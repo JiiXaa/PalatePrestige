@@ -64,9 +64,9 @@
             {% if request.user.is_authenticated %}
             <li class="list-inline-item dropdown">
               <a href="#" class="text-black nav-link" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="icon">
+                <div class="text-center">
                   <i class="fas fa-user"></i>
-                </span>
+                </div>
                 <span class="d-none d-lg-inline-block">My Account</span>
               </a>
                 <div class="dropdown-menu border-0" aria-labelledby="user-options">
@@ -88,7 +88,9 @@
             <li class="list-inline-item">
               <a href="" class="{% if sum_total %}text-info font-weight-bold{% else %} text-black{% endif %} nav-link">
                 <div class="text-center">
-                  <div><i class="fas fa-shopping-bag fa-lg"></i></div>
+                  <div>
+                    <i class="fas fa-shopping-bag fa-lg"></i>
+                  </div>
                   <p class="my-0">
                     {% if sum_total %}
                       <span class="badge badge-pill badge-info">&#163;{{ sum_total|floatformat:2 }}</span>
