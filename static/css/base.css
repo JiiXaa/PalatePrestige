@@ -75,3 +75,15 @@ body {
   background-color: var(--primary-color) !important;
   border-bottom: 3px solid black;
 }
+
+/* Allauth custom styles */
+
+/* Logout */
+.logout-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
