@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Chef, Customer
+from menus.models import Menu
 
 
 def all_chefs(request):
@@ -15,8 +16,19 @@ def all_chefs(request):
 
 
 def chef_detail(request, chef_id):
-    """A view to show individual chef details"""
-    return render(request, "users/chef_detail.html")
+    """A view to show individual chef details and their menus"""
+
+    # Get the chef or return 404 if not found
+    chef = get_object_or_404(Chef, id=chef_id)
+    # Get all menus associated with this chef
+    menus = Menu.objects.filter(chef=chef)
+
+    context = {
+        "chef": chef,
+        "menus": menus,
+    }
+
+    return render(request, "chefs/chef_detail.html", context)
 
 
 def all_customers(request):

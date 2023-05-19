@@ -12,9 +12,13 @@
 {% block content %}
   <div class="container move-down">
     <div class="row">
-      <div class="col move-down">
-        {{ all_chefs }}
-      </div>
+      {% for chef in all_chefs %}
+        <div class="col move-down">
+          <h2>{{ chef.first_name }} {{ chef.last_name }}</h2>
+          <p>{{ chef.bio }}</p>
+          <a href="{% url 'chef_detail' chef_id=chef.id %}">More Details</a>
+        </div>
+      {% endfor %}
     </div>
   </div>
 {% endblock %}

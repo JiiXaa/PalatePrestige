@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+  <div class="container header-container">
+    <div class="row">
+      <div class="col"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container move-down">
+    <div class="row">
+      <div class="col move-down">
+        <h2>{{ chef.first_name }} {{ chef.last_name }}</h2>
+        <p>{{ chef.bio }}</p>
+        {% for menu in menus %}
+          <h2>{{ menu.title }}</h2>
+          <p>{{ menu.description }}</p>
+          {% for dish in menu.dishes.all %}
+            <h3>{{ dish.name }}</h3>
+            <p>{{ dish.category }}</p>
+            <p>{{ dish.description }}</p>
+          {% endfor %}
+          <p>From &#163;{{ menu.price }} pp </p>
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
