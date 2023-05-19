@@ -7,9 +7,19 @@ class Menu(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
     chef = models.ForeignKey("users.Chef", on_delete=models.CASCADE)
+    menu_category = models.ForeignKey(
+        "MenuCategory", related_name="menus", on_delete=models.SET_NULL, null=True
+    )
 
     def __str__(self):
         return self.title
+
+
+class MenuCategory(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
 
 
 class Dish(models.Model):
