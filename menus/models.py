@@ -16,6 +16,9 @@ class Menu(models.Model):
 
 
 class MenuCategory(models.Model):
+    class Meta:
+        verbose_name_plural = "menu categories"
+
     name = models.CharField(max_length=200)
 
     def __str__(self):
