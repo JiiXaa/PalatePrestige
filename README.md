@@ -46,3 +46,12 @@
 **Customer and Review:** This is a one-to-many relationship. One Customer can write multiple Review instances, but each Review is associated with one and only one Customer. If a Customer is deleted, all of their Review instances are also deleted due to the on_delete=models.CASCADE argument.
 
 **Chef and Review:** This is another one-to-many relationship. One Chef can have multiple Review instances, but each Review is associated with one and only one Chef. If a Chef is deleted, all related Review instances are also deleted due to the on_delete=models.CASCADE argument.
+
+## Admin specific actions
+
+**Add menu category:**
+Admin-only add menu categories simplify search and sorting while preventing an excessive number of categories for users.
+
+Nice to have:
+
+- [ ] Chef can request specific category addition.
