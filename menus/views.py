@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 
-from .models import Menu, Dish
+from .models import Menu, Dish, MenuCategory
 from .forms import MenuForm, MenuCategoryForm
 
 
@@ -39,20 +39,27 @@ def add_menu(request):
 
 @login_required
 def add_menu_category(request):
-    """A view to add a menu category to the database (admin only))"""
+    """A view to add a menu category to the database (admin only)"""
     if not request.user.is_superuser and not request.user.is_staff:
-        messages.error(request, "Only staff can add menu category.")
-        return redirect("menus")
+        messages.error(request, "Only staff can add menu categories.")
+        return redirect("home")
 
     if request.method == "POST":
         form = MenuCategoryForm(request.POST)
         if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Menu category successfully added.")
-                return redirect("add_menu_category")
-            except Exception as e:
-                messages.error(request, f"Error adding menu category: {e}")
+            name = form.cleaned_data["name"]
+            # Check if a menu category with the same name already exists (case insensitive) Found solution here: https://stackoverflow.com/questions/9983391/how-do-i-use-iexact-to-check-if-an-item-matches-case-insensitively-in-django
+            if MenuCategory.objects.filter(name__iexact=name).exists():
+                messages.error(
+                    request, "A menu category with the same name already exists."
+                )
+            else:
+                try:
+                    form.save()
+                    messages.success(request, "Menu category successfully added!")
+                    return redirect("add_menu")
+                except Exception as e:
+                    messages.error(request, f"Error adding menu category: {e}")
     else:
         form = MenuCategoryForm()
 
