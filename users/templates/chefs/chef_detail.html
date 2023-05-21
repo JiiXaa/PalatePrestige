@@ -10,22 +10,29 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container move-down">
+  <div class="overlay"></div>
+  <div class="container fluid">
     <div class="row">
-      <div class="col move-down">
+      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
         <h2>{{ chef.first_name }} {{ chef.last_name }}</h2>
         <p>{{ chef.bio }}</p>
         {% for menu in menus %}
-          <h2>{{ menu.title }}</h2>
-          <p>{{ menu.description }}</p>
-          {% for dish in menu.dishes.all %}
-            <h3>{{ dish.name }}</h3>
-            <p>{{ dish.category }}</p>
-            <p>{{ dish.description }}</p>
-          {% endfor %}
-          <p>From &#163;{{ menu.price }} pp </p>
-        {% endfor %}
-
+          <div class="row">
+            <div class="col-12">
+              <h2>{{ menu.title }}</h2>
+              <p>{{ menu.description }}</p>
+              {% for dish in menu.dishes.all %}
+                <h3>{{ dish.name }}</h3>
+                <p>{{ dish.category }}</p>
+                <p>{{ dish.description }}</p>
+              {% endfor %}
+              <p>From &#163;{{ menu.price }} pp </p>
+              {% endfor %}
+            </div>
+          </div>
+        {% if user.is_authenticated and user.chef.id == chef.id %}
+        <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
+        {% endif %}
       </div>
     </div>
   </div>

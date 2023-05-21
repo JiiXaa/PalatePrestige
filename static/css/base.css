@@ -49,6 +49,10 @@ body {
   height: 100%;
 }
 
+.header-container {
+  padding-top: 164px;
+}
+
 @media (min-width: 688px) {
   .home-container {
     display: flex;
@@ -69,9 +73,34 @@ body {
     max-height: 400px;
   }
 
+  .header-container {
+    padding-top: 164px;
+  }
+
   /* TESTING ONLY */
   .move-down {
     margin-top: 8rem;
+  }
+
+  /* Background trick for the content (just place div on top of the content) */
+  .overlay {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background-color: white;
+    z-index: -1;
+  }
+}
+
+@media (max-width: 667px) {
+  .header-container {
+    padding-top: 116px;
+  }
+
+  body {
+    height: calc(100vh - 116px);
   }
 }
 
