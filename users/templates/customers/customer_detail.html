@@ -14,8 +14,11 @@
   <div class="container fluid">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
-        <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
+        <h2>{{ customer.user.first_name }} {{ customer.user.last_name }}</h2>
         <p>{{ customer.location }}</p>
+        {% if not customer.location %}
+        <p>Edit profile to add location</p>
+        {% endif %}
       </div>
     </div>
       </div>

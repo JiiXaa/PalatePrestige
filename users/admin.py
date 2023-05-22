@@ -5,9 +5,6 @@ from .models import Chef, Customer
 class ChefAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "first_name",
-        "last_name",
-        "email",
         "bio",
         "cuisine_types",
         "is_super_chef",
@@ -18,7 +15,7 @@ class ChefAdmin(admin.ModelAdmin):
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("user", "first_name", "last_name", "email", "location")
+    list_display = ("user", "location")
 
     ordering = ("user",)
 
