@@ -1,6 +1,32 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+
+from allauth.account.views import SignupView
+from .forms import CustomSignupForm
+
 from .models import Chef, Customer
 from menus.models import Menu
+
+
+class CustomSignupView(SignupView):
+    form_class = CustomSignupForm
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user_type = form.cleaned_data.get("user_type")
+
+        if user_type == "chef":
+            Chef.objects.create(user=self.user)
+            group, created = Group.objects.get_or_create(name="Chef")
+        else:
+            Customer.objects.create(user=self.user)
+            group, created = Group.objects.get_or_create(name="Customer")
+
+        self.user.groups.add(group)
+
+        return response
 
 
 def all_chefs(request):
@@ -16,17 +42,27 @@ def all_chefs(request):
 
 
 def chef_detail(request, chef_id):
-    """A view to show individual chef details and their menus"""
-
-    # Get the chef or return 404 if not found
+    """A view to display a single chef profile"""
     chef = get_object_or_404(Chef, id=chef_id)
-    # Get all menus associated with this chef
     menus = Menu.objects.filter(chef=chef)
 
-    context = {
-        "chef": chef,
-        "menus": menus,
-    }
+    if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
+        # If the logged-in user is the Chef whose profile is being viewed
+        context = {
+            "chef": chef,
+            "menus": menus,
+            "is_owner": True,  # Additional context variable to control template rendering
+        }
+    elif request.user.groups.filter(name="Customer").exists():
+        # If the logged-in user is a Customer
+        context = {
+            "chef": chef,
+            "menus": menus,
+            "is_owner": False,  # The Customer is not the owner of this Chef profile
+        }
+    else:
+        messages.error(request, "Access Denied.")
+        return redirect("home")
 
     return render(request, "chefs/chef_detail.html", context)
 
@@ -36,6 +72,19 @@ def all_customers(request):
     return render(request, "users/customers.html")
 
 
+@login_required
 def customer_detail(request, customer_id):
-    """A view to show individual customer details"""
-    return render(request, "users/customer_detail.html")
+    """A view to display a single customer profile"""
+    # Ensure that the logged in user is a Customer
+    if request.user.groups.filter(name="Customer").exists():
+        # Get the customer associated with the user or return 404 if not found
+        customer = get_object_or_404(Customer, id=customer_id)
+
+        context = {
+            "customer": customer,
+        }
+
+        return render(request, "customers/customer_detail.html", context)
+    else:
+        messages.error(request, "Access Denied. You are not a Customer.")
+        return redirect("home")

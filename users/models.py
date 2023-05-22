@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Chef(models.Model):
@@ -25,3 +27,18 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+# Group assignment on user creation using signals
+@receiver(post_save, sender=Chef)
+def add_to_chef_group(sender, instance, created, **kwargs):
+    if created:
+        group, created = Group.objects.get_or_create(name="Chef")
+        instance.user.groups.add(group)
+
+
+@receiver(post_save, sender=Customer)
+def add_to_customer_group(sender, instance, created, **kwargs):
+    if created:
+        group, created = Group.objects.get_or_create(name="Customer")
+        instance.user.groups.add(group)

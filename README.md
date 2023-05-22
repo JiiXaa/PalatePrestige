@@ -12,7 +12,10 @@
 
 **Displaying and Navigation**
 
-- [ ] The display of content is determined by the group assigned to each individual user. Depending on their assigned group, clients are able to view pages and templates that showcase chefs' profiles and menus associated with them. On the other hand, chefs have the ability to add or edit menus that they offer to customers.
+- [ ] The display of content is determined by the group assigned to each individual user. Depending on their assigned group, clients are able to view pages and templates that showcase chefs' profiles and menus associated with them. On the other hand, chefs have the ability to add or edit menus that they offer to customers.</br>
+      More information about the Django groups can be found: </br>
+  - https://testdriven.io/blog/django-permissions/ </br>
+  - https://stackoverflow.com/questions/34571880/how-to-check-in-template-if-user-belongs-to-a-group </br>
 
 | As a/an | I want to be able to...                         | So that I can...                                         |
 | ------- | ----------------------------------------------- | -------------------------------------------------------- |

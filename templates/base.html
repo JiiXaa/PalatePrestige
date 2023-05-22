@@ -1,4 +1,5 @@
 {% load static %}
+{% load group_filter %}
 
 <!doctype html>
 <html lang="en">
@@ -72,7 +73,13 @@
                     {% if request.user.is_superuser %}
                         <a href="#" class="dropdown-item">Admin</a>
                     {% endif %}
-                    <a href="#" class="dropdown-item">My Profile</a>
+                    {% if user.is_authenticated %}
+                      {% if user|has_group:'Chef' %}
+                        <a href="{% url 'chef_detail' chef_id=user.chef.id %}" class="dropdown-item">My Profile</a>
+                      {% elif user|has_group:'Customer' %}
+                        <a href="{% url 'customer_detail' customer_id=user.customer.id %}" class="dropdown-item">My Profile</a>
+                      {% endif %}
+                    {% endif %}
                     <a href="#" class="dropdown-item">My Bookings</a>
                     <a href="#" class="dropdown-item">My Reviews</a>
                     <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
