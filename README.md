@@ -12,11 +12,15 @@
 
 **Displaying and Navigation**
 
-| As a/an | I want to be able to...                      | So that I can...                                         |
-| ------- | -------------------------------------------- | -------------------------------------------------------- |
-| Client  | View a list of chefs                         | Select a chef to book                                    |
-| Client  | View individual chef details                 | Identify the price, menu, availability, rating           |
-| Client  | Easily view the total amount of the bookings | Keep an eye on the total sum before completing a booking |
+- [ ] The display of content is determined by the group assigned to each individual user. Depending on their assigned group, clients are able to view pages and templates that showcase chefs' profiles and menus associated with them. On the other hand, chefs have the ability to add or edit menus that they offer to customers.
+
+| As a/an | I want to be able to...                         | So that I can...                                         |
+| ------- | ----------------------------------------------- | -------------------------------------------------------- |
+| Client  | View a list of chefs                            | Select a chef to book                                    |
+| Client  | View individual chef details                    | Identify the price, menu, availability, rating           |
+| Client  | Easily view the total amount of the bookings    | Keep an eye on the total sum before completing a booking |
+|         |                                                 |                                                          |
+| Chef    | Easily add/edit/remove menu's available to book | Keep an eye on the total sum before completing a booking |
 
 ## Development
 
