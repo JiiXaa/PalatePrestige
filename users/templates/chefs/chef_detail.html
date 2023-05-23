@@ -19,17 +19,21 @@
         {% for menu in menus %}
           <div class="row">
             <div class="col-12">
-              <h2>{{ menu.title }}</h2>
-              <p>{{ menu.description }}</p>
-              {% for dish in menu.dishes.all %}
-                <h3>{{ dish.name }}</h3>
-                <p>{{ dish.category }}</p>
-                <p>{{ dish.description }}</p>
-              {% endfor %}
-              <p>From &#163;{{ menu.price }} pp </p>
-              {% endfor %}
+              <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                <div>
+                  <h2>{{ menu.title }}</h2>
+                  <p>{{ menu.description }}</p>
+                  {% for dish in menu.dishes.all %}
+                    <h3>{{ dish.name }}</h3>
+                    <p>{{ dish.category }}</p>
+                    <p>{{ dish.description }}</p>
+                  {% endfor %}
+                  <p>From &#163;{{ menu.price }} pp </p>
+                </div>
+              </a>
             </div>
           </div>
+        {% endfor %}
         {% if user.is_authenticated and user.chef.id == chef.id %}
         <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
         {% endif %}

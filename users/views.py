@@ -13,17 +13,21 @@ from menus.models import Menu
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
 
+    # Override form_valid to save user_type and create Chef or Customer object
     def form_valid(self, form):
         response = super().form_valid(form)
         user_type = form.cleaned_data.get("user_type")
 
+        # Create Chef or Customer object based on user_type
         if user_type == "chef":
             Chef.objects.create(user=self.user)
             group, created = Group.objects.get_or_create(name="Chef")
         else:
+            # if user_type == "customer":
             Customer.objects.create(user=self.user)
             group, created = Group.objects.get_or_create(name="Customer")
 
+        # Add user to Chef or Customer group
         self.user.groups.add(group)
 
         return response

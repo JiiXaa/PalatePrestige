@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 from .models import Menu, Dish, MenuCategory
-from .forms import MenuForm, MenuCategoryForm
+from .forms import MenuForm, MenuCategoryForm, DishForm
 
 
 def all_menus(request):
@@ -40,6 +40,8 @@ def add_menu(request):
 @login_required
 def add_menu_category(request):
     """A view to add a menu category to the database (admin only)"""
+
+    # Only staff can add menu categories
     if not request.user.is_superuser and not request.user.is_staff:
         messages.error(request, "Only staff can add menu categories.")
         return redirect("home")
@@ -64,6 +66,45 @@ def add_menu_category(request):
         form = MenuCategoryForm()
 
     return render(request, "add_menu_category.html", {"form": form})
+
+
+def menu_detail(request, menu_id):
+    """A view to display a single menu"""
+    # Get menu
+    menu = get_object_or_404(Menu, id=menu_id)
+    # Filter dishes by menu
+    dishes = Dish.objects.filter(menu=menu)
+
+    context = {
+        "menu": menu,
+        "dishes": dishes,
+    }
+
+    return render(request, "menu_detail.html", context)
+
+
+@login_required
+def add_dish(request, menu_id):
+    """A view to add a dish to a menu"""
+    menu = get_object_or_404(Menu, id=menu_id)
+
+    if request.method == "POST":
+        form = DishForm(request.POST)
+        if form.is_valid():
+            new_dish = form.save(commit=False)
+            new_dish.menu = menu
+            new_dish.save()
+            messages.success(request, "Dish successfully added!")
+            return redirect("menu_detail", menu_id=menu.id)
+    else:
+        form = DishForm()
+
+    context = {
+        "form": form,
+        "menu": menu,
+    }
+
+    return render(request, "add_dish.html", context)
 
 
 @login_required
