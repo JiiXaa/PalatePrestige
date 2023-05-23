@@ -75,16 +75,23 @@ def all_customers(request):
 @login_required
 def customer_detail(request, customer_id):
     """A view to display a single customer profile"""
-    # Ensure that the logged in user is a Customer
+    # Ensure that the logged-in user is a Customer
     if request.user.groups.filter(name="Customer").exists():
         # Get the customer associated with the user or return 404 if not found
         customer = get_object_or_404(Customer, id=customer_id)
 
-        context = {
-            "customer": customer,
-        }
-
-        return render(request, "customers/customer_detail.html", context)
+        # Check if the requested customer profile matches the logged-in user
+        # User is allowed to view their own profile but not others
+        if customer.user == request.user:
+            context = {
+                "customer": customer,
+            }
+            return render(request, "customers/customer_detail.html", context)
+        else:
+            messages.error(
+                request, "Access Denied. You are not authorized to view this profile."
+            )
+            return redirect("home")
     else:
         messages.error(request, "Access Denied. You are not a Customer.")
         return redirect("home")
