@@ -15,6 +15,14 @@ class Chef(models.Model):
         return self.user.username
 
 
+class Availability(models.Model):
+    chef = models.ForeignKey(Chef, on_delete=models.CASCADE)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    is_available = models.BooleanField(default=True)
+    is_finalised = models.BooleanField(default=False)
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=200, blank=True)

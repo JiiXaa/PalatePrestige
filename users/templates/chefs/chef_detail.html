@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_js %}
+    <!-- FullCalendar core JS -->
+    <script src=" https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js "></script>
+    <script src="{% static 'js/chefs/chef_availability.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
 {% block page_header %}
   <div class="container header-container">
     <div class="row">
@@ -37,6 +46,18 @@
         {% if user.is_authenticated and user.chef.id == chef.id %}
         <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
         {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <!-- Pass the chef id to be able -->
+      <div id="calendar" data-chef-id="{{ chef.id }}"></div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
+        <h2>Availability</h2>
+        {% for availability in chef_availability %}
+          <p>{{ availability.start_time }} - {{ availability.end_time }}</p>
+      {% endfor %}
       </div>
     </div>
   </div>

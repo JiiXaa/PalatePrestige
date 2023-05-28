@@ -2,11 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.http import JsonResponse
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+
+import json
 
 from allauth.account.views import SignupView
 from .forms import CustomSignupForm
 
-from .models import Chef, Customer
+from .models import Chef, Customer, Availability
 from menus.models import Menu
 
 
@@ -49,12 +54,19 @@ def chef_detail(request, chef_id):
     """A view to display a single chef profile"""
     chef = get_object_or_404(Chef, id=chef_id)
     menus = Menu.objects.filter(chef=chef)
+    check_availability = Availability.objects.filter(
+        chef_id=chef_id,
+        is_available=True,
+    )
+
+    print(check_availability)
 
     if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
         # If the logged-in user is the Chef whose profile is being viewed
         context = {
             "chef": chef,
             "menus": menus,
+            "chef_availability": check_availability,
             "is_owner": True,  # Additional context variable to control template rendering
         }
     elif request.user.groups.filter(name="Customer").exists():
@@ -62,6 +74,7 @@ def chef_detail(request, chef_id):
         context = {
             "chef": chef,
             "menus": menus,
+            "chef_availability": check_availability,
             "is_owner": False,  # The Customer is not the owner of this Chef profile
         }
     else:
@@ -69,6 +82,64 @@ def chef_detail(request, chef_id):
         return redirect("home")
 
     return render(request, "chefs/chef_detail.html", context)
+
+
+def get_chef_availability(request, chef_id):
+    # Get all availability instances for the given chef
+    availability_entries = Availability.objects.filter(chef_id=chef_id)
+
+    # Convert the entries to a format that can be serialized to JSON
+    availability_data = []
+    for entry in availability_entries:
+        # Convert the start and end times to the timezone-aware ISO 8601 format
+        start_time = entry.start_time.astimezone(timezone.utc).isoformat()
+        end_time = entry.end_time.astimezone(timezone.utc).isoformat()
+
+        availability_data.append(
+            {
+                "start": start_time,
+                "end": end_time,
+                "title": "Available" if entry.is_available else "Not Available",
+                "editable": entry.is_available,
+            }
+        )
+
+    return JsonResponse(availability_data, safe=False)
+
+
+def add_chef_availability(request):
+    if request.method == "POST":
+        # Get the data from the request body
+        data = json.loads(request.body)
+        chef_id = int(data["chef_id"])
+        # Parse the start and end times from the request body
+        start_time = parse_datetime(data["start_time"])
+        end_time = parse_datetime(data["end_time"])
+
+        print(chef_id)
+        print(start_time)
+        print(end_time)
+
+        # Ensure only the chef can add availability
+        if request.user.is_authenticated and request.user.id == chef_id:
+            Availability.objects.create(
+                chef_id=chef_id,
+                start_time=start_time,
+                end_time=end_time,
+                is_available=True,
+            )
+
+            print("Availability added successfully.")
+
+            return JsonResponse(
+                {"message": "Availability added successfully."}, status=201
+            )
+        else:
+            return JsonResponse(
+                {"error": "You do not have permission to add availability."}, status=403
+            )
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
 def all_customers(request):
