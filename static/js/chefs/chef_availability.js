@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
   getChefAvailability(chefId);
 });
 
+let calendar;
 async function getChefAvailability(chefId) {
   console.log('Getting chef availability...');
   try {
@@ -28,13 +29,21 @@ async function getChefAvailability(chefId) {
         extendedProps: {
           is_available: slot.title === 'Available',
         },
+        allDay: false,
       };
     });
 
     console.log('Events:', events);
 
-    // Initialize the calendar with the chef's availability
-    initCalendar(events, chefId);
+    if (calendar) {
+      console.log('Updating events...');
+      // Update the calendar with the chef's availability
+      calendar.removeAllEvents();
+      calendar.addEventSource(events);
+    } else {
+      // Initialize the calendar with the chef's availability
+      calendar = initCalendar(events, chefId);
+    }
   } catch (error) {
     console.error('Error fetching chef availability:', error);
   }
@@ -45,18 +54,40 @@ function initCalendar(events, chefId) {
   console.log('init Events:', events);
 
   const calendarEl = document.getElementById('calendar');
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
+  const calendarInstance = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'timeGridWeek',
+    allDaySlot: false,
     editable: true,
     selectable: true,
+    selectAllow: function (selectInfo) {
+      // Only allow selecting dates that are equal to or later than today
+      return selectInfo.start >= new Date();
+    },
     select: function (info) {
-      // Send the selected date range to the server
-      addChefAvailability(chefId, info.start, info.end);
+      const existingEvents = calendarInstance.getEvents();
+      for (let i = 0; i < existingEvents.length; i++) {
+        if (
+          info.start < existingEvents[i].end &&
+          info.end > existingEvents[i].start
+        ) {
+          // If selected slot overlaps with an existing event, don't add it
+          return;
+        }
+      }
+
+      // Create a new Date object from the start date
+      let endDate = new Date(info.start);
+      // Add 4 hours to the end date
+      endDate.setHours(endDate.getHours() + 4);
+      // The selected slot doesn't overlap with any existing events, so add it
+      addChefAvailability(chefId, info.start, endDate);
     },
     events: events,
   });
 
-  calendar.render();
+  calendarInstance.render();
+
+  return calendarInstance;
 }
 
 async function addChefAvailability(chefId, start, end) {
