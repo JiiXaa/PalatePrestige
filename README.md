@@ -21,9 +21,21 @@
 | ------- | ----------------------------------------------- | -------------------------------------------------------- |
 | Client  | View a list of chefs                            | Select a chef to book                                    |
 | Client  | View individual chef details                    | Identify the price, menu, availability, rating           |
-| Client  | Easily view the total amount of the bookings    | Keep an eye on the total sum before completing a booking |
+| Client  | Easily view the total price of the booking      | Keep an eye on the total sum before completing a booking |
 |         |                                                 |                                                          |
 | Chef    | Easily add/edit/remove menu's available to book | Keep an eye on the total sum before completing a booking |
+
+**Chef's Service Booking**
+
+| As a/an | I want to be able to...                    | So that I can...                      |
+| ------- | ------------------------------------------ | ------------------------------------- |
+| Client  | View a chef's calendar and available dates | Pick and book a date                  |
+| Client  | View the confirmation page before payment  | Make sure all booking data is correct |
+| Client  | Make a secure payment                      | Complete the booking process          |
+| Client  | View active and previous bookings          | See all bookings                      |
+|         |                                            |                                       |
+| Chef    | Easily add/remove availability dates       | Manage availability                   |
+| Chef    | Create various deals                       | Promote my services                   |
 
 ## Development
 
@@ -31,6 +43,7 @@
 
 - [Bootstrap](https://getbootstrap.com/) the world’s most popular framework for building responsive, mobile-first sites
 - [django-allauth](https://django-allauth.readthedocs.io/en/latest/) provides a set of reusable Django applications addressing authentication, registration, account management, and third-party (social) account authentication.
+- [Full Calendar](https://fullcalendar.io/) is a lightweight yet powerful and developer-friendly JavaScript library to create flexible, draggable event calendars on the modern web app.
 
 ## Database Model
 
