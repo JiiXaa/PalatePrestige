@@ -18,4 +18,9 @@ urlpatterns = [
         views.add_chef_availability,
         name="add_chef_availability",
     ),
+    path(
+        "chefs/delete_chef_availability/<int:availability_id>/",
+        views.delete_chef_availability,
+        name="delete_chef_availability",
+    ),
 ]

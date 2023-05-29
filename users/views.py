@@ -101,6 +101,7 @@ def get_chef_availability(request, chef_id):
                 "end": end_time,
                 "title": "Available" if entry.is_available else "Not Available",
                 "editable": entry.is_available,
+                "availability_id": entry.id,
             }
         )
 
@@ -140,6 +141,29 @@ def add_chef_availability(request):
             )
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+def delete_chef_availability(request, availability_id):
+    if request.method == "DELETE":
+        # Retrieve the availability instance
+        availability = Availability.objects.filter(id=availability_id).first()
+
+        # Ensure only the chef can delete availability
+        if (
+            request.user.is_authenticated
+            and availability
+            and availability.chef.user == request.user
+        ):
+            # Delete the availability instance
+            availability.delete()
+            return JsonResponse(
+                {"message": "Availability deleted successfully."}, status=200
+            )
+
+        # If the availability instance was not found or the user is not the chef associated with the availability instance or the user is not authenticated
+        return JsonResponse(
+            {"error": "You do not have permission to delete availability."}, status=403
+        )
 
 
 def all_customers(request):

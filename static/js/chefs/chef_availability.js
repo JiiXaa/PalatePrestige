@@ -22,12 +22,14 @@ async function getChefAvailability(chefId) {
 
     const events = availability.map((slot) => {
       console.log(slot);
+      console.log('Availability ID:', slot.availability_id);
       return {
         title: slot.title,
         start: slot.start,
         end: slot.end,
         extendedProps: {
           is_available: slot.title === 'Available',
+          availability_id: slot.availability_id,
         },
         allDay: false,
       };
@@ -37,6 +39,7 @@ async function getChefAvailability(chefId) {
 
     if (calendar) {
       console.log('Updating events...');
+      // TODO: update events when the chef's availability is updated
       // Update the calendar with the chef's availability
       calendar.removeAllEvents();
       calendar.addEventSource(events);
@@ -87,6 +90,20 @@ function initCalendar(events, chefId) {
 
   calendarInstance.render();
 
+  calendarInstance.on('eventClick', function (info) {
+    console.log('Event clicked:', info.event);
+    const e = info.event;
+    const availabilityId = e.extendedProps.availability_id;
+
+    if (
+      availabilityId &&
+      e.extendedProps.is_available &&
+      confirm('Are you sure you want to delete this availability?')
+    ) {
+      deleteChefAvailability(availabilityId, chefId);
+    }
+  });
+
   return calendarInstance;
 }
 
@@ -120,6 +137,34 @@ async function addChefAvailability(chefId, start, end) {
     getChefAvailability(chefId);
   } catch (error) {
     console.error('Error adding availability:', error);
+  }
+}
+
+async function deleteChefAvailability(availabilityId, chefId) {
+  try {
+    const csrfToken = getCookie('csrftoken');
+    console.log('CSRF Token:', csrfToken);
+    console.log('Chef ID:', typeof chefId, chefId);
+
+    const response = await fetch(
+      `/users/chefs/delete_chef_availability/${availabilityId}/`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    // Refresh the calendar to show the new availability
+    getChefAvailability(chefId);
+  } catch (error) {
+    console.error('Error deleting availability:', error);
   }
 }
 
