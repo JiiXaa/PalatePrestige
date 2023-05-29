@@ -146,7 +146,7 @@ def add_chef_availability(request):
 def delete_chef_availability(request, availability_id):
     if request.method == "DELETE":
         # Retrieve the availability instance
-        availability = Availability.objects.filter(id=availability_id).first()
+        availability = get_object_or_404(Availability, id=availability_id)
 
         # Ensure only the chef can delete availability
         if (
@@ -164,6 +164,42 @@ def delete_chef_availability(request, availability_id):
         return JsonResponse(
             {"error": "You do not have permission to delete availability."}, status=403
         )
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+def update_chef_availability(request, availability_id):
+    if request.method == "PUT":
+        # Retrieve the availability instance
+        availability = get_object_or_404(Availability, id=availability_id)
+
+        # Ensure only the chef can update availability
+        if (
+            request.user.is_authenticated
+            and availability
+            and availability.chef.user == request.user
+        ):
+            # Parse the start and end times from the request body
+            data = json.loads(request.body)
+            availability_id = int(data["availability_id"])
+            start_time = parse_datetime(data["start_time"])
+            end_time = parse_datetime(data["end_time"])
+
+            # Update the availability instance
+            availability.start_time = start_time
+            availability.end_time = end_time
+            availability.save()
+
+            return JsonResponse(
+                {"message": "Availability updated successfully."}, status=200
+            )
+
+        # If the availability instance was not found or the user is not the chef associated with the availability instance or the user is not authenticated
+        return JsonResponse(
+            {"error": "You do not have permission to update availability."}, status=403
+        )
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
 def all_customers(request):

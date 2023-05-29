@@ -89,7 +89,8 @@ function initCalendar(events, chefId) {
   });
 
   calendarInstance.render();
-
+  // Event listeners for calendar events
+  // eventClick is triggered when an event is clicked on the calendar (e.g. to delete an availability)
   calendarInstance.on('eventClick', function (info) {
     console.log('Event clicked:', info.event);
     const e = info.event;
@@ -101,6 +102,34 @@ function initCalendar(events, chefId) {
       confirm('Are you sure you want to delete this availability?')
     ) {
       deleteChefAvailability(availabilityId, chefId);
+    }
+  });
+
+  // eventDrop is triggered when an event is dragged and dropped on the calendar (e.g. to update an availability)
+  calendarInstance.on('eventDrop', function (info) {
+    const e = info.event;
+    const availabilityId = e.extendedProps.availability_id;
+    console.log('Event dropped:', info.event);
+    if (
+      availabilityId &&
+      e.extendedProps.is_available &&
+      confirm('Are you sure you want to update this availability?')
+    ) {
+      updateChefAvailability(availabilityId, chefId, e.start, e.end);
+    }
+  });
+
+  // eventResize is triggered when an event is resized on the calendar (e.g. to update an availability)
+  calendarInstance.on('eventResize', function (info) {
+    const e = info.event;
+    const availabilityId = e.extendedProps.availability_id;
+
+    if (
+      availabilityId &&
+      e.extendedProps.is_available &&
+      confirm('Are you sure you want to update this availability?')
+    ) {
+      updateChefAvailability(availabilityId, chefId, e.start, e.end);
     }
   });
 
@@ -165,6 +194,45 @@ async function deleteChefAvailability(availabilityId, chefId) {
     getChefAvailability(chefId);
   } catch (error) {
     console.error('Error deleting availability:', error);
+  }
+}
+
+async function updateChefAvailability(availabilityId, chefId, start, end) {
+  try {
+    const csrfToken = getCookie('csrftoken');
+    console.log('CSRF Token:', csrfToken);
+    console.log('Chef ID:', typeof chefId, chefId);
+
+    const start_time = start.toISOString();
+    const end_time = end.toISOString();
+
+    const response = await fetch(
+      `/users/chefs/update_chef_availability/${availabilityId}/`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({
+          chef_id: chefId,
+          availability_id: availabilityId,
+          start_time: start_time,
+          end_time: end_time,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    console.log('Availability updated');
+
+    // Refresh the calendar to show the new availability
+    getChefAvailability(chefId);
+  } catch (error) {
+    console.error('Error updating availability:', error);
   }
 }
 
