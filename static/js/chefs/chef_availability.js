@@ -3,10 +3,16 @@ console.log('chef_availability.js loaded');
 document.addEventListener('DOMContentLoaded', function () {
   const calendarEl = document.getElementById('calendar');
   const chefId = calendarEl.getAttribute('data-chef-id');
+  const userRole = calendarEl.getAttribute('data-user-role');
 
+  console.log('User role:', userRole);
   console.log('Chef ID:', chefId);
-  // chefId is passed to the Django's template as a data attribute on the calendar element
-  getChefAvailability(chefId);
+
+  if (userRole === 'chef') {
+    getChefAvailability(chefId);
+  } else if (userRole === 'customer') {
+    getChefAvailabilityForBooking(chefId);
+  }
 });
 
 let calendar;
@@ -45,95 +51,157 @@ async function getChefAvailability(chefId) {
       calendar.addEventSource(events);
     } else {
       // Initialize the calendar with the chef's availability
-      calendar = initCalendar(events, chefId);
+      calendar = initCalendar(events, chefId, true);
+
+      // Add event listener for when a user selects a time slot
+      calendar.on('select', function (selectInfo) {
+        handleChefSelect(selectInfo, chefId, calendar);
+      });
+
+      // Add event listener for when a user clicks on an event (when chef clicks on an availability)
+      calendar.on('eventClick', function (info) {
+        console.log('Event click info:', info.event);
+
+        const e = info.event;
+        const availabilityId = e.extendedProps.availability_id;
+
+        if (
+          availabilityId &&
+          e.extendedProps.is_available &&
+          confirm('Are you sure you want to delete this availability?')
+        ) {
+          deleteChefAvailability(availabilityId, chefId);
+        }
+      });
+
+      // Event listener for eventDrop (when chef drags an availability to a new time slot)
+      calendar.on('eventDrop', function (info) {
+        const e = info.event;
+        const availabilityId = e.extendedProps.availability_id;
+        console.log('Event drop info:', info.event);
+
+        if (
+          availabilityId &&
+          e.extendedProps.is_available &&
+          confirm('Are you sure you want to update this availability?')
+        ) {
+          // Update the availability
+          updateChefAvailability(availabilityId, chefId, e.start, e.end);
+        }
+      });
+
+      // Event listener for eventResize (when chef resizes an availability) (not currently used)
+      calendar.on('eventResize', function (info) {
+        const e = info.event;
+        const availabilityId = e.extendedProps.availability_id;
+        console.log('Event resize info:', info.event);
+
+        if (
+          availabilityId &&
+          e.extendedProps.is_available &&
+          confirm('Are you sure you want to update this availability?')
+        ) {
+          // Update the availability
+          updateChefAvailability(availabilityId, chefId, e.start, e.end);
+        }
+      });
     }
   } catch (error) {
     console.error('Error fetching chef availability:', error);
   }
 }
 
+async function getChefAvailabilityForBooking(chefId) {
+  console.log('Getting chef availability for booking...');
+  try {
+    const response = await fetch(
+      `/users/chefs/get_chef_availability/${chefId}/`
+    );
+    const availability = await response.json();
+
+    console.log('Chef availability:', availability);
+
+    const events = availability.map((slot) => {
+      console.log(slot);
+      console.log('Availability ID:', slot.availability_id);
+      return {
+        title: slot.title,
+        start: slot.start,
+        end: slot.end,
+        allDay: false,
+      };
+    });
+
+    calendar = initCalendar(events, chefId, false);
+
+    // Customer's booking selection
+    calendar.on('select', function (selectInfo) {
+      handleCustomerSelect(selectInfo, calendar);
+    });
+
+    calendar.on('eventClick', function (info) {
+      const selectedDate = info.event.start;
+      storeSelectedDate(selectedDate);
+    });
+  } catch (error) {
+    console.error('Error fetching chef availability:', error);
+  }
+}
+
 // Calendar initialization function - called after the chef's availability is retrieved from the server
-function initCalendar(events, chefId) {
+function initCalendar(events, chefId, editable) {
   console.log('init Events:', events);
 
   const calendarEl = document.getElementById('calendar');
   const calendarInstance = new FullCalendar.Calendar(calendarEl, {
     initialView: 'timeGridWeek',
     allDaySlot: false,
-    editable: true,
+    editable: editable,
     selectable: true,
     selectAllow: function (selectInfo) {
       // Only allow selecting dates that are equal to or later than today
       return selectInfo.start >= new Date();
     },
-    select: function (info) {
-      const existingEvents = calendarInstance.getEvents();
-      for (let i = 0; i < existingEvents.length; i++) {
-        if (
-          info.start < existingEvents[i].end &&
-          info.end > existingEvents[i].start
-        ) {
-          // If selected slot overlaps with an existing event, don't add it
-          return;
-        }
-      }
-
-      // Create a new Date object from the start date
-      let endDate = new Date(info.start);
-      // Add 4 hours to the end date
-      endDate.setHours(endDate.getHours() + 4);
-      // The selected slot doesn't overlap with any existing events, so add it
-      addChefAvailability(chefId, info.start, endDate);
-    },
     events: events,
   });
 
   calendarInstance.render();
-  // Event listeners for calendar events
-  // eventClick is triggered when an event is clicked on the calendar (e.g. to delete an availability)
-  calendarInstance.on('eventClick', function (info) {
-    console.log('Event clicked:', info.event);
-    const e = info.event;
-    const availabilityId = e.extendedProps.availability_id;
-
-    if (
-      availabilityId &&
-      e.extendedProps.is_available &&
-      confirm('Are you sure you want to delete this availability?')
-    ) {
-      deleteChefAvailability(availabilityId, chefId);
-    }
-  });
-
-  // eventDrop is triggered when an event is dragged and dropped on the calendar (e.g. to update an availability)
-  calendarInstance.on('eventDrop', function (info) {
-    const e = info.event;
-    const availabilityId = e.extendedProps.availability_id;
-    console.log('Event dropped:', info.event);
-    if (
-      availabilityId &&
-      e.extendedProps.is_available &&
-      confirm('Are you sure you want to update this availability?')
-    ) {
-      updateChefAvailability(availabilityId, chefId, e.start, e.end);
-    }
-  });
-
-  // eventResize is triggered when an event is resized on the calendar (e.g. to update an availability)
-  calendarInstance.on('eventResize', function (info) {
-    const e = info.event;
-    const availabilityId = e.extendedProps.availability_id;
-
-    if (
-      availabilityId &&
-      e.extendedProps.is_available &&
-      confirm('Are you sure you want to update this availability?')
-    ) {
-      updateChefAvailability(availabilityId, chefId, e.start, e.end);
-    }
-  });
 
   return calendarInstance;
+}
+
+// Event handler for when a Customer selects a time slot
+function handleCustomerSelect(selectInfo, calendar) {
+  const existingEvents = calendar.getEvents();
+
+  if (existingEvents.length > 0) {
+    alert('This chef is not available at this time');
+    return;
+  }
+}
+
+// Event handler for when a Chef selects a time slot
+function handleChefSelect(selectInfo, chefId, calendar) {
+  console.log('Select info:', selectInfo);
+  const existingEvents = calendar.getEvents();
+
+  for (let i = 0; i < existingEvents.length; i++) {
+    if (
+      selectInfo.start < existingEvents[i].end &&
+      selectInfo.end > existingEvents[i].start
+    ) {
+      // The selected time slot overlaps with an existing event - do not allow the user to select it
+      console.log('Slot is not available');
+      return;
+    }
+  }
+
+  // Create a new Date object from the start date
+  let endDate = new Date(selectInfo.start);
+  // Add 4 hours to the start date to get the end date
+  endDate.setHours(endDate.getHours() + 4);
+  // If selected time slot is available, add it to the calendar
+  addChefAvailability(chefId, selectInfo.start, endDate);
 }
 
 async function addChefAvailability(chefId, start, end) {
@@ -251,4 +319,10 @@ function getCookie(name) {
     }
   }
   return cookieValue;
+}
+
+// Function to store the selected date in a variable
+function storeSelectedDate(selectedDate) {
+  console.log('Storing selected date');
+  console.log('Selected date:', selectedDate);
 }

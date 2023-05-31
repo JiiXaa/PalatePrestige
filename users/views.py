@@ -59,15 +59,22 @@ def chef_detail(request, chef_id):
         is_available=True,
     )
 
-    print(check_availability)
+    # determine the user role of the logged-in user. This is used to determine which instance of the calendar to render
+    user_role = None
+    if request.user.groups.filter(name="Chef").exists():
+        user_role = "chef"
+    elif request.user.groups.filter(name="Customer").exists():
+        user_role = "customer"
 
+    print(check_availability)
+    print("user_role", user_role)
     if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
         # If the logged-in user is the Chef whose profile is being viewed
         context = {
             "chef": chef,
             "menus": menus,
             "chef_availability": check_availability,
-            "is_owner": True,  # Additional context variable to control template rendering
+            "user_role": user_role,
         }
     elif request.user.groups.filter(name="Customer").exists():
         # If the logged-in user is a Customer
@@ -75,7 +82,7 @@ def chef_detail(request, chef_id):
             "chef": chef,
             "menus": menus,
             "chef_availability": check_availability,
-            "is_owner": False,  # The Customer is not the owner of this Chef profile
+            "user_role": user_role,
         }
     else:
         messages.error(request, "Access Denied.")
