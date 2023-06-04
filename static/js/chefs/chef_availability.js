@@ -139,9 +139,12 @@ async function getChefAvailabilityForBooking(chefId) {
       handleCustomerSelect(selectInfo, calendar);
     });
 
+    // Customer's booking selection
     calendar.on('eventClick', function (info) {
       const selectedDate = info.event.start;
-      storeSelectedDate(selectedDate);
+      // selectedBooking is a variable in the js/booking/index.js file
+      selectedBookingDate = selectedDate;
+      console.log('Selected date:', selectedDate);
     });
   } catch (error) {
     console.error('Error fetching chef availability:', error);
