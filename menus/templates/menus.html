@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <!-- Chef's availability JS -->
+    <script src="{% static 'js/bookings/index.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block page_header %}
+  <div class="container header-container">
+    <div class="row">
+      <div class="col"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="overlay"></div>
+  <div class="container fluid">
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
+        <h2>Menus:</h2>
+        {% if user.is_authenticated and user.chef %}
+        <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
+        {% endif %}
+        {% for menu in all_menus %}
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                <div>
+                  <h2>{{ menu.title }}</h2>
+                  <p>{{ menu.description }}</p>
+                  {% for dish in menu.dishes.all %}
+                    <h3>{{ dish.name }}</h3>
+                    <p>{{ dish.category }}</p>
+                    <p>{{ dish.description }}</p>
+                  {% endfor %}
+                  <p>From &#163;{{ menu.price }} pp </p>
+                </div>
+              </a>
+            </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -17,11 +17,11 @@
               Food Types
           </a>
           <div class="dropdown-menu border-0" aria-labelledby="clothing-link">
-              <a href="" class="dropdown-item">European</a>
-              <a href="" class="dropdown-item">Indian</a>
-              <a href="" class="dropdown-item">Thai</a>
-              <a href="" class="dropdown-item">Japanese</a>
-              <a href="" class="dropdown-item">All types</a>
+              <a href="{% url 'menus'%}?category=Mediterranean" class="dropdown-item">Mediterranean</a>
+              <a href="{% url 'menus'%}?category=Indian" class="dropdown-item">Indian</a>
+              <a href="{% url 'menus'%}?category=Thai" class="dropdown-item">Thai</a>
+              <a href="{% url 'menus'%}?category=Japanese" class="dropdown-item">Japanese</a>
+              <a href="{% url 'menus'%}" class="dropdown-item">All types</a>
           </div>
       </li>
 

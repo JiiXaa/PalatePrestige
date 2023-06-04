@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from .models import Menu, Dish, MenuCategory
 from .forms import MenuForm, MenuCategoryForm, DishForm
@@ -10,12 +11,31 @@ from .forms import MenuForm, MenuCategoryForm, DishForm
 def all_menus(request):
     """A view to display all menus, including sorting and search queries"""
     all_menus = Menu.objects.all()
+    query = None
+    categories = None
+
+    if request.GET:
+        if "category" in request.GET:
+            categories = request.GET["category"].split(",")
+            all_menus = all_menus.filter(menu_category__name__in=categories)
+            categories = MenuCategory.objects.filter(name__in=categories)
+
+    if "q" in request.GET:
+        query = request.GET["q"]
+        if not query:
+            messages.error(request, "You didn't enter any search criteria!")
+            return redirect(reverse("menus"))
+        queries = Q(title__icontains=query) | Q(description__icontains=query)
+
+        all_menus = all_menus.filter(queries)
 
     context = {
         "all_menus": all_menus,
+        "search_term": query,
+        "current_categories": categories,
     }
 
-    return render(request, "menus/menus.html", context)
+    return render(request, "menus.html", context)
 
 
 @login_required
