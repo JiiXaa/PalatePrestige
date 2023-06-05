@@ -63,7 +63,7 @@ def chef_detail(request, chef_id):
     user_role = None
     if request.user.groups.filter(name="Chef").exists():
         user_role = "chef"
-    elif request.user.groups.filter(name="Customer").exists():
+    else:
         user_role = "customer"
 
     print(check_availability)
@@ -76,17 +76,14 @@ def chef_detail(request, chef_id):
             "chef_availability": check_availability,
             "user_role": user_role,
         }
-    elif request.user.groups.filter(name="Customer").exists():
-        # If the logged-in user is a Customer
+    else:
+        # If the logged-in user is a Customer or a not-logged-in user
         context = {
             "chef": chef,
             "menus": menus,
             "chef_availability": check_availability,
             "user_role": user_role,
         }
-    else:
-        messages.error(request, "Access Denied.")
-        return redirect("home")
 
     return render(request, "chefs/chef_detail.html", context)
 
