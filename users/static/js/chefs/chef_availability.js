@@ -19,6 +19,10 @@ let calendar;
 async function getChefAvailability(chefId) {
   console.log('Getting chef availability...');
   try {
+    // Remove past availabilities before retrieving current availability
+    await removePastAvailabilities();
+
+    // Fetch the chef's availability
     const response = await fetch(
       `/users/chefs/get_chef_availability/${chefId}/`
     );
@@ -111,9 +115,36 @@ async function getChefAvailability(chefId) {
   }
 }
 
+// Function to handle past availabilities
+async function removePastAvailabilities() {
+  console.log('Removing past availabilities...');
+  try {
+    const csrfToken = getCookie('csrftoken');
+    const response = await fetch('/users/chefs/remove_past_availabilities/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    console.log('Past availabilities removed successfully.');
+  } catch (error) {
+    console.error('Error removing past availabilities:', error);
+  }
+}
+
 async function getChefAvailabilityForBooking(chefId) {
   console.log('Getting chef availability for booking...');
   try {
+    // Remove past availabilities before retrieving current availability
+    await removePastAvailabilities();
+
+    // Fetch the chef's availability for booking
     const response = await fetch(
       `/users/chefs/get_chef_availability/${chefId}/`
     );

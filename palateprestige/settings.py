@@ -14,7 +14,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()  # load environment variables from .env file
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -101,7 +102,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "login_redirect"
 
 WSGI_APPLICATION = "palateprestige.wsgi.application"
 
@@ -155,6 +156,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "users", "static"),
     os.path.join(BASE_DIR, "menus", "static"),
     os.path.join(BASE_DIR, "bookings", "static"),

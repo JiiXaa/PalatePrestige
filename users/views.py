@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.urls import reverse
+
 
 import json
 
@@ -36,6 +38,22 @@ class CustomSignupView(SignupView):
         self.user.groups.add(group)
 
         return response
+
+
+def login_redirect(request):
+    # Check user role and redirect accordingly
+    if request.user.groups.filter(name="Chef").exists():
+        return redirect(
+            reverse("chef_detail", kwargs={"chef_id": request.user.chef.id})
+        )
+    elif request.user.groups.filter(name="Customer").exists():
+        return redirect(
+            reverse("customer_detail", kwargs={"customer_id": request.user.customer.id})
+        )
+    else:
+        # Handle the case when the user does not have any role assigned
+        messages.error(request, "Access Denied. You are not a Chef or a Customer.")
+        return redirect("home")
 
 
 def all_chefs(request):
@@ -204,6 +222,22 @@ def update_chef_availability(request, availability_id):
         )
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+from django.utils import timezone
+
+
+def remove_past_availabilities(request):
+    print("Removing past availabilities...")
+    now = timezone.now()
+    past_availabilities = Availability.objects.filter(end_time__lt=now)
+    print("Past availabilities count:", past_availabilities.count())
+    past_availabilities.delete()
+    print("Past availabilities deleted.")
+
+    return JsonResponse(
+        {"message": "Past availabilities removed successfully."}, status=200
+    )
 
 
 def all_customers(request):
