@@ -67,6 +67,36 @@ class SelectedBooking {
   setSelectedChef(chef) {
     this.chef = chef;
   }
+
+  getSelectedDate() {
+    return this.date;
+  }
+
+  getSelectedMenu() {
+    return this.menu;
+  }
+
+  getSelectedChef() {
+    return this.chef;
+  }
+
+  clearSelectedDate() {
+    this.date = null;
+  }
+
+  clearSelectedMenu() {
+    this.menu = null;
+  }
+
+  clearSelectedChef() {
+    this.chef = null;
+  }
+
+  clearSelectedBooking() {
+    this.date = null;
+    this.menu = null;
+    this.chef = null;
+  }
 }
 
 const selectedBooking = new SelectedBooking();
