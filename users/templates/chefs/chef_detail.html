@@ -56,11 +56,16 @@
       <div id="calendar" data-chef-id="{{ chef.id }}" data-user-role="{{ user_role }}"></div>
     </div>
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
+      <div class="col-6 col-md-3 col-lg-4 offset-lg-2">
         <h2>Availability</h2>
         {% for availability in chef_availability %}
           <p>{{ availability.start_time }} - {{ availability.end_time }}</p>
       {% endfor %}
+      </div>
+      <div class="col-6 col-md-3">
+        <p id="selectedChef"></p>
+        <p id="selectedDate"></p>
+        <p id="selectedMenu"></p>
       </div>
     </div>
   </div>

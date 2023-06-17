@@ -1,4 +1,6 @@
-console.log('chefs bookings index.js');
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('chefs bookings index.js');
+});
 
 class Booking {
   constructor(id, chef, user, date, time, location, cuisine, status) {
@@ -60,36 +62,66 @@ class SelectedBooking {
     this.date = date;
   }
 
-  setSelectedMenu(menu) {
-    this.menu = menu;
-  }
-
-  setSelectedChef(chef) {
-    this.chef = chef;
-  }
-
   getSelectedDate() {
     return this.date;
-  }
-
-  getSelectedMenu() {
-    return this.menu;
-  }
-
-  getSelectedChef() {
-    return this.chef;
   }
 
   clearSelectedDate() {
     this.date = null;
   }
 
+  addSelectedDateLS(date) {
+    localStorage.setItem('selectedDate', date);
+  }
+
+  removeSelectedDateLS() {
+    localStorage.removeItem('selectedDate');
+  }
+
+  setSelectedMenu(menu) {
+    this.menu = menu;
+  }
+
+  getSelectedMenu() {
+    return this.menu;
+  }
+
   clearSelectedMenu() {
     this.menu = null;
   }
 
+  addSelectedMenuLS(menu) {
+    localStorage.setItem('selectedMenu', menu);
+  }
+
+  removeSelectedMenuLS() {
+    localStorage.removeItem('selectedMenu');
+  }
+
+  setSelectedChef(chef) {
+    this.chef = chef;
+  }
+
+  getSelectedChef() {
+    return this.chef;
+  }
+
   clearSelectedChef() {
     this.chef = null;
+  }
+
+  addSelectedChefLS(chef) {
+    localStorage.setItem('selectedChef', chef);
+  }
+
+  removeSelectedChefLS() {
+    localStorage.removeItem('selectedChef');
+  }
+
+  clearSelectedBookingLS() {
+    localStorage.removeItem('selectedDate');
+    localStorage.removeItem('selectedMenu');
+    localStorage.removeItem('selectedChef');
   }
 
   clearSelectedBooking() {
@@ -97,6 +129,46 @@ class SelectedBooking {
     this.menu = null;
     this.chef = null;
   }
-}
 
-const selectedBooking = new SelectedBooking();
+  updateSelectionDisplay() {
+    let selectedDate = document.getElementById('selectedDate');
+    let selectedMenu = document.getElementById('selectedMenu');
+    let selectedChef = document.getElementById('selectedChef');
+
+    if (localStorage.getItem('selectedDate')) {
+      this.date = localStorage.getItem('selectedDate');
+    } else {
+      this.date = null;
+    }
+
+    if (this.date) {
+      selectedDate.innerHTML = `Date: ${this.date}`;
+    } else {
+      selectedDate.innerHTML = '';
+    }
+
+    if (localStorage.getItem('selectedMenu')) {
+      this.menu = localStorage.getItem('selectedMenu');
+    } else {
+      this.menu = null;
+    }
+
+    if (this.menu) {
+      selectedMenu.innerHTML = `Menu: ${this.menu}`;
+    } else {
+      selectedMenu.innerHTML = '';
+    }
+
+    if (localStorage.getItem('selectedChef')) {
+      this.chef = localStorage.getItem('selectedChef');
+    } else {
+      this.chef = null;
+    }
+
+    if (this.chef) {
+      selectedChef.innerHTML = `Chef: ${this.chef}`;
+    } else {
+      selectedChef.innerHTML = '';
+    }
+  }
+}
