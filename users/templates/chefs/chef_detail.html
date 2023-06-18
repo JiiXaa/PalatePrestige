@@ -65,7 +65,11 @@
       <div class="col-6 col-md-3">
         <div id="selectedChef" data-chef-id="{{ chef.id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
         <div id="selectedDate" class="d-flex justify-content-center"></div>
-        <div id="selectedMenu"></div>
+        <div id="selectedMenu" class="d-flex justify-content-center"></div>
+
+        <div id="clearBooking" class="hidden">
+          <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
+        </div>
       </div>
     </div>
   </div>

@@ -121,3 +121,8 @@ body {
   align-items: center;
   margin-top: 1rem;
 }
+
+/* Utility classes */
+.hidden {
+  display: none;
+}

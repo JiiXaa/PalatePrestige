@@ -39,7 +39,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Update the selection display
       selectedBooking.updateSelectionDisplay();
+
+      // Hide the button
+      this.style.display = 'none'; // 'this' refers to the button that was clicked
     });
+  });
+
+  // Clear Booking button
+  const clearBookingBtn = document.getElementById('clearBookingBtn');
+
+  clearBookingBtn.addEventListener('click', () => {
+    selectedBooking.clearSelectedBookingLS();
+    selectedBooking.clearSelectedBooking();
+    selectedBooking.updateSelectionDisplay();
+    console.log(
+      'test',
+      selectedBooking.date,
+      selectedBooking.menu,
+      selectedBooking.chef
+    );
   });
 });
 
@@ -193,7 +211,23 @@ class SelectedBooking {
     }
 
     if (this.menu) {
-      selectedMenu.innerHTML = `Menu: ${this.menu}`;
+      selectedMenu.innerHTML = `
+        <p>Menu: ${this.menu}</p>
+        <span class="icon ml-2">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      `;
+
+      // Get the icon element
+      const icon = selectedMenu.querySelector('.icon');
+
+      // Add an event listener to the icon to remove the selected menu
+      icon.addEventListener('click', () => {
+        this.removeSelectedMenuLS();
+        this.clearSelectedMenu();
+        this.clearSelectedChef();
+        this.updateSelectionDisplay();
+      });
     } else {
       selectedMenu.innerHTML = '';
     }
@@ -216,7 +250,7 @@ class SelectedBooking {
         name: chefName,
       };
 
-      selectedChef.innerHTML = `Chef: ${this.chef.name}`;
+      selectedChef.innerHTML = `<p>Chef: ${this.chef.name}</p>`;
     } else {
       // Either date or menu is not selected, clear chef and selectedChef display
       this.chef = null;
@@ -255,5 +289,41 @@ class SelectedBooking {
     } else {
       selectedDate.innerHTML = '';
     }
+
+    // Clear Booking button
+    const clearBooking = document.getElementById('clearBooking');
+
+    console.log(
+      'date from method',
+      this.date,
+      'menu',
+      this.menu,
+      'chef',
+      this.chef
+    );
+
+    console.log('clearBooking', clearBooking);
+
+    if (this.date || this.menu || this.chef) {
+      clearBooking.classList.remove('hidden');
+      // Add event listener to the Clear Booking button here
+      const clearBookingBtn = document.getElementById('clearBookingBtn');
+      clearBookingBtn.removeEventListener('click', clearBookingFunction);
+      clearBookingBtn.addEventListener('click', clearBookingFunction);
+    } else {
+      clearBooking.classList.add('hidden');
+    }
   }
 }
+
+const clearBookingFunction = () => {
+  selectedBooking.clearSelectedBookingLS();
+  selectedBooking.clearSelectedBooking();
+  selectedBooking.updateSelectionDisplay();
+  console.log(
+    'test',
+    selectedBooking.date,
+    selectedBooking.menu,
+    selectedBooking.chef
+  );
+};
