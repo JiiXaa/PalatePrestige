@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('User role:', userRole);
   console.log('Chef ID:', chefId);
 
-  const selectedBooking = new SelectedBooking();
+  // Check if the selectedBooking instance already exists in the window object
+  const selectedBooking = window.aselectedBooking || new SelectedBooking();
+
+  // Assign the selectedBooking instance to the window object
+  window.selectedBooking = selectedBooking;
   console.log('selectedBooking', selectedBooking);
   selectedBooking.updateSelectionDisplay();
 

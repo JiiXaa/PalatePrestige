@@ -30,19 +30,19 @@
         <p>{{ chef.bio }}</p>
         {% for menu in menus %}
           <div class="row">
-            <div class="col-12">
+            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}">
               <a href="{% url 'menu_detail' menu_id=menu.id %}">
-                <div>
-                  <h2>{{ menu.title }}</h2>
-                  <p>{{ menu.description }}</p>
-                  {% for dish in menu.dishes.all %}
-                    <h3>{{ dish.name }}</h3>
-                    <p>{{ dish.category }}</p>
-                    <p>{{ dish.description }}</p>
-                  {% endfor %}
-                  <p>From &#163;{{ menu.price }} pp </p>
-                </div>
+                <h2>{{ menu.title }}</h2>
               </a>
+              <p>{{ menu.description }}</p>
+              {% for dish in menu.dishes.all %}
+                <h3>{{ dish.name }}</h3>
+                <p>{{ dish.category }}</p>
+                <p>{{ dish.description }}</p>
+              {% endfor %}
+              <p>From &#163;{{ menu.price }} pp </p>
+
+              <button type="button" class="btn btn-primary add-menu-js">Add to Booking</button>
             </div>
           </div>
         {% endfor %}
@@ -63,9 +63,9 @@
       {% endfor %}
       </div>
       <div class="col-6 col-md-3">
-        <p id="selectedChef"></p>
-        <p id="selectedDate"></p>
-        <p id="selectedMenu"></p>
+        <div id="selectedChef" data-chef-id="{{ chef.id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
+        <div id="selectedDate" class="d-flex justify-content-center"></div>
+        <div id="selectedMenu"></div>
       </div>
     </div>
   </div>

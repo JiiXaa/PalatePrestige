@@ -1,5 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('chefs bookings index.js');
+  console.log('booking/index.js loaded');
+
+  // Access the existing selectedBooking instance from the window object
+  const selectedBooking = window.selectedBooking;
+
+  // Get all the "Add menu to booking" buttons
+  const addMenuToBookingBtns = document.querySelectorAll('.add-menu-js');
+
+  // Add click event listener to each button
+  addMenuToBookingBtns.forEach((btn) => {
+    btn.addEventListener('click', function () {
+      // Get the associated menu ID from the data attribute
+      const menuId = this.closest('.menu-card').dataset.menuId;
+      // Get the chef ID from the data attribute
+      const chefId = this.closest('.menu-card').dataset.chefId;
+      console.log('important!!!', this.closest('.menu-card').dataset);
+      // Get the chef name from the data attributes
+      const chefFirstName = this.closest('.menu-card').dataset.chefFirstName;
+      const chefLastName = this.closest('.menu-card').dataset.chefLastName;
+
+      console.log('Chef First Name: ', chefFirstName);
+      console.log('Chef Last Name: ', chefLastName);
+      const chefName = chefFirstName + ' ' + chefLastName;
+
+      console.log('menuId', menuId);
+      console.log('chefId', chefId);
+      console.log('chefName', chefName);
+
+      // Use the menu ID to set the selected menu in the selectedBooking instance and in local storage
+      selectedBooking.setSelectedMenu(menuId);
+      selectedBooking.addSelectedMenuLS(menuId);
+
+      // Use the chef ID and name to set the selected chef in the selectedBooking instance and in local storage
+      const chef = { id: chefId, name: chefName };
+      console.log('Chef object before setting:', chef);
+      selectedBooking.setSelectedChef(chef);
+      selectedBooking.addSelectedChefLS(JSON.stringify(chef));
+
+      // Update the selection display
+      selectedBooking.updateSelectionDisplay();
+    });
+  });
 });
 
 class Booking {
@@ -50,7 +91,6 @@ class Booking {
     });
   }
 }
-
 class SelectedBooking {
   constructor() {
     this.date = null;
@@ -99,6 +139,7 @@ class SelectedBooking {
   }
 
   setSelectedChef(chef) {
+    console.log('Setting chef:', chef);
     this.chef = chef;
   }
 
@@ -111,7 +152,8 @@ class SelectedBooking {
   }
 
   addSelectedChefLS(chef) {
-    localStorage.setItem('selectedChef', chef);
+    console.log('Adding chef to local storage:', chef);
+    localStorage.setItem('selectedChef', JSON.stringify(chef));
   }
 
   removeSelectedChefLS() {
@@ -141,11 +183,8 @@ class SelectedBooking {
       this.date = null;
     }
 
-    if (this.date) {
-      selectedDate.innerHTML = `Date: ${this.date}`;
-    } else {
-      selectedDate.innerHTML = '';
-    }
+    // Convert the date string to a date object
+    const dateObj = new Date(this.date);
 
     if (localStorage.getItem('selectedMenu')) {
       this.menu = localStorage.getItem('selectedMenu');
@@ -159,16 +198,62 @@ class SelectedBooking {
       selectedMenu.innerHTML = '';
     }
 
-    if (localStorage.getItem('selectedChef')) {
-      this.chef = localStorage.getItem('selectedChef');
+    // Check if both date and menu are selected. If so, get the chef data from the menu card and set the selected chef depending on the menu card selected and display the selected chef.
+    if (this.date && this.menu) {
+      // Find the correct parent element which contains the data attributes
+      const menuCard = document.querySelector(
+        `.menu-card[data-menu-id="${this.menu}"]`
+      );
+
+      // Get the chef data from the parent element
+      const chefId = menuCard.dataset.chefId;
+      const chefFirstName = menuCard.dataset.chefFirstName;
+      const chefLastName = menuCard.dataset.chefLastName;
+      const chefName = `${chefFirstName} ${chefLastName}`;
+
+      this.chef = {
+        id: chefId,
+        name: chefName,
+      };
+
+      selectedChef.innerHTML = `Chef: ${this.chef.name}`;
     } else {
+      // Either date or menu is not selected, clear chef and selectedChef display
       this.chef = null;
+      selectedChef.innerHTML = '';
+      this.removeSelectedChefLS();
     }
 
-    if (this.chef) {
-      selectedChef.innerHTML = `Chef: ${this.chef}`;
+    if (this.date) {
+      selectedDate.innerHTML = `
+        <p class="date">${dateObj.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })} ${dateObj.toLocaleTimeString('en-GB', {
+        hour: 'numeric',
+        minute: 'numeric',
+      })}</p>
+        <span class="icon ml-2">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      `;
+
+      // Get the icon element
+      const icon = selectedDate.querySelector('.icon');
+
+      // Store a reference to the SelectedBooking instance
+      const selectedBooking = this;
+
+      // Add click event listener to the icon
+      icon.addEventListener('click', function () {
+        selectedBooking.clearSelectedDate();
+        selectedBooking.removeSelectedDateLS();
+        selectedBooking.removeSelectedChefLS();
+        selectedBooking.updateSelectionDisplay();
+      });
     } else {
-      selectedChef.innerHTML = '';
+      selectedDate.innerHTML = '';
     }
   }
 }
