@@ -30,7 +30,7 @@
         <p>{{ chef.bio }}</p>
         {% for menu in menus %}
           <div class="row">
-            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}">
+            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
               <a href="{% url 'menu_detail' menu_id=menu.id %}">
                 <h2>{{ menu.title }}</h2>
               </a>
@@ -60,16 +60,29 @@
         <h2>Availability</h2>
         {% for availability in chef_availability %}
           <p>{{ availability.start_time }} - {{ availability.end_time }}</p>
-      {% endfor %}
+        {% endfor %}
+        {% for booking in chef_bookings %}
+        <p>Customer: {{ booking.customer }}</p> 
+        <p>Menu: {{ booking.menu }}</p>
+        <p>Date: {{ booking.booking_date }}</p>
+        <p>Number of guests: {{ booking.number_of_guests }}</p>
+        <p>Status: {{ booking.status }}</p>
+        {% endfor %}
       </div>
       <div class="col-6 col-md-3">
         <div id="selectedChef" data-chef-id="{{ chef.id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
         <div id="selectedDate" class="d-flex justify-content-center"></div>
         <div id="selectedMenu" class="d-flex justify-content-center"></div>
 
+        <div class="form-control mb-5">
+          <label for="numberOfGuests">Number of guests:</label>
+          <input type="number" id="numberOfGuests" name="numberOfGuests" min="1" value="1">
+        </div>
         <div id="clearBooking" class="hidden">
           <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
         </div>
+        <div id="bookingBtn">
+          <button class="btn btn-primary" id="submitBookingBtn">Book</button>
       </div>
     </div>
   </div>

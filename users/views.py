@@ -76,6 +76,9 @@ def chef_detail(request, chef_id):
         chef_id=chef_id,
         is_available=True,
     )
+    chef_bookings = chef.booking_set.all()
+
+    print("chef_bookings", chef_bookings)
 
     # determine the user role of the logged-in user. This is used to determine which instance of the calendar to render
     user_role = None
@@ -92,6 +95,7 @@ def chef_detail(request, chef_id):
             "chef": chef,
             "menus": menus,
             "chef_availability": check_availability,
+            "chef_bookings": chef_bookings,
             "user_role": user_role,
         }
     else:
@@ -99,6 +103,7 @@ def chef_detail(request, chef_id):
         context = {
             "chef": chef,
             "menus": menus,
+            "chef_bookings": chef_bookings,
             "chef_availability": check_availability,
             "user_role": user_role,
         }

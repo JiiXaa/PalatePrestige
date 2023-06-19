@@ -59,6 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedBooking.chef
     );
   });
+
+  // Submit Booking button
+  const submitBookingBtn = document.getElementById('submitBookingBtn');
+
+  submitBookingBtn.addEventListener('click', () => {
+    // Get the selectedBooking instance from the window object
+    const selectedBooking = window.selectedBooking;
+    // Get the selected date from the selectedBooking instance
+    const selectedDate = selectedBooking.getSelectedDate();
+    // Get the selected menu from the selectedBooking instance
+    const selectedMenu = selectedBooking.getSelectedMenu();
+    // Get the selected chef from the selectedBooking instance
+    const selectedChef = selectedBooking.getSelectedChef();
+
+    // Call the createBooking function with the selected data
+    createBooking(selectedChef, selectedDate, selectedMenu);
+  });
 });
 
 class Booking {
@@ -327,3 +344,82 @@ const clearBookingFunction = () => {
     selectedBooking.chef
   );
 };
+
+function createBooking(selectedChef, selectedDate, selectedMenu) {
+  // Get the number of guests
+  const numberOfGuests = document.getElementById('numberOfGuests').value;
+
+  // Get the menu price from the menu card
+  const menuCard = document.querySelector('.menu-card');
+  // Get the menu price from the menu card (price per person)
+  const menuPriceAttribute = menuCard.getAttribute('data-menu-price');
+
+  // Convert the price to a number
+  const menuPrice = parseFloat(menuPriceAttribute);
+
+  // Calculate the total price
+  const totalPrice = numberOfGuests * menuPrice;
+
+  // Format date
+  const formatedDate = formatDate(selectedDate);
+
+  // Create the booking object
+  const booking = {
+    chef: selectedChef.id,
+    date: formatedDate,
+    menu: selectedMenu,
+    numberOfGuests: numberOfGuests,
+    totalPrice: totalPrice,
+  };
+
+  const csrfToken = getCookie('csrftoken');
+
+  console.log('booking', booking);
+  console.log('csrfToken', csrfToken);
+
+  // Send the booking object to the server
+  fetch('/bookings/create_booking/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify(booking),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Success:', data);
+      // TODO: Stripe payment here...
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+// Format the date to Django's required format
+function formatDate(date) {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = dateObj.getMonth() + 1;
+  const day = dateObj.getDate();
+  const hours = dateObj.getHours();
+  const minutes = dateObj.getMinutes();
+  const seconds = dateObj.getSeconds();
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  return formattedDate;
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
