@@ -65,7 +65,8 @@
         <p>Customer: {{ booking.customer }}</p> 
         <p>Menu: {{ booking.menu }}</p>
         <p>Date: {{ booking.booking_date }}</p>
-        <p>Number of guests: {{ booking.number_of_guests }}</p>
+        <p>Number of guests: {{ booking.number_of_people }}</p>
+        <p>Total Cost {{ booking.total_cost }}</p>
         <p>Status: {{ booking.status }}</p>
         {% endfor %}
       </div>

@@ -346,6 +346,18 @@ const clearBookingFunction = () => {
 };
 
 function createBooking(selectedChef, selectedDate, selectedMenu) {
+  // Check if selectedChef, selectedDate, and selectedMenu are not null
+  if (!selectedDate || !selectedMenu) {
+    let missingData = '';
+    if (!selectedDate) missingData += 'Date ';
+    if (!selectedMenu) missingData += 'Menu ';
+
+    alert(
+      `Please select the following data: ${missingData} to create a booking`
+    );
+    return;
+  }
+
   // Get the number of guests
   const numberOfGuests = document.getElementById('numberOfGuests').value;
 
@@ -388,8 +400,12 @@ function createBooking(selectedChef, selectedDate, selectedMenu) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Success:', data);
-      // TODO: Stripe payment here...
+      if (data.error) {
+        alert(data.error);
+      } else {
+        console.log('Success:', data);
+        // TODO: Stripe payment
+      }
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -400,11 +416,11 @@ function createBooking(selectedChef, selectedDate, selectedMenu) {
 function formatDate(date) {
   const dateObj = new Date(date);
   const year = dateObj.getFullYear();
-  const month = dateObj.getMonth() + 1;
-  const day = dateObj.getDate();
-  const hours = dateObj.getHours();
-  const minutes = dateObj.getMinutes();
-  const seconds = dateObj.getSeconds();
+  const month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+  const day = ('0' + dateObj.getDate()).slice(-2);
+  const hours = ('0' + dateObj.getHours()).slice(-2);
+  const minutes = ('0' + dateObj.getMinutes()).slice(-2);
+  const seconds = ('0' + dateObj.getSeconds()).slice(-2);
   const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   return formattedDate;
 }
