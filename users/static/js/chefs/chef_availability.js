@@ -179,13 +179,22 @@ document.addEventListener('DOMContentLoaded', function () {
       // Customer's booking selection
       calendar.on('eventClick', function (info) {
         const selectedDate = info.event.start;
-        // selectedBooking is a variable in the booking/static/js/index.js file
-        // It is used to store the selected date for the booking in the booking class instance.
-        // This is done so that the selected date is stored in the booking class instance in the front end before the booking is created in the back end.
-        selectedBooking.setSelectedDate(selectedDate);
-        selectedBooking.addSelectedDateLS(selectedDate);
-        selectedBooking.updateSelectionDisplay();
-        console.log('Selected date:', selectedBooking);
+        const isAvailable = info.event.extendedProps.is_available;
+
+        // Check if the selected date is available
+        if (isAvailable) {
+          // selectedBooking is a variable in the booking/static/js/index.js file
+          // It is used to store the selected date for the booking in the booking class instance.
+          // This is done so that the selected date is stored in the booking class instance in the front end before the booking is created in the back end.
+          selectedBooking.setSelectedDate(selectedDate);
+          selectedBooking.addSelectedDateLS(selectedDate);
+          selectedBooking.updateSelectionDisplay();
+          console.log('Selected date:', selectedBooking);
+        } else {
+          alert(
+            'The selected date is not available. Please choose a different date..'
+          );
+        }
       });
     } catch (error) {
       console.error('Error fetching chef availability:', error);
@@ -202,11 +211,30 @@ document.addEventListener('DOMContentLoaded', function () {
       allDaySlot: false,
       editable: editable,
       selectable: true,
+      events: events,
       selectAllow: function (selectInfo) {
         // Only allow selecting dates that are equal to or later than today
-        return selectInfo.start >= new Date();
+        if (selectInfo.start < new Date()) {
+          return false;
+        }
+
+        // Check if the selected slot is available
+        const overlappingEvents = calendarInstance
+          .getEvents()
+          .filter((event) => {
+            return selectInfo.start < event.end && selectInfo.end > event.start;
+          });
+
+        for (let event of overlappingEvents) {
+          if (!event.extendedProps.is_available) {
+            // Selected slot is not available
+            alert('This slot is already booked.');
+            return false;
+          }
+        }
+        // Allow selection if the conditions are met
+        return true;
       },
-      events: events,
     });
 
     calendarInstance.render();
