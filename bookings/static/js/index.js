@@ -1,3 +1,8 @@
+const stripe = Stripe(
+  'pk_test_51KG5PSCNxZRJUEeXP6dfetfctUGX4G24nKY2FruoTLNFCl57uHxL2pWPyOOcCdaWraBlUd4Jax59pouBetWCMwG000imChvkvo'
+);
+const elements = stripe.elements();
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('booking/index.js loaded');
 
@@ -64,18 +69,65 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBookingBtn = document.getElementById('submitBookingBtn');
 
   submitBookingBtn.addEventListener('click', () => {
-    // Get the selectedBooking instance from the window object
-    const selectedBooking = window.selectedBooking;
-    // Get the selected date from the selectedBooking instance
-    const selectedDate = selectedBooking.getSelectedDate();
-    // Get the selected menu from the selectedBooking instance
-    const selectedMenu = selectedBooking.getSelectedMenu();
-    // Get the selected chef from the selectedBooking instance
-    const selectedChef = selectedBooking.getSelectedChef();
+    console.log('Submit Booking button clicked');
 
-    // Call the createBooking function with the selected data
-    createBooking(selectedChef, selectedDate, selectedMenu);
+    // Open the card payment modal
+    const paymentModal = new bootstrap.Modal(
+      document.getElementById('paymentModal'),
+      {}
+    );
+    paymentModal.show();
   });
+
+  // Create the card Element and mount it to the Element DOM element.
+  const card = elements.create('card');
+  card.mount('#card-element');
+
+  // Handle real-time validation errors from the card Element.
+  card.addEventListener('change', function (event) {
+    const displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = '';
+    }
+  });
+
+  document
+    .getElementById('payment-form')
+    .addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Get the selectedBooking instance from the window object
+      const selectedBooking = window.selectedBooking;
+      // Get the selected date from the selectedBooking instance
+      const selectedDate = selectedBooking.getSelectedDate();
+      // Get the selected menu from the selectedBooking instance
+      const selectedMenu = selectedBooking.getSelectedMenu();
+      // Get the selected chef from the selectedBooking instance
+      const selectedChef = selectedBooking.getSelectedChef();
+
+      // Create a booking using the createBooking function after the payment method is created
+      stripe
+        .createPaymentMethod({
+          type: 'card',
+          card: card,
+        })
+        .then((result) => {
+          if (result.error) {
+            alert(result.error.message);
+          } else {
+            const paymentMethodId = result.paymentMethod.id;
+            // Call the createBooking function with the selected data and the payment method ID
+            createBooking(
+              selectedChef,
+              selectedDate,
+              selectedMenu,
+              paymentMethodId
+            );
+          }
+        });
+    });
 });
 
 class Booking {
@@ -345,7 +397,12 @@ const clearBookingFunction = () => {
   );
 };
 
-function createBooking(selectedChef, selectedDate, selectedMenu) {
+function createBooking(
+  selectedChef,
+  selectedDate,
+  selectedMenu,
+  paymentMethodId
+) {
   // Check if selectedChef, selectedDate, and selectedMenu are not null
   if (!selectedDate || !selectedMenu) {
     let missingData = '';
@@ -372,23 +429,23 @@ function createBooking(selectedChef, selectedDate, selectedMenu) {
   // Calculate the total price
   const totalPrice = numberOfGuests * menuPrice;
 
+  console.log('date before formatting', selectedDate);
   // Format date
-  const formatedDate = formatDate(selectedDate);
+  const formattedDate = formatDate(selectedDate);
+  console.log('date after formatting', formattedDate);
 
   // Create the booking object
   const booking = {
     chef: selectedChef.id,
-    date: formatedDate,
+    date: formattedDate,
     menu: selectedMenu,
     numberOfGuests: numberOfGuests,
     totalPrice: totalPrice,
+    paymentMethodId: paymentMethodId,
   };
 
   const csrfToken = getCookie('csrftoken');
-
-  console.log('booking', booking);
-  console.log('csrfToken', csrfToken);
-
+  console.log('Before sending request to server');
   // Send the booking object to the server
   fetch('/bookings/create_booking/', {
     method: 'POST',
@@ -404,12 +461,41 @@ function createBooking(selectedChef, selectedDate, selectedMenu) {
         alert(data.error);
       } else {
         console.log('Success:', data);
-        // TODO: Stripe payment
+
+        // Clear the selected booking
+        clearBookingFunction();
+
+        // Handle payment
+        stripe
+          .confirmCardPayment(data.client_secret, {
+            payment_method: paymentMethodId,
+          })
+          .then((result) => {
+            if (result.error) {
+              alert(result.error.message);
+            } else {
+              // Hide the payment form
+              const paymentModal = new bootstrap.Modal(
+                document.getElementById('paymentModal'),
+                {}
+              );
+              paymentModal.hide();
+
+              // The payment has succeeded. Display a success message.
+              alert('Payment succeeded!');
+
+              // Clear the selected booking
+              selectedBooking.clearSelectedBookingLS();
+              selectedBooking.clearSelectedBooking();
+              selectedBooking.updateSelectionDisplay();
+            }
+          });
       }
     })
     .catch((error) => {
       console.error('Error:', error);
     });
+  console.log('After sending request to server');
 }
 
 // Format the date to Django's required format

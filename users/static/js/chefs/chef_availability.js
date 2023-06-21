@@ -165,6 +165,10 @@ document.addEventListener('DOMContentLoaded', function () {
           title: slot.title,
           start: slot.start,
           end: slot.end,
+          extendedProps: {
+            is_available: slot.title === 'Available',
+            availability_id: slot.availability_id,
+          },
           allDay: false,
         };
       });
@@ -182,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isAvailable = info.event.extendedProps.is_available;
 
         // Check if the selected date is available
-        if (isAvailable) {
+        if (isAvailable || isAvailable === undefined) {
           // selectedBooking is a variable in the booking/static/js/index.js file
           // It is used to store the selected date for the booking in the booking class instance.
           // This is done so that the selected date is stored in the booking class instance in the front end before the booking is created in the back end.

@@ -7,11 +7,16 @@ from menus.models import Menu
 import json
 
 
+import stripe
+from django.conf import settings
+
+
 from datetime import datetime
-from django.contrib import messages
 
 
 def create_booking(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
     if request.method == "POST":
         data = json.loads(request.body)
         chef_id = data.get("chef")
@@ -19,6 +24,7 @@ def create_booking(request):
         booking_date_str = data.get("date")
         total_cost = data.get("totalPrice")
         number_of_people = data.get("numberOfGuests")
+        payment_method_id = data.get("paymentMethodId")
 
         # Convert booking_date string to datetime object
         try:
@@ -70,6 +76,15 @@ def create_booking(request):
                 status="pending",
             )
 
+            # Create the stripe payment intent
+            payment_intent = stripe.PaymentIntent.create(
+                amount=int(total_cost * 100),
+                currency="gbp",
+                payment_method=payment_method_id,
+                confirm=False,
+                metadata={"booking_id": str(booking.id)},
+            )
+
             # Update chef availability
             try:
                 # Filter availabilities using the date part of booking_date
@@ -84,10 +99,15 @@ def create_booking(request):
                     {"error": "Availability does not exist"}, status=400
                 )
 
-            # Show success message
-            messages.success(request, "Booking created successfully.")
-
-            return JsonResponse({"status": "booking_created", "booking_id": booking.id})
+            # Return the PaymentIntent client_secret along with booking info
+            # The client_secret is used to finalize the payment on the client-side
+            return JsonResponse(
+                {
+                    "status": "booking_created",
+                    "booking_id": booking.id,
+                    "client_secret": payment_intent["client_secret"],
+                }
+            )
         except IntegrityError:
             return JsonResponse({"error": "Booking already exists"}, status=400)
 
