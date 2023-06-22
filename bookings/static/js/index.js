@@ -3,8 +3,17 @@ const stripe = Stripe(
 );
 const elements = stripe.elements();
 
+// Variable to hold the Stripe's payment modal
+let paymentModal;
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('booking/index.js loaded');
+
+  // Initialize the payment modal
+  const paymentModal = new bootstrap.Modal(
+    document.getElementById('paymentModal'),
+    {}
+  );
 
   // Access the existing selectedBooking instance from the window object
   const selectedBooking = window.selectedBooking;
@@ -72,10 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Submit Booking button clicked');
 
     // Open the card payment modal
-    const paymentModal = new bootstrap.Modal(
-      document.getElementById('paymentModal'),
-      {}
-    );
     paymentModal.show();
   });
 
@@ -123,7 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
               selectedChef,
               selectedDate,
               selectedMenu,
-              paymentMethodId
+              paymentMethodId,
+              paymentModal
             );
           }
         });
@@ -401,7 +407,8 @@ function createBooking(
   selectedChef,
   selectedDate,
   selectedMenu,
-  paymentMethodId
+  paymentMethodId,
+  paymentModal
 ) {
   // Check if selectedChef, selectedDate, and selectedMenu are not null
   if (!selectedDate || !selectedMenu) {
@@ -475,10 +482,6 @@ function createBooking(
               alert(result.error.message);
             } else {
               // Hide the payment form
-              const paymentModal = new bootstrap.Modal(
-                document.getElementById('paymentModal'),
-                {}
-              );
               paymentModal.hide();
 
               // The payment has succeeded. Display a success message.
@@ -488,6 +491,9 @@ function createBooking(
               selectedBooking.clearSelectedBookingLS();
               selectedBooking.clearSelectedBooking();
               selectedBooking.updateSelectionDisplay();
+
+              // Refresh the page
+              location.reload();
             }
           });
       }
