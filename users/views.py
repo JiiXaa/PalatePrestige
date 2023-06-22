@@ -15,6 +15,7 @@ from .forms import CustomSignupForm
 
 from .models import Chef, Customer, Availability
 from menus.models import Menu
+from bookings.models import Booking
 
 
 class CustomSignupView(SignupView):
@@ -257,7 +258,8 @@ def all_customers(request):
 
 @login_required
 def customer_detail(request, customer_id):
-    """A view to display a single customer profile"""
+    """A view to display a single customer profile along with their bookings"""
+
     # Ensure that the logged-in user is a Customer
     if request.user.groups.filter(name="Customer").exists():
         # Get the customer associated with the user or return 404 if not found
@@ -266,9 +268,11 @@ def customer_detail(request, customer_id):
         # Check if the requested customer profile matches the logged-in user
         # User is allowed to view their own profile but not others
         if customer.user == request.user:
-            context = {
-                "customer": customer,
-            }
+            # Retrieve all bookings for the logged-in customer
+            bookings = Booking.objects.filter(customer=customer)
+
+            # Pass the customer and bookings to the template context
+            context = {"customer": customer, "bookings": bookings}
             return render(request, "customers/customer_detail.html", context)
         else:
             messages.error(
