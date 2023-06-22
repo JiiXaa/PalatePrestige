@@ -28,18 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const menuId = this.closest('.menu-card').dataset.menuId;
       // Get the chef ID from the data attribute
       const chefId = this.closest('.menu-card').dataset.chefId;
-      console.log('important!!!', this.closest('.menu-card').dataset);
       // Get the chef name from the data attributes
       const chefFirstName = this.closest('.menu-card').dataset.chefFirstName;
       const chefLastName = this.closest('.menu-card').dataset.chefLastName;
-
-      console.log('Chef First Name: ', chefFirstName);
-      console.log('Chef Last Name: ', chefLastName);
       const chefName = chefFirstName + ' ' + chefLastName;
-
-      console.log('menuId', menuId);
-      console.log('chefId', chefId);
-      console.log('chefName', chefName);
 
       // Use the menu ID to set the selected menu in the selectedBooking instance and in local storage
       selectedBooking.setSelectedMenu(menuId);
@@ -47,15 +39,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Use the chef ID and name to set the selected chef in the selectedBooking instance and in local storage
       const chef = { id: chefId, name: chefName };
-      console.log('Chef object before setting:', chef);
       selectedBooking.setSelectedChef(chef);
       selectedBooking.addSelectedChefLS(JSON.stringify(chef));
 
       // Update the selection display
       selectedBooking.updateSelectionDisplay();
 
-      // Hide the button
-      this.style.display = 'none'; // 'this' refers to the button that was clicked
+      // Update the total price
+      const numberOfGuestsInput = document.getElementById('numberOfGuests');
+      const numberOfGuests = parseInt(numberOfGuestsInput.value);
+
+      // Get all the menu cards
+      const menuCards = document.querySelectorAll('.menu-card');
+
+      // Find the selected menu card
+      let selectedMenuCard = null;
+      menuCards.forEach((menuCard) => {
+        if (menuCard.dataset.menuId === menuId) {
+          selectedMenuCard = menuCard;
+          // Exit the loop once the selected menu card is found
+          return;
+        }
+      });
+
+      // Get the menu price from the selected menu card. If the selected menu card is not found, set the price to 0
+      const menuPriceAttribute = selectedMenuCard
+        ? selectedMenuCard.getAttribute('data-menu-price')
+        : '0';
+      const menuPrice = parseFloat(menuPriceAttribute);
+
+      // Calculate the total price
+      const totalPrice = numberOfGuests * menuPrice;
+
+      // Display the total price
+      const totalPriceElement = document.getElementById('totalPrice');
+      totalPriceElement.textContent = `Total Price: £${totalPrice.toFixed(2)}`;
+
+      // Hide the clicked button and show the rest
+      addMenuToBookingBtns.forEach((button) => {
+        if (button === this) {
+          button.style.display = 'none';
+        } else {
+          button.style.display = 'block';
+        }
+      });
     });
   });
 
@@ -85,7 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Create the card Element and mount it to the Element DOM element.
-  const card = elements.create('card');
+  const card = elements.create('card', {
+    hidePostalCode: true,
+  });
   card.mount('#card-element');
 
   // Handle real-time validation errors from the card Element.
@@ -112,11 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
       // Get the selected chef from the selectedBooking instance
       const selectedChef = selectedBooking.getSelectedChef();
 
+      // Get the email from the payment form
+      const email = document.getElementById('email').value;
+
       // Create a booking using the createBooking function after the payment method is created
       stripe
         .createPaymentMethod({
           type: 'card',
           card: card,
+          billing_details: {
+            email: email,
+          },
         })
         .then((result) => {
           if (result.error) {
@@ -388,6 +423,40 @@ class SelectedBooking {
     } else {
       clearBooking.classList.add('hidden');
     }
+
+    // Get the number of guests from the input field
+    const numberOfGuestsInput = document.getElementById('numberOfGuests');
+
+    // Add an event listener to the number of guests input field
+    numberOfGuestsInput.addEventListener('input', () => {
+      // Get the current number of guests
+      const numberOfGuests = parseInt(numberOfGuestsInput.value);
+
+      // Get all the menu cards
+      const menuCards = document.querySelectorAll('.menu-card');
+
+      // Find the selected menu card
+      let selectedMenuCard = null;
+      menuCards.forEach((menuCard) => {
+        if (menuCard.dataset.menuId === this.menu) {
+          selectedMenuCard = menuCard;
+          return; // Exit the loop once the selected menu card is found
+        }
+      });
+
+      // Get the menu price from the selected menu card
+      const menuPriceAttribute = selectedMenuCard
+        ? selectedMenuCard.getAttribute('data-menu-price')
+        : '0';
+      const menuPrice = parseFloat(menuPriceAttribute);
+
+      // Calculate the total price
+      const totalPrice = numberOfGuests * menuPrice;
+
+      // Display the total price
+      const totalPriceElement = document.getElementById('totalPrice');
+      totalPriceElement.textContent = `Total Price: £${totalPrice.toFixed(2)}`;
+    });
   }
 }
 
@@ -436,6 +505,9 @@ function createBooking(
   // Calculate the total price
   const totalPrice = numberOfGuests * menuPrice;
 
+  // Get the email from the input field in the payment modal
+  const email = document.getElementById('email').value;
+
   console.log('date before formatting', selectedDate);
   // Format date
   const formattedDate = formatDate(selectedDate);
@@ -476,6 +548,7 @@ function createBooking(
         stripe
           .confirmCardPayment(data.client_secret, {
             payment_method: paymentMethodId,
+            receipt_email: email,
           })
           .then((result) => {
             if (result.error) {
