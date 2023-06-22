@@ -79,7 +79,7 @@ def add_menu_category(request):
                 try:
                     form.save()
                     messages.success(request, "Menu category successfully added!")
-                    return redirect("add_menu")
+                    return redirect("add_menu_category")
                 except Exception as e:
                     messages.error(request, f"Error adding menu category: {e}")
     else:

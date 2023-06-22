@@ -77,6 +77,9 @@ def chef_detail(request, chef_id):
         is_available=True,
     )
     chef_bookings = chef.booking_set.all()
+    logged_in_user_id = request.user.id
+
+    print("logged_in_user_id", logged_in_user_id)
 
     print("chef_bookings", chef_bookings)
 
@@ -97,6 +100,7 @@ def chef_detail(request, chef_id):
             "chef_availability": check_availability,
             "chef_bookings": chef_bookings,
             "user_role": user_role,
+            "logged_in_user_id": logged_in_user_id,
         }
     else:
         # If the logged-in user is a Customer or a not-logged-in user
@@ -106,6 +110,7 @@ def chef_detail(request, chef_id):
             "chef_bookings": chef_bookings,
             "chef_availability": check_availability,
             "user_role": user_role,
+            "logged_in_user_id": logged_in_user_id,
         }
 
     return render(request, "chefs/chef_detail.html", context)

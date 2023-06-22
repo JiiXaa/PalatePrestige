@@ -75,9 +75,14 @@ document.addEventListener('DOMContentLoaded', function () {
           const e = info.event;
           const availabilityId = e.extendedProps.availability_id;
 
+          // Retrieve the logged-in chef ID from the HTML attribute
+          const logged_in_chef_id = calendarEl.getAttribute(
+            'data-logged-in-user-id'
+          );
           if (
             availabilityId &&
             e.extendedProps.is_available &&
+            chefId === logged_in_chef_id && // Check if logged-in chef is the owner of the calendar
             confirm('Are you sure you want to delete this availability?')
           ) {
             deleteChefAvailability(availabilityId, chefId);
@@ -89,10 +94,15 @@ document.addEventListener('DOMContentLoaded', function () {
           const e = info.event;
           const availabilityId = e.extendedProps.availability_id;
           console.log('Event drop info:', info.event);
+          // Retrieve the logged-in chef ID from the HTML attribute
+          const logged_in_chef_id = calendarEl.getAttribute(
+            'data-logged-in-user-id'
+          );
 
           if (
             availabilityId &&
             e.extendedProps.is_available &&
+            chefId === logged_in_chef_id && // Check if logged-in chef is the owner of the calendar
             confirm('Are you sure you want to update this availability?')
           ) {
             // Update the availability
@@ -106,9 +116,14 @@ document.addEventListener('DOMContentLoaded', function () {
           const availabilityId = e.extendedProps.availability_id;
           console.log('Event resize info:', info.event);
 
+          // Retrieve the logged-in chef ID from the HTML attribute
+          const logged_in_chef_id = calendarEl.getAttribute(
+            'data-logged-in-user-id'
+          );
           if (
             availabilityId &&
             e.extendedProps.is_available &&
+            chefId === logged_in_chef_id && // Check if logged-in chef is the owner of the calendar
             confirm('Are you sure you want to update this availability?')
           ) {
             // Update the availability
@@ -289,25 +304,37 @@ document.addEventListener('DOMContentLoaded', function () {
       const start_time = start.toISOString();
       const end_time = end.toISOString();
 
-      const response = await fetch(`/users/chefs/add_chef_availability/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({
-          chef_id: chefId,
-          start_time: start_time,
-          end_time: end_time,
-        }),
-      });
+      // Retrieve the logged-in chef ID from the HTML attribute
+      const logged_in_chef_id = calendarEl.getAttribute(
+        'data-logged-in-user-id'
+      );
+      console.log('logged_in_chef_id:', logged_in_chef_id);
+      console.log('chefId:', chefId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
+      // Ensure only the logged-in chef can add availability for their own page
+      if (chefId === logged_in_chef_id) {
+        const response = await fetch(`/users/chefs/add_chef_availability/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({
+            chef_id: chefId,
+            start_time: start_time,
+            end_time: end_time,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+
+        // Refresh the calendar to show the new availability
+        getChefAvailability(chefId);
+      } else {
+        console.error('You do not have permission to add availability.');
       }
-
-      // Refresh the calendar to show the new availability
-      getChefAvailability(chefId);
     } catch (error) {
       console.error('Error adding availability:', error);
     }
@@ -319,23 +346,35 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('CSRF Token:', csrfToken);
       console.log('Chef ID:', typeof chefId, chefId);
 
-      const response = await fetch(
-        `/users/chefs/delete_chef_availability/${availabilityId}/`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-          },
-        }
+      // Retrieve the logged-in chef ID from the HTML attribute
+      const logged_in_chef_id = calendarEl.getAttribute(
+        'data-logged-in-user-id'
       );
+      console.log('logged_in_chef_id:', logged_in_chef_id);
+      console.log('chefId:', chefId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
+      // Ensure only the logged-in chef can delete their own availability
+      if (chefId === logged_in_chef_id) {
+        const response = await fetch(
+          `/users/chefs/delete_chef_availability/${availabilityId}/`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+
+        // Refresh the calendar to show the new availability
+        getChefAvailability(chefId);
+      } else {
+        console.error('You do not have permission to delete availability.');
       }
-
-      // Refresh the calendar to show the new availability
-      getChefAvailability(chefId);
     } catch (error) {
       console.error('Error deleting availability:', error);
     }
