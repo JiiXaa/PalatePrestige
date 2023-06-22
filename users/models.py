@@ -11,6 +11,11 @@ class Chef(models.Model):
     is_super_chef = models.BooleanField(default=False)
     location = models.CharField(max_length=200, blank=True)
 
+    def average_rating(self):
+        total = sum(review.rating for review in self.reviews.all())
+        count = self.reviews.count()
+        return total / count if count > 0 else 0
+
     def __str__(self):
         return self.user.username
 

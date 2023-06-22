@@ -8,6 +8,7 @@ class Booking(models.Model):
     chef = models.ForeignKey("users.Chef", on_delete=models.CASCADE)
     menu = models.ForeignKey("menus.Menu", on_delete=models.CASCADE)
     booking_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default="pending")
     is_paid = models.BooleanField(default=False)
     number_of_people = models.IntegerField()
