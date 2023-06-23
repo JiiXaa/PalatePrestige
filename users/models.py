@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from reviews.models import ChefReview
 
 
 class Chef(models.Model):
@@ -12,9 +13,11 @@ class Chef(models.Model):
     location = models.CharField(max_length=200, blank=True)
 
     def average_rating(self):
-        total = sum(review.rating for review in self.reviews.all())
-        count = self.reviews.count()
-        return total / count if count > 0 else 0
+        reviews = ChefReview.objects.filter(booking__chef=self)
+        total = sum(review.rating for review in reviews)
+        count = reviews.count()
+        average = total / count if count > 0 else 0
+        return round(average, 1)
 
     def __str__(self):
         return self.user.username

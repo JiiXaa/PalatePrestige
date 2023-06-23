@@ -79,11 +79,8 @@ def chef_detail(request, chef_id):
         is_available=True,
     )
     chef_bookings = chef.booking_set.all()
+    reviews = ChefReview.objects.filter(booking__chef=chef)
     logged_in_user_id = request.user.id
-
-    print("logged_in_user_id", logged_in_user_id)
-
-    print("chef_bookings", chef_bookings)
 
     # determine the user role of the logged-in user. This is used to determine which instance of the calendar to render
     user_role = None
@@ -102,6 +99,7 @@ def chef_detail(request, chef_id):
             "chef_availability": check_availability,
             "chef_bookings": chef_bookings,
             "user_role": user_role,
+            "reviews": reviews,
             "logged_in_user_id": logged_in_user_id,
         }
     else:
@@ -112,6 +110,7 @@ def chef_detail(request, chef_id):
             "chef_bookings": chef_bookings,
             "chef_availability": check_availability,
             "user_role": user_role,
+            "reviews": reviews,
             "logged_in_user_id": logged_in_user_id,
         }
 
@@ -236,9 +235,6 @@ def update_chef_availability(request, availability_id):
     return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
-from django.utils import timezone
-
-
 def remove_past_availabilities(request):
     print("Removing past availabilities...")
     now = timezone.now()
@@ -267,8 +263,6 @@ def customer_detail(request, customer_id):
     if request.user.groups.filter(name="Customer").exists():
         # Get the customer associated with the user or return 404 if not found
         customer = get_object_or_404(Customer, user=request.user)
-        print("customer id", customer_id)
-        print("logged in user id", request.user.id)
 
         # Check if the requested customer profile matches the logged-in user
         # User is allowed to view their own profile but not others
