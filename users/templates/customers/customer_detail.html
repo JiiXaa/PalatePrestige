@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block extra_js %}
-Include the base extra_js block from the base.html template
 {{ block.super }}
  <!-- Booking JS -->
  <script src="{% static 'js/booking_control.js' %}"></script>
@@ -28,6 +27,7 @@ Include the base extra_js block from the base.html template
           <div class="card-body">
             <h5>{{ customer.user.first_name }} {{ customer.user.last_name }}</h5>
             <p>Location: {{ customer.location }}</p>
+
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ Include the base extra_js block from the base.html template
                       <tbody>
                           {% for booking in bookings %}
                           <tr
-                            {% if forloop.counter > 5 %}
+                            {% if bookings|length > 5 and forloop.counter > 5 %}
                               class="collapse" id="moreBookings"
                             {% endif %}>
                                   <td>{{ booking.chef.user.username }}</td>
@@ -64,15 +64,15 @@ Include the base extra_js block from the base.html template
                                   <td>{{ booking.status }}</td>
                                   <td>{{ booking.total_cost }}</td>
                                   <td>
-                                      {% if not booking.review %}
-                                          <a href="#" class="btn btn-primary">
-                                              <i class="fas fa-plus-circle"></i> Add Review
-                                          </a>
-                                      {% else %}
-                                          <a href="#" class="btn btn-secondary">
-                                              <i class="fas fa-edit"></i> Update Review
-                                          </a>
-                                      {% endif %}
+                                    {% if not booking.chefreview %}
+                                        <a href="{% url 'create_review' booking.id %}" class="btn btn-primary">
+                                            <i class="fas fa-plus-circle"></i> Add Review
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="btn btn-secondary">
+                                            <i class="fas fa-edit"></i> Update Review
+                                        </a>
+                                    {% endif %}
                                   </td>
                               </tr>
                           {% endfor %}
@@ -89,5 +89,12 @@ Include the base extra_js block from the base.html template
           </div>
       </div>
     </div>
+      {% for review in reviews %}
+      <p>Customer: {{ review.booking.customer.user.first_name }} {{ review.booking.customer.user.last_name }}</p>
+      <p>Chef: {{ review.booking.chef.user.first_name }} {{ review.booking.chef.user.last_name }}</p>
+      <p>Rating: {{ review.rating }}</p>
+      <p>Review: {{ review.review }}</p>
+      {% endfor %}
+
   </div>
 {% endblock %}

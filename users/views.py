@@ -16,6 +16,7 @@ from .forms import CustomSignupForm
 from .models import Chef, Customer, Availability
 from menus.models import Menu
 from bookings.models import Booking
+from reviews.models import ChefReview
 
 
 class CustomSignupView(SignupView):
@@ -253,7 +254,9 @@ def remove_past_availabilities(request):
 
 def all_customers(request):
     """A view to display all customers, including sorting and search queries"""
-    return render(request, "users/customers.html")
+    customers = Customer.objects.all()
+
+    return render(request, "customers/customers.html", {"customers": customers})
 
 
 @login_required
@@ -263,16 +266,20 @@ def customer_detail(request, customer_id):
     # Ensure that the logged-in user is a Customer
     if request.user.groups.filter(name="Customer").exists():
         # Get the customer associated with the user or return 404 if not found
-        customer = get_object_or_404(Customer, id=customer_id)
+        customer = get_object_or_404(Customer, user=request.user)
+        print("customer id", customer_id)
+        print("logged in user id", request.user.id)
 
         # Check if the requested customer profile matches the logged-in user
         # User is allowed to view their own profile but not others
-        if customer.user == request.user:
+        if customer.user.id == int(customer_id):
             # Retrieve all bookings for the logged-in customer
             bookings = Booking.objects.filter(customer=customer)
-
-            # Pass the customer and bookings to the template context
-            context = {"customer": customer, "bookings": bookings}
+            # Retrieve all reviews for the logged-in customer
+            reviews = ChefReview.objects.filter(booking__customer=customer)
+            print("reviews", reviews)
+            # Pass the customer, bookings and reviews to the template context
+            context = {"customer": customer, "bookings": bookings, "reviews": reviews}
             return render(request, "customers/customer_detail.html", context)
         else:
             messages.error(

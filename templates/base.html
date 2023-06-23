@@ -26,7 +26,7 @@
     {% endblock %}
 
     {% block corejs %}
-    // TODO: Fix double imports of the Bootstrap before styling!!!
+    <!-- TODO: Fix double imports of the Bootstrap before styling!!! -->
     <script src="https://kit.fontawesome.com/733177767a.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -79,9 +79,9 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                       {% if user|has_group:'Chef' %}
-                        <a href="{% url 'chef_detail' chef_id=user.chef.id %}" class="dropdown-item">My Profile</a>
+                        <a href="{% url 'chef_detail' chef_id=user.id %}" class="dropdown-item">My Profile</a>
                       {% elif user|has_group:'Customer' %}
-                        <a href="{% url 'customer_detail' customer_id=user.customer.id %}" class="dropdown-item">My Profile</a>
+                        <a href="{% url 'customer_detail' customer_id=user.id %}" class="dropdown-item">My Profile</a>
                       {% endif %}
                     {% endif %}
                     <a href="#" class="dropdown-item">My Bookings</a>

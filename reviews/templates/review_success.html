@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block extra_meta %}
+<meta http-equiv="refresh" content="6; url={% url 'customer_detail' customer_id=customer_id %}" />
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Thank You!</h1>
+        <p>Your review has been submitted successfully. You will be redirected shortly...</p>
+    </div>
+{% endblock %}

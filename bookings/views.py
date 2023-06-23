@@ -41,11 +41,17 @@ def create_booking(request):
         except Chef.DoesNotExist:
             return JsonResponse({"error": "Chef does not exist"}, status=400)
 
-        # Retrieve the customer instance
-        try:
-            customer = request.user.customer
-        except Customer.DoesNotExist:
-            return JsonResponse({"error": "Customer does not exist"}, status=400)
+        # Ensure that the logged-in user is a Customer
+        if request.user.groups.filter(name="Customer").exists():
+            # Retrieve the customer instance
+            try:
+                customer = request.user.customer
+            except Customer.DoesNotExist:
+                return JsonResponse({"error": "Customer does not exist"}, status=400)
+        else:
+            return JsonResponse(
+                {"error": "Access Denied. You are not a Customer."}, status=400
+            )
 
         # Retrieve the menu instance
         try:
