@@ -2,9 +2,9 @@
 
 {% block content %}
   <div class="container">
-    <h1>Submit a Review</h1>
+    <h1>Update Review</h1>
 
-    <form method="POST" action="{% url 'create_review' booking.id %}">
+    <form method="POST" action="{% url 'update_review' booking.id %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="rating">Rating:</label>
@@ -13,13 +13,13 @@
             <i class="fa-regular fa-star" data-rating="3"></i>
             <i class="fa-regular fa-star" data-rating="4"></i>
             <i class="fa-regular fa-star" data-rating="5"></i>
-            <input type="hidden" name="rating" id="rating" class="form-control" required>
+            <input type="hidden" name="rating" id="rating" class="form-control" value="{{ review.rating }}" required>
         </div>
         <div class="form-group">
             <label for="review">Review:</label>
-            <textarea name="review" id="review" class="form-control" required></textarea>
+            <textarea name="review" id="review" class="form-control" required>{{ review.review }}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Review</button>
+        <button type="submit" class="btn btn-primary">Update Review</button>
     </form>
   </div>
 
@@ -27,6 +27,18 @@
     document.addEventListener("DOMContentLoaded", function() {
       var stars = document.querySelectorAll(".fa-star");
       var ratingInput = document.getElementById("rating");
+      var initialRating = ratingInput.value;
+
+      // Set the initial rating
+      stars.forEach(function(star, index) {
+        if (index < initialRating) {
+          star.classList.remove("fa-regular");
+          star.classList.add("fa-solid");
+        } else {
+          star.classList.remove("fa-solid");
+          star.classList.add("fa-regular");
+        }
+      });
 
       stars.forEach(function(star) {
         star.addEventListener("click", function() {

@@ -9,8 +9,6 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def create_review(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id)
-    print("customer id", booking.customer.user.id)
-    print("booking id", booking.id)
 
     # Check if the user is the customer for this booking
     if request.user != booking.customer.user:
@@ -32,6 +30,10 @@ def create_review(request, booking_id):
         rating = request.POST.get("rating")
         review_text = request.POST.get("review")
 
+        if not rating or not review_text:
+            messages.error(request, "Rating and review are required fields.")
+            return render(request, "create_review.html", {"booking": booking})
+
         review = ChefReview(booking=booking, rating=rating, review=review_text)
         review.save()
 
@@ -44,6 +46,41 @@ def create_review(request, booking_id):
 @login_required
 def review_success(request, customer_id):
     return render(request, "review_success.html", {"customer_id": customer_id})
+
+
+@login_required
+def update_review(request, booking_id):
+    booking = get_object_or_404(Booking, pk=booking_id)
+
+    # Check if the user is the customer for this booking
+    if request.user != booking.customer.user:
+        messages.error(request, "You are not the customer for this booking.")
+        return redirect("home")
+
+    # Check if review exists for this booking
+    review = ChefReview.objects.filter(booking=booking).first()
+    if not review:
+        messages.error(request, "No review exists for this booking.")
+        customer_detail_url = reverse(
+            "customer_detail", kwargs={"customer_id": booking.customer.user.id}
+        )
+        return redirect(customer_detail_url)
+
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        review_text = request.POST.get("review")
+
+        if not rating or not review_text:
+            messages.error(request, "Rating and review are required fields.")
+            return render(request, "create_review.html", {"booking": booking})
+
+        review.rating = rating
+        review.review = review_text
+        review.save()
+
+        return redirect("review_success", customer_id=booking.customer.user.id)
+
+    return render(request, "update_review.html", {"booking": booking, "review": review})
 
 
 def show_customer_reviews(request, customer_id):
