@@ -46,12 +46,10 @@ def login_redirect(request):
     # Check user role and redirect accordingly
     if request.user.groups.filter(name="Chef").exists():
         return redirect(
-            reverse("chef_detail", kwargs={"chef_id": request.user.chef.id})
+            reverse("chef_detail", kwargs={"chef_id": request.user.chef.pk})
         )
     elif request.user.groups.filter(name="Customer").exists():
-        return redirect(
-            reverse("customer_detail", kwargs={"customer_id": request.user.customer.id})
-        )
+        return redirect("chefs")
     else:
         # Handle the case when the user does not have any role assigned
         messages.error(request, "Access Denied. You are not a Chef or a Customer.")
@@ -72,7 +70,7 @@ def all_chefs(request):
 
 def chef_detail(request, chef_id):
     """A view to display a single chef profile"""
-    chef = get_object_or_404(Chef, id=chef_id)
+    chef = get_object_or_404(Chef, user_id=chef_id)
     menus = Menu.objects.filter(chef=chef)
     check_availability = Availability.objects.filter(
         chef_id=chef_id,

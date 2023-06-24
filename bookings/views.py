@@ -37,7 +37,7 @@ def create_booking(request):
 
         # Retrieve the chef instance
         try:
-            chef = Chef.objects.get(id=chef_id)
+            chef = Chef.objects.get(user_id=chef_id)
         except Chef.DoesNotExist:
             return JsonResponse({"error": "Chef does not exist"}, status=400)
 
@@ -101,9 +101,16 @@ def create_booking(request):
                     avail.is_available = False
                     avail.save()
             except Availability.DoesNotExist:
+                # Update the booking status to "failed" if availability does not exist
+                booking.status = "failed"
+                booking.save()
                 return JsonResponse(
                     {"error": "Availability does not exist"}, status=400
                 )
+
+            # Update the booking status to "completed"
+            booking.status = "completed"
+            booking.save()
 
             # Return the PaymentIntent client_secret along with booking info
             # The client_secret is used to finalize the payment on the client-side
@@ -114,7 +121,17 @@ def create_booking(request):
                     "client_secret": payment_intent["client_secret"],
                 }
             )
+
         except IntegrityError:
+            # Update the booking status to "failed" if an IntegrityError occurs
+            booking.status = "failed"
+            booking.save()
             return JsonResponse({"error": "Booking already exists"}, status=400)
+
+        except Exception as e:
+            # Update the booking status to "failed" for other exceptions
+            booking.status = "failed"
+            booking.save()
+            return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse({"error": "Invalid request"}, status=400)

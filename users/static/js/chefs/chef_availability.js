@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const chefId = calendarEl.getAttribute('data-chef-id');
   const userRole = calendarEl.getAttribute('data-user-role');
 
+  console.log('calendarEl', calendarEl);
   console.log('User role:', userRole);
   console.log('Chef ID:', chefId);
 
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
       await removePastAvailabilities();
 
       // Fetch the chef's availability
+      console.log('Chef ID:', chefId);
       const response = await fetch(
         `/users/chefs/get_chef_availability/${chefId}/`
       );

@@ -13,7 +13,7 @@
   <div class="container">
     <div class="row">
         <div class="col">
-            {% if user.is_authenticated and user.chef.id == menu.chef.id %}
+            {% if user.is_authenticated and user.chef.user_id == menu.chef.user_id %}
                 <a href="{% url 'add_dish' menu_id=menu.id %}" class="btn btn-primary">Add Dish</a>
             {% endif %}
         </div>

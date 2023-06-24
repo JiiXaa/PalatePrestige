@@ -49,7 +49,7 @@ def add_menu(request):
                 new_menu.chef = request.user.chef
                 new_menu.save()
                 messages.success(request, "Menu successfully added!")
-                return redirect("chef_detail", chef_id=request.user.chef.id)
+                return redirect("chef_detail", chef_id=request.user.chef.user_id)
         except ValidationError as e:
             messages.error(request, f"Error adding menu: {e}")
     else:
@@ -138,7 +138,7 @@ def edit_menu(request, menu_id):
             try:
                 form.save()
                 messages.success(request, "Menu successfully updated!")
-                return redirect("chef_detail", chef_id=request.user.chef.id)
+                return redirect("chef_detail", chef_id=request.user.chef.user_id)
             except ValidationError as e:
                 messages.error(request, f"Error updating menu: {e}")
     else:
@@ -154,7 +154,7 @@ def delete_menu(request, menu_id):
     try:
         menu.delete()
         messages.success(request, "Menu successfully deleted!")
-        return redirect("chef_detail", chef_id=request.user.chef.id)
+        return redirect("chef_detail", chef_id=request.user.chef.user_id)
     except Exception as e:
         messages.error(request, f"Error deleting menu: {e}")
-        return redirect("chef_detail", chef_id=request.user.chef.id)
+        return redirect("chef_detail", chef_id=request.user.chef.user_id)

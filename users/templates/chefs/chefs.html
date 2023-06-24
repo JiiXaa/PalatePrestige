@@ -16,7 +16,7 @@
         <div class="col">
           <h2>{{ chef.user.first_name }} {{ chef.user.last_name }}</h2>
           <p>{{ chef.bio }}</p>
-          <a href="{% url 'chef_detail' chef_id=chef.id %}">More Details</a>
+          <a href="{% url 'chef_detail' chef_id=chef.user_id %}">More Details</a>
         </div>
       {% endfor %}
     </div>

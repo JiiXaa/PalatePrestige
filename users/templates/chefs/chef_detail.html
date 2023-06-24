@@ -33,7 +33,7 @@
         <p>{{ chef.bio }}</p>
         {% for menu in menus %}
           <div class="row">
-            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
+            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
               <a href="{% url 'menu_detail' menu_id=menu.id %}">
                 <h2>{{ menu.title }}</h2>
               </a>
@@ -49,18 +49,18 @@
             </div>
           </div>
         {% endfor %}
-        {% if user.is_authenticated and user.chef.id == chef.id %}
+        {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
         <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
         {% endif %}
       </div>
     </div>
     <div class="row">
       <!-- Pass the chef id to be able -->
-      <div id="calendar" data-chef-id="{{ chef.id }}" data-user-role="{{ user_role }}" data-logged-in-user-id="{{ logged_in_user_id }}"></div>
+      <div id="calendar" data-chef-id="{{ chef.user_id }}" data-user-role="{{ user_role }}" data-logged-in-user-id="{{ logged_in_user_id }}"></div>
     </div>
     <div class="row">
       <div class="col-6 col-md-3">
-        <div id="selectedChef" data-chef-id="{{ chef.id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
+        <div id="selectedChef" data-chef-id="{{ chef.user_id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
         <div id="selectedDate" class="d-flex justify-content-center"></div>
         <div id="selectedMenu" class="d-flex justify-content-center"></div>
 

@@ -6,7 +6,7 @@ from reviews.models import ChefReview
 
 
 class Chef(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     bio = models.TextField(max_length=500, blank=True)
     cuisine_types = models.CharField(max_length=200, blank=True)
     is_super_chef = models.BooleanField(default=False)
@@ -32,7 +32,7 @@ class Availability(models.Model):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     location = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
