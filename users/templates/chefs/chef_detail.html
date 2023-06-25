@@ -38,6 +38,9 @@
     {% endif %}
         <p>{{ chef.user.email }}</p>
         <p>{{ chef.bio }}</p>
+        {% if request.user == chef.user %}
+          <a href="{% url 'edit_chef' chef_id=chef.user.id %}">Edit Profile</a>
+        {% endif %}
         {% for menu in menus %}
           <div class="row">
             <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">

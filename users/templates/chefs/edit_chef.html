@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+  <div class="container header-container">
+    <div class="row">
+      <div class="col"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mt-3">
+      <div class="col">
+        <h2>Edit Chef {{ user.first_name }} {{ user.last_name }}</h2>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <!-- Display user fields -->
+          {{ user_form.as_p }}
+
+          <!-- Display chef fields -->
+          {{ chef_form.as_p }}
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+  </div>
+</div>
+
+
+{% endblock %}

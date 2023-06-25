@@ -34,4 +34,5 @@ urlpatterns = [
         views.update_chef_availability,
         name="update_chef_availability",
     ),
+    path("chefs/edit_chef/<int:chef_id>/", views.edit_chef, name="edit_chef"),
 ]

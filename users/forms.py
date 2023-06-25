@@ -1,5 +1,7 @@
 from django import forms
 from allauth.account.forms import SignupForm
+from .models import Chef
+from users.models import User
 
 
 class CustomSignupForm(SignupForm):
@@ -41,3 +43,36 @@ class CustomSignupForm(SignupForm):
     )
 
     user_type = forms.ChoiceField(choices=USER_GROUP_CHOICES)
+
+
+class EditUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "profile_image"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs["autofocus"] = True
+
+
+class ChefForm(forms.ModelForm):
+    class Meta:
+        model = Chef
+        fields = ["bio", "cuisine_types", "location"]
+        widgets = {
+            "bio": forms.Textarea(
+                attrs={
+                    "placeholder": "Enter bio",
+                }
+            ),
+            "cuisine_types": forms.TextInput(
+                attrs={
+                    "placeholder": "Enter cuisine types",
+                }
+            ),
+            "location": forms.TextInput(
+                attrs={
+                    "placeholder": "Enter location",
+                }
+            ),
+        }

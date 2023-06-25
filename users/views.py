@@ -8,6 +8,9 @@ from django.utils.dateparse import parse_datetime
 from django.urls import reverse
 from django.conf import settings
 
+import boto3
+from .forms import ChefForm, EditUserForm
+
 
 import json
 
@@ -116,6 +119,56 @@ def chef_detail(request, chef_id):
         }
 
     return render(request, "chefs/chef_detail.html", context)
+
+
+@login_required
+def edit_chef(request, chef_id):
+    chef = get_object_or_404(Chef, user__id=chef_id)
+    user = chef.user
+
+    # If the logged in user is not the owner of the chef profile
+    # Redirect them to the detail page with an error message
+    if request.user != user:
+        messages.error(request, "You do not have permission to edit this profile.")
+        return redirect("chef_detail", chef_id=chef_id)
+
+    if request.method == "POST":
+        chef_form = ChefForm(request.POST, request.FILES, instance=chef)
+        user_form = EditUserForm(request.POST, request.FILES, instance=user)
+
+        if chef_form.is_valid() and user_form.is_valid():
+            old_profile_image_name = chef.user.profile_image.name
+
+            chef = chef_form.save(commit=False)
+            user = user_form.save()
+
+            chef.user = user
+            chef.save()
+
+            messages.success(request, "Chef details updated successfully.")
+
+            if (
+                chef.user.profile_image
+                and old_profile_image_name != chef.user.profile_image.name
+            ):
+                # Delete the old profile image from the S3 bucket
+                s3 = boto3.resource("s3")
+                s3.Object(
+                    settings.AWS_STORAGE_BUCKET_NAME, old_profile_image_name
+                ).delete()
+
+            return redirect("chef_detail", chef_id=chef.user.id)
+    else:
+        chef_form = ChefForm(instance=chef)
+        user_form = EditUserForm(instance=user)
+
+    context = {
+        "chef_form": chef_form,
+        "chef": chef,
+        "user_form": user_form,
+    }
+
+    return render(request, "chefs/edit_chef.html", context)
 
 
 def get_chef_availability(request, chef_id):
