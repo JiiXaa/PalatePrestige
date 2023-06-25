@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+import boto3
+from django.conf import settings
 
 from .models import Menu, Dish, MenuCategory
 from .forms import MenuForm, MenuCategoryForm, DishForm
@@ -109,7 +111,7 @@ def add_dish(request, menu_id):
     menu = get_object_or_404(Menu, id=menu_id)
 
     if request.method == "POST":
-        form = DishForm(request.POST)
+        form = DishForm(request.POST, request.FILES)
         if form.is_valid():
             new_dish = form.save(commit=False)
             new_dish.menu = menu
@@ -125,6 +127,40 @@ def add_dish(request, menu_id):
     }
 
     return render(request, "add_dish.html", context)
+
+
+@login_required
+def edit_dish(request, menu_id, dish_id):
+    menu = get_object_or_404(Menu, id=menu_id)
+    dish = get_object_or_404(Dish, id=dish_id)
+
+    if dish.menu != menu:
+        messages.error(request, "This dish does not belong to this menu!")
+        return redirect("menu_detail", menu_id=menu.id)
+
+    old_image_name = "media/" + dish.image.name  # Modify this line
+
+    if request.method == "POST":
+        form = DishForm(request.POST, request.FILES, instance=dish)
+        if form.is_valid():
+            dish = form.save()
+            messages.success(request, "Dish successfully edited!")
+
+            if dish.image and old_image_name != dish.image.name:
+                s3 = boto3.resource("s3")
+                s3.Object(settings.AWS_STORAGE_BUCKET_NAME, old_image_name).delete()
+
+            return redirect("menu_detail", menu_id=menu.id)
+    else:
+        form = DishForm(instance=dish)
+
+    context = {
+        "form": form,
+        "menu": menu,
+        "dish": dish,
+    }
+
+    return render(request, "edit_dish.html", context)
 
 
 @login_required

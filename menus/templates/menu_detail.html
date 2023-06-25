@@ -25,8 +25,12 @@
             {% for dish in menu.dishes.all %}
               <div>
                 <h3>{{ dish.name }}</h3>
+                {% if dish.image %}
+                  <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
+                {% endif %}
                 <p>{{ dish.category }}</p>
                 <p>{{ dish.description }}</p>
+                <a href="{% url 'edit_dish' menu_id=menu.id dish_id=dish.id %}">Edit Dish</a>
               </div>
             {% endfor %}
         </div>

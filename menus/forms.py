@@ -40,7 +40,7 @@ class MenuCategoryForm(forms.ModelForm):
 class DishForm(forms.ModelForm):
     class Meta:
         model = Dish
-        fields = ["name", "description", "category"]
+        fields = ["name", "description", "category", "image"]
         widgets = {
             "name": forms.TextInput(
                 attrs={

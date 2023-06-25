@@ -47,6 +47,9 @@
               <p>{{ menu.description }}</p>
               {% for dish in menu.dishes.all %}
                 <h3>{{ dish.name }}</h3>
+                {% if dish.image %}
+                  <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
+                {% endif %}
                 <p>{{ dish.category }}</p>
                 <p>{{ dish.description }}</p>
               {% endfor %}
