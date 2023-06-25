@@ -18,6 +18,11 @@ class CustomSignupForm(SignupForm):
         widget=forms.TextInput(attrs={"placeholder": "Last name"}),
     )
 
+    profile_image = forms.ImageField(
+        label="Profile Image",
+        required=False,
+    )
+
     # Override __init__ to make email field autofocus
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

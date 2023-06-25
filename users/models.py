@@ -1,8 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from reviews.models import ChefReview
+
+
+class User(AbstractUser):
+    profile_image = models.ImageField(upload_to="profile_images", blank=True, null=True)
 
 
 class Chef(models.Model):

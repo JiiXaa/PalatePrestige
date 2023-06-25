@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+import boto3
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 load_dotenv()
@@ -32,6 +34,19 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = "palateprestigebucket"
+AWS_S3_REGION_NAME = "eu-west-2"
+
+# Default file storage class
+DEFAULT_FILE_STORAGE = "palateprestige.custom_storages.MediaStorage"
+
+
+# Cache settings
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 
 # Application definition
@@ -52,6 +67,7 @@ INSTALLED_APPS = [
     "menus",
     "bookings",
     "reviews",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -161,13 +177,15 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "bookings", "static"),
 )
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "https://palateprestigebucket.s3.amazonaws.com/media/"
+MEDIA_ROOT = ""
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "users.User"
 
 STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")

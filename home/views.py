@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from users.models import Chef
-
-# Create your views here.
+from django.conf import settings
 
 
 def index(request):
     """A view to return the index page"""
-    chef = Chef.objects.all()
-    return render(request, "home/index.html", {"chef": chef})
+    all_chefs = Chef.objects.all()
+
+    context = {
+        "chefs": all_chefs,
+        "MEDIA_URL": settings.MEDIA_URL,
+    }
+
+    return render(request, "home/index.html", context)
