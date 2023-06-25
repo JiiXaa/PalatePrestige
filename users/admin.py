@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import Chef, Customer
+from django.contrib.auth.admin import UserAdmin
+from .models import User
 
 
 class ChefAdmin(admin.ModelAdmin):
@@ -22,3 +24,4 @@ class CustomerAdmin(admin.ModelAdmin):
 
 admin.site.register(Chef, ChefAdmin)
 admin.site.register(Customer, CustomerAdmin)
+admin.site.register(User, UserAdmin)

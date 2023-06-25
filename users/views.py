@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.urls import reverse
+from django.conf import settings
 
 
 import json
@@ -22,17 +23,18 @@ from reviews.models import ChefReview
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
 
-    # Override form_valid to save user_type and create Chef or Customer object
+    # Override the form_valid method to add user_type to the form data before it is saved. Also, create Chef or Customer object based on user_type.
     def form_valid(self, form):
         response = super().form_valid(form)
         user_type = form.cleaned_data.get("user_type")
 
         # Create Chef or Customer object based on user_type
         if user_type == "chef":
-            Chef.objects.create(user=self.user)
+            chef = Chef.objects.create(user=self.user)
             group, created = Group.objects.get_or_create(name="Chef")
+            chef.user.profile_image = form.cleaned_data.get("profile_image")
+            chef.user.save()
         else:
-            # if user_type == "customer":
             Customer.objects.create(user=self.user)
             group, created = Group.objects.get_or_create(name="Customer")
 
@@ -87,7 +89,6 @@ def chef_detail(request, chef_id):
     else:
         user_role = "customer"
 
-    print(check_availability)
     print("user_role", user_role)
     if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
         # If the logged-in user is the Chef whose profile is being viewed
@@ -99,6 +100,7 @@ def chef_detail(request, chef_id):
             "user_role": user_role,
             "reviews": reviews,
             "logged_in_user_id": logged_in_user_id,
+            "MEDIA_URL": settings.MEDIA_URL,
         }
     else:
         # If the logged-in user is a Customer or a not-logged-in user
@@ -110,6 +112,7 @@ def chef_detail(request, chef_id):
             "user_role": user_role,
             "reviews": reviews,
             "logged_in_user_id": logged_in_user_id,
+            "MEDIA_URL": settings.MEDIA_URL,
         }
 
     return render(request, "chefs/chef_detail.html", context)

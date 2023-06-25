@@ -14,8 +14,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
-import boto3
-from storages.backends.s3boto3 import S3Boto3Storage
 
 
 load_dotenv()
@@ -41,9 +39,12 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = "palateprestigebucket"
 AWS_S3_REGION_NAME = "eu-west-2"
 
-# Default file storage class
-DEFAULT_FILE_STORAGE = "palateprestige.custom_storages.MediaStorage"
-
+# Configure S3 storage backend
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
 
 # Cache settings
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
@@ -177,8 +178,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "bookings", "static"),
 )
 
-MEDIA_URL = "https://palateprestigebucket.s3.amazonaws.com/media/"
-MEDIA_ROOT = ""
+MEDIAFILES_LOCATION = "media"
+DEFAULT_FILE_STORAGE = "palateprestige.custom_storages.MediaStorage"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -4,10 +4,36 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from reviews.models import ChefReview
+from PIL import Image
+from io import BytesIO
+import boto3
+import os
 
 
 class User(AbstractUser):
     profile_image = models.ImageField(upload_to="profile_images", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.profile_image:
+            image = Image.open(self.profile_image)
+            if image.height > 300 or image.width > 300:
+                output_size = (300, 300)
+                image.thumbnail(output_size)
+                image_buffer = BytesIO()
+                image.save(image_buffer, format="JPEG")
+                image_buffer.seek(0)
+                filename = os.path.basename(self.profile_image.name)
+                self.profile_image.save(filename, image_buffer, save=False)
+                self.save()
+
+                # Set ACL of the saved object to public-read
+                s3 = boto3.client("s3")
+                bucket_name = "palateprestigebucket"
+                object_key = f"media/{self.profile_image.name}"
+                print(f"Bucket: {bucket_name}, Key: {object_key}")
+                s3.put_object_acl(Bucket=bucket_name, Key=object_key, ACL="public-read")
 
 
 class Chef(models.Model):
