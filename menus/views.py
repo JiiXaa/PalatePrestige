@@ -102,13 +102,24 @@ def delete_menu(request, menu_id):
     """A view to delete a menu"""
     menu = get_object_or_404(Menu, id=menu_id)
 
-    try:
-        menu.delete()
-        messages.success(request, "Menu successfully deleted!")
-        return redirect("chef_detail", chef_id=request.user.chef.user_id)
-    except Exception as e:
-        messages.error(request, f"Error deleting menu: {e}")
-        return redirect("chef_detail", chef_id=request.user.chef.user_id)
+    if menu.chef != request.user.chef:
+        messages.error(request, "You can only delete your own menus!")
+        return redirect("home")
+
+    if request.method == "POST":
+        try:
+            menu.delete()
+            messages.success(request, "Menu successfully deleted!")
+            return redirect("chef_detail", chef_id=request.user.chef.user_id)
+        except Exception as e:
+            messages.error(request, f"Error deleting menu: {e}")
+            return redirect("chef_detail", chef_id=request.user.chef.user_id)
+
+    context = {
+        "menu": menu,
+    }
+
+    return render(request, "delete_menu.html", context)
 
 
 @login_required

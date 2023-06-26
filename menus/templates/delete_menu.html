@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+  <div class="container header-container">
+    <div class="row">
+      <div class="col"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Delete Menu</h2>
+            <p>Are you sure you want to delete the menu "{{ menu.title }}"?</p>
+            <form method="POST" action="{% url 'delete_menu' menu_id=menu.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}
