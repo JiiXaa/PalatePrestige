@@ -79,6 +79,10 @@ def edit_menu(request, menu_id):
     """A view to edit a menu"""
     menu = get_object_or_404(Menu, id=menu_id)
 
+    if menu.chef != request.user.chef:
+        messages.error(request, "You can only edit your own menus!")
+        return redirect("home")
+
     if request.method == "POST":
         form = MenuForm(request.POST, instance=menu)
         if form.is_valid():
