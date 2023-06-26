@@ -40,6 +40,21 @@ def all_menus(request):
     return render(request, "menus.html", context)
 
 
+def menu_detail(request, menu_id):
+    """A view to display a single menu"""
+    # Get menu
+    menu = get_object_or_404(Menu, id=menu_id)
+    # Filter dishes by menu
+    dishes = Dish.objects.filter(menu=menu)
+
+    context = {
+        "menu": menu,
+        "dishes": dishes,
+    }
+
+    return render(request, "menu_detail.html", context)
+
+
 @login_required
 def add_menu(request):
     """A view to add a menu to a chef's profile"""
@@ -51,12 +66,45 @@ def add_menu(request):
                 new_menu.chef = request.user.chef
                 new_menu.save()
                 messages.success(request, "Menu successfully added!")
-                return redirect("chef_detail", chef_id=request.user.chef.user_id)
+                return redirect("add_dish", menu_id=new_menu.id)
         except ValidationError as e:
             messages.error(request, f"Error adding menu: {e}")
     else:
         form = MenuForm()
     return render(request, "add_menu.html", {"form": form})
+
+
+@login_required
+def edit_menu(request, menu_id):
+    """A view to edit a menu"""
+    menu = get_object_or_404(Menu, id=menu_id)
+
+    if request.method == "POST":
+        form = MenuForm(request.POST, instance=menu)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, "Menu successfully updated!")
+                return redirect("chef_detail", chef_id=request.user.chef.user_id)
+            except ValidationError as e:
+                messages.error(request, f"Error updating menu: {e}")
+    else:
+        form = MenuForm(instance=menu)
+    return render(request, "edit_menu.html", {"form": form, "menu": menu})
+
+
+@login_required
+def delete_menu(request, menu_id):
+    """A view to delete a menu"""
+    menu = get_object_or_404(Menu, id=menu_id)
+
+    try:
+        menu.delete()
+        messages.success(request, "Menu successfully deleted!")
+        return redirect("chef_detail", chef_id=request.user.chef.user_id)
+    except Exception as e:
+        messages.error(request, f"Error deleting menu: {e}")
+        return redirect("chef_detail", chef_id=request.user.chef.user_id)
 
 
 @login_required
@@ -88,21 +136,6 @@ def add_menu_category(request):
         form = MenuCategoryForm()
 
     return render(request, "add_menu_category.html", {"form": form})
-
-
-def menu_detail(request, menu_id):
-    """A view to display a single menu"""
-    # Get menu
-    menu = get_object_or_404(Menu, id=menu_id)
-    # Filter dishes by menu
-    dishes = Dish.objects.filter(menu=menu)
-
-    context = {
-        "menu": menu,
-        "dishes": dishes,
-    }
-
-    return render(request, "menu_detail.html", context)
 
 
 @login_required
@@ -164,33 +197,32 @@ def edit_dish(request, menu_id, dish_id):
 
 
 @login_required
-def edit_menu(request, menu_id):
-    """A view to edit a menu"""
+def delete_dish(request, menu_id, dish_id):
     menu = get_object_or_404(Menu, id=menu_id)
+    dish = get_object_or_404(Dish, id=dish_id)
+
+    if dish.menu != menu:
+        messages.error(request, "This dish does not belong to this menu!")
+        return redirect("menu_detail", menu_id=menu.id)
 
     if request.method == "POST":
-        form = MenuForm(request.POST, instance=menu)
-        if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Menu successfully updated!")
-                return redirect("chef_detail", chef_id=request.user.chef.user_id)
-            except ValidationError as e:
-                messages.error(request, f"Error updating menu: {e}")
-    else:
-        form = MenuForm(instance=menu)
-    return render(request, "edit_menu.html", {"form": form, "menu": menu})
+        try:
+            # Delete the dish and its associated image
+            dish.delete()
+            if dish.image:
+                s3 = boto3.resource("s3")
+                s3.Object(
+                    settings.AWS_STORAGE_BUCKET_NAME, "media/" + dish.image.name
+                ).delete()
 
+            messages.success(request, "Dish successfully deleted!")
+            return redirect("menu_detail", menu_id=menu.id)
+        except Exception as e:
+            messages.error(request, f"Error deleting dish: {e}")
 
-@login_required
-def delete_menu(request, menu_id):
-    """A view to delete a menu"""
-    menu = get_object_or_404(Menu, id=menu_id)
+    context = {
+        "menu": menu,
+        "dish": dish,
+    }
 
-    try:
-        menu.delete()
-        messages.success(request, "Menu successfully deleted!")
-        return redirect("chef_detail", chef_id=request.user.chef.user_id)
-    except Exception as e:
-        messages.error(request, f"Error deleting menu: {e}")
-        return redirect("chef_detail", chef_id=request.user.chef.user_id)
+    return render(request, "delete_dish.html", context)

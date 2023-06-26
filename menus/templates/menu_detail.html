@@ -31,6 +31,7 @@
                 <p>{{ dish.category }}</p>
                 <p>{{ dish.description }}</p>
                 <a href="{% url 'edit_dish' menu_id=menu.id dish_id=dish.id %}">Edit Dish</a>
+                <a href="{% url 'delete_dish' menu_id=menu.id dish_id=dish.id %}">Delete Dish</a>
               </div>
             {% endfor %}
         </div>
