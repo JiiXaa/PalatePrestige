@@ -21,11 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Get all the "Add menu to booking" buttons
   const addMenuToBookingBtns = document.querySelectorAll('.add-menu-js');
 
+  // Variable to hold the selected menu card
+  let selectedMenuCard = null;
+
   // Add click event listener to each button
   addMenuToBookingBtns.forEach((btn) => {
     btn.addEventListener('click', function () {
       // Get the associated menu ID from the data attribute
       const menuId = this.closest('.menu-card').dataset.menuId;
+      // Get the menu title from the data attribute
+      const menuTitle = this.closest('.menu-card').dataset.menuTitle;
       // Get the chef ID from the data attribute
       const chefId = this.closest('.menu-card').dataset.chefId;
       // Get the chef name from the data attributes
@@ -36,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Use the menu ID to set the selected menu in the selectedBooking instance and in local storage
       selectedBooking.setSelectedMenu(menuId);
       selectedBooking.addSelectedMenuLS(menuId);
+      selectedBooking.setSelectedMenuTitle(menuTitle);
+      selectedBooking.addSelectedMenuTitleLS(menuTitle);
 
       // Use the chef ID and name to set the selected chef in the selectedBooking instance and in local storage
       const chef = { id: chefId, name: chefName };
@@ -53,12 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const menuCards = document.querySelectorAll('.menu-card');
 
       // Find the selected menu card
-      let selectedMenuCard = null;
       menuCards.forEach((menuCard) => {
         if (menuCard.dataset.menuId === menuId) {
           selectedMenuCard = menuCard;
-          // Exit the loop once the selected menu card is found
-          return;
+          selectedMenuCard.classList.add('menu-selected');
+          console.log('selectedMenuCard', selectedMenuCard);
+        } else {
+          menuCard.classList.remove('menu-selected');
         }
       });
 
@@ -90,6 +98,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearBookingBtn = document.getElementById('clearBookingBtn');
 
   clearBookingBtn.addEventListener('click', () => {
+    // Set totalPriceElement.textContent to 0
+    const totalPriceElement = document.getElementById('totalPrice');
+    totalPriceElement.textContent = 'Total Price: £0';
+
+    // Show all addMenuToBookingBtns
+    addMenuToBookingBtns.forEach((button) => {
+      button.style.display = 'block';
+    });
+
+    // Update the total price
+    const numberOfGuestsInput = document.getElementById('numberOfGuests');
+    numberOfGuestsInput.value = 0;
+
     selectedBooking.clearSelectedBookingLS();
     selectedBooking.clearSelectedBooking();
     selectedBooking.updateSelectionDisplay();
@@ -99,6 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedBooking.menu,
       selectedBooking.chef
     );
+
+    // Remove the 'menu-selected' class from the selected menu card
+    if (selectedMenuCard) {
+      selectedMenuCard.classList.remove('menu-selected');
+    }
   });
 
   // Submit Booking button
@@ -223,6 +249,7 @@ class SelectedBooking {
   constructor() {
     this.date = null;
     this.menu = null;
+    this.menuTitle = null;
     this.chef = null;
   }
 
@@ -250,20 +277,40 @@ class SelectedBooking {
     this.menu = menu;
   }
 
+  setSelectedMenuTitle(menuTitle) {
+    this.menuTitle = menuTitle;
+  }
+
   getSelectedMenu() {
     return this.menu;
+  }
+
+  getSelectedMenuTitle() {
+    return this.menuTitle;
   }
 
   clearSelectedMenu() {
     this.menu = null;
   }
 
+  clearSelectedMenuTitle() {
+    this.menuTitle = null;
+  }
+
   addSelectedMenuLS(menu) {
     localStorage.setItem('selectedMenu', menu);
   }
 
+  addSelectedMenuTitleLS(menuTitle) {
+    localStorage.setItem('selectedMenuTitle', menuTitle);
+  }
+
   removeSelectedMenuLS() {
     localStorage.removeItem('selectedMenu');
+  }
+
+  removeSelectedMenuTitleLS() {
+    localStorage.removeItem('selectedMenuTitle');
   }
 
   setSelectedChef(chef) {
@@ -291,12 +338,14 @@ class SelectedBooking {
   clearSelectedBookingLS() {
     localStorage.removeItem('selectedDate');
     localStorage.removeItem('selectedMenu');
+    localStorage.removeItem('selectedMenuTitle');
     localStorage.removeItem('selectedChef');
   }
 
   clearSelectedBooking() {
     this.date = null;
     this.menu = null;
+    this.menuTitle = null;
     this.chef = null;
   }
 
@@ -314,8 +363,8 @@ class SelectedBooking {
     // Convert the date string to a date object
     const dateObj = new Date(this.date);
 
-    if (localStorage.getItem('selectedMenu')) {
-      this.menu = localStorage.getItem('selectedMenu');
+    if (localStorage.getItem('selectedMenuTitle')) {
+      this.menu = localStorage.getItem('selectedMenuTitle');
     } else {
       this.menu = null;
     }

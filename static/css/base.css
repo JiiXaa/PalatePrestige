@@ -14,7 +14,10 @@
 body {
   color: #555;
   font-family: 'Lato', sans-serif;
-  border: 3px solid black;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Slider */
@@ -82,7 +85,7 @@ body {
     margin-top: 8rem;
   }
 
-  /* Background trick for the content (just place div on top of the content) */
+  /* Background color trick for the content (just place div on top of the content) */
   .overlay {
     height: 100%;
     width: 100%;
@@ -125,4 +128,12 @@ body {
 /* Utility classes */
 .hidden {
   display: none;
+}
+
+.mt-custom-10rem {
+  margin-top: 10rem;
+}
+
+.center-text {
+  text-align: center;
 }

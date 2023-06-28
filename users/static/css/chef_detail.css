@@ -1,0 +1,26 @@
+.menu-card img {
+  max-width: 100%;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.profile-image-container {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}
+
+.chef-details {
+  border: 2px solid red;
+}
+
+.test {
+  background-color: red;
+}
+
+.menu-selected {
+  padding-bottom: 2.41rem;
+}

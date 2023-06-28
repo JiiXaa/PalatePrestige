@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_js %}
-    Include the base extra_js block from the base.html template
+    <!-- Include the base extra_js block from the base.html template -->
     {{ block.super }}
 
     <!-- FullCalendar core JS -->
@@ -14,148 +14,187 @@
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chef_detail.css' %}">
 {% endblock %}
 
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
 
 {% block content %}
-  <div class="overlay"></div>
-  <div class="container fluid">
+<div class="overlay"></div>
+<div class="container mt-custom-10rem">
+    <!-- Main row -->
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
-        <h2>{{ chef.user.first_name }} {{ chef.user.last_name }}</h2>
-        {% if chef.user.profile_image %}
-          <img src="{{ chef.user.profile_image.url }}" alt="Profile Image">
-        {% else %}
-        <!-- You can put a placeholder image here -->
-          <img src="{{ MEDIA_URL }}placeholder_img.png" alt="Placeholder Image">
-    {% endif %}
-        <p>{{ chef.user.email }}</p>
-        <p>{{ chef.bio }}</p>
-        {% if request.user == chef.user %}
-          <a href="{% url 'edit_chef' chef_id=chef.user.id %}">Edit Profile</a>
-        {% endif %}
-        {% for menu in menus %}
-          <div class="row">
-            <div class="menu-card" data-menu-id="{{ menu.id }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
-              <a href="{% url 'menu_detail' menu_id=menu.id %}">
-                <h2>{{ menu.title }}</h2>
-              </a>
-              <p>{{ menu.description }}</p>
-              {% for dish in menu.dishes.all %}
-                <h3>{{ dish.name }}</h3>
-                {% if dish.image %}
-                  <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
-                {% endif %}
-                <p>{{ dish.category }}</p>
-                <p>{{ dish.description }}</p>
-              {% endfor %}
-              <p>From &#163;{{ menu.price }} pp </p>
-
-              <button type="button" class="btn btn-primary add-menu-js">Add to Booking</button>
-            </div>
-          </div>
-        {% endfor %}
-        {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
-        <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
-        {% endif %}
-      </div>
-    </div>
-    <div class="row">
-      <!-- Pass the chef id to be able -->
-      <div id="calendar" data-chef-id="{{ chef.user_id }}" data-user-role="{{ user_role }}" data-logged-in-user-id="{{ logged_in_user_id }}"></div>
-    </div>
-    <div class="row">
-      <div class="col-6 col-md-3">
-        <div id="selectedChef" data-chef-id="{{ chef.user_id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
-        <div id="selectedDate" class="d-flex justify-content-center"></div>
-        <div id="selectedMenu" class="d-flex justify-content-center"></div>
-
-        <div class="form-control mb-5">
-          <label for="numberOfGuests">Number of guests:</label>
-          <input type="number" id="numberOfGuests" name="numberOfGuests" min="0" value="0">
-
-          <p id="totalPrice">Total Price: &#163;0.00</p>
-        </div>
-        <div id="clearBooking" class="hidden">
-          <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
-        </div>
-        <div id="bookingBtn">
-          <button class="btn btn-primary" id="submitBookingBtn">Book</button>
-      </div>
-    </div>
-      <div class="mb-4">
-        <h5>Average Rating</h5>
-        <div class="d-flex align-items-center">
-          <i class="fas fa-star mr-1"></i>
-          <span>{{ chef.average_rating }}</span>
-        </div>
-      </div>
-
-      <!-- Reviews -->
-      <h5>Reviews ({{ reviews.count }})</h5>
-      <div class="review-container">
-        {% for review in reviews|slice:":4" %}
-          <div class="review-item">
-            <div class="review-header">
-              <h6>{{ review.booking.customer.user.username }}</h6>
-              <p>{{ review.created_at|date:"F Y" }}</p>
-            </div>
-            <p>{{ review.review }}</p>
-          </div>
-        {% endfor %}
-
-        {% if reviews.count > 4 %}
-          <div class="collapse" id="moreReviews">
-            {% for review in reviews|slice:"4:" %}
-              <div class="review-item">
-                <div class="review-header">
-                  <h6>{{ review.booking.customer.user.username }}</h6>
-                  <p>{{ review.created_at|date:"F Y" }}</p>
+        <!-- First column (2/3 of the page) -->
+        <div class="col-lg-8">
+            <!-- Chef Details -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-md-6 d-flex align-items-center justify-content-center">
+                    {% if chef.user.profile_image %}
+                      <div class="profile-image-container">
+                        <img src="{{ chef.user.profile_image.url }}" alt="Profile Image" class="img-fluid">
+                      </div>
+                    {% else %}
+                      <div class="profile-image-container">
+                        <img src="{{ MEDIA_URL }}placeholder_img.png" alt="Placeholder Image" class="img-fluid">
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <h2 class="mr-3">{{ chef.user.first_name|capfirst }} {{ chef.user.last_name|capfirst }}</h2>
+                      <p class="my-auto ">
+                        <i class="fas fa-star text-primary"></i>
+                        <span class="review-span">
+                          {{ chef.average_rating }}
+                          <a href="#reviews">({{ reviews.count }} reviews)</a>
+                        </span>
+                      </p>
+                    </div>
+                    <p>{{ chef.bio|capfirst }}</p>
+                    {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
+                      <a href="{% url 'edit_chef' chef_id=chef.user.id %}" class="btn btn-outline-primary mr-1">Edit Profile</a>
+                      <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
+                    {% endif %}
+                  </div>
                 </div>
-                <p>{{ review.review }}</p>
               </div>
-            {% endfor %}
+            </div>
+
+            <!-- Menus -->
+            <div class="row mb-4">
+                {% for menu in menus %}
+                  <div class="col-md-6">
+                    <div class="card menu-card" data-menu-id="{{ menu.id }}"  data-menu-title="{{ menu.title }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
+                      <div class="card-body">
+                        <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                          <h4 class="card-title">{{ menu.title|title }}</h4>
+                        </a>
+                        <p class="card-text">{{ menu.description|capfirst }}</p>
+                        <div class="menu-card-content">
+                          {% for dish in menu.dishes.all %}
+                            {% if forloop.counter == 1 %}
+                              <h5>{{ dish.name|capfirst }}</h5>
+                              {% if dish.image %}
+                                <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid">
+                              {% endif %}
+                              <p>{{ dish.category|capfirst }}</p>
+                              <p>{{ dish.description|capfirst }}</p>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <p>From &#163;{{ menu.price }} pp</p>
+                        <button type="button" class="btn btn-primary add-menu-js">Add to Booking</button>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+            </div>
+
+            <!-- Calendar -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div id="calendar" data-chef-id="{{ chef.user_id }}" data-user-role="{{ user_role }}" data-logged-in-user-id="{{ logged_in_user_id }}"></div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-4">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-star mr-1"></i>
+                    <span>
+                      {{ chef.average_rating }}
+                      <a href="#reviews">({{ reviews.count }} reviews)</a>
+                    </span>
+                  </div>
+                </div>
+
+                <h5>Reviews</h5>
+                <div class="review-container mb-5">
+                  {% for review in reviews|slice:":4" %}
+                    <div id="reviews" class="review-item">
+                      <div class="review-header">
+                        <h6>{{ review.booking.customer.user.username }}</h6>
+                        <p>{{ review.created_at|date:"F Y" }}</p>
+                      </div>
+                      <p>{{ review.review }}</p>
+                    </div>
+                  {% endfor %}
+
+                  {% if reviews.count > 4 %}
+                    <div class="collapse" id="moreReviews">
+                      {% for review in reviews|slice:"4:" %}
+                        <div class="review-item">
+                          <div class="review-header">
+                            <h6>{{ review.booking.customer.user.username }}</h6>
+                            <p>{{ review.created_at|date:"F Y" }}</p>
+                          </div>
+                          <p>{{ review.review }}</p>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#moreReviews" aria-expanded="false" aria-controls="moreReviews">
+                      Show More Reviews
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+        <!-- Second column (1/3 of the page) -->
+        <div class="col-lg-3 align-self-center" style="position: -webkit-fixed; position: fixed; top: 25%; right: 10%">
+          <div id="selectedChef" data-chef-id="{{ chef.user_id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}">
           </div>
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#moreReviews" aria-expanded="false" aria-controls="moreReviews">
-            Show More Reviews
-          </button>
-        {% endif %}
+          <div id="selectedDate" class="d-flex justify-content-center">
+            <p>Please select a date</p>
+          </div>
+          <div id="selectedMenu" class="d-flex justify-content-center">
+            <p>Please select a menu</p>
+          </div>
+
+          <div class="form-control mb-2 pb-5 pt-3">
+            <label for="numberOfGuests">Number of guests:</label>
+            <input type="number" id="numberOfGuests" name="numberOfGuests" min="0" value="0">
+          </div>
+          <p id="totalPrice">Total Price: &#163;0.00</p>
+          <div id="bookingBtn" class="d-flex">
+            <button class="btn btn-outline-primary mr-1" id="submitBookingBtn">Book</button>
+            <div id="clearBooking" class="hidden">
+              <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+      </div>
+      <div class="modal-body">
+        <!-- Payment Form -->
+        <form id="payment-form">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+          </div>
+          <div id="card-element">
+            <!-- A Stripe Element will be inserted here. -->
+          </div>
+          <!-- Used to display form errors. -->
+          <div id="card-errors" role="alert"></div>
+          <button type="submit" class="btn btn-primary">Submit Payment</button>
+        </form>
       </div>
     </div>
   </div>
-  <!-- Modal -->
-  <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="paymentModalLabel">Payment</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Payment Form -->
-          <form id="payment-form">
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-            </div>
-            <div id="card-element">
-              <!-- A Stripe Element will be inserted here. -->
-            </div>
-            <!-- Used to display form errors. -->
-            <div id="card-errors" role="alert"></div>
-            <button type="submit" class="btn btn-primary">Submit Payment</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
+</div>
 {% endblock %}
