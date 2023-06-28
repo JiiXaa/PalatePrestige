@@ -197,54 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-class Booking {
-  constructor(id, chef, user, date, time, location, cuisine, status) {
-    this.id = id;
-    this.chef = chef;
-    this.user = user;
-    this.date = date;
-    this.time = time;
-    this.location = location;
-    this.cuisine = cuisine;
-    this.status = status;
-  }
-
-  // instance method to render a single booking to the DOM. This is an instance method because it is specific to a single booking instance.
-  renderBooking() {
-    let bookingDiv = document.createElement('div');
-    bookingDiv.className = 'booking';
-    bookingDiv.id = `booking-${this.id}`;
-    bookingDiv.innerHTML = `
-            <h3>${this.chef.name} - ${this.user.name}</h3>
-            <p>Date: ${this.date}</p>
-            <p>Time: ${this.time}</p>
-            <p>Location: ${this.location}</p>
-            <p>Cuisine: ${this.cuisine}</p>
-            <p>Status: ${this.status}</p>
-            <button class="delete-booking" data-id="${this.id}">Delete Booking</button>
-        `;
-    return bookingDiv;
-  }
-
-  // static method to render all bookings to the DOM from an array of bookings. This is a class method because it is not specific to a single booking instance.
-  static renderAllBookings(bookings) {
-    let bookingsDiv = document.getElementById('bookings');
-    bookingsDiv.innerHTML = '';
-    bookings.forEach((booking) => {
-      let newBooking = new Booking(
-        booking.id,
-        booking.chef,
-        booking.user,
-        booking.date,
-        booking.time,
-        booking.location,
-        booking.cuisine,
-        booking.status
-      );
-      bookingsDiv.appendChild(newBooking.renderBooking());
-    });
-  }
-}
 class SelectedBooking {
   constructor() {
     this.date = null;
@@ -363,15 +315,19 @@ class SelectedBooking {
     // Convert the date string to a date object
     const dateObj = new Date(this.date);
 
-    if (localStorage.getItem('selectedMenuTitle')) {
-      this.menu = localStorage.getItem('selectedMenuTitle');
+    if (
+      localStorage.getItem('selectedMenu') &&
+      localStorage.getItem('selectedMenuTitle')
+    ) {
+      this.menu = localStorage.getItem('selectedMenu');
+      this.menuTitle = localStorage.getItem('selectedMenuTitle');
     } else {
       this.menu = null;
     }
 
     if (this.menu) {
       selectedMenu.innerHTML = `
-        <p>Menu: ${this.menu}</p>
+        <p>Menu: ${this.menuTitle}</p>
         <span class="icon ml-2">
           <i class="fa-solid fa-xmark"></i>
         </span>
@@ -388,7 +344,9 @@ class SelectedBooking {
         this.updateSelectionDisplay();
       });
     } else {
-      selectedMenu.innerHTML = '';
+      selectedMenu.innerHTML = `
+        <p>Select a menu.</p>
+      `;
     }
 
     // Check if both date and menu are selected. If so, get the chef data from the menu card and set the selected chef depending on the menu card selected and display the selected chef.
@@ -410,6 +368,8 @@ class SelectedBooking {
       };
 
       selectedChef.innerHTML = `<p>Chef: ${this.chef.name}</p>`;
+      selectedChef.classList.add('d-flex');
+      selectedChef.classList.add('justify-content-center');
     } else {
       // Either date or menu is not selected, clear chef and selectedChef display
       this.chef = null;
@@ -446,7 +406,9 @@ class SelectedBooking {
         selectedBooking.updateSelectionDisplay();
       });
     } else {
-      selectedDate.innerHTML = '';
+      selectedDate.innerHTML = `
+        <p>Select a date</p>
+      `;
     }
 
     // Clear Booking button
@@ -483,6 +445,8 @@ class SelectedBooking {
 
       // Get all the menu cards
       const menuCards = document.querySelectorAll('.menu-card');
+
+      console.log('menuCards', menuCards);
 
       // Find the selected menu card
       let selectedMenuCard = null;
