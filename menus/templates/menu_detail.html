@@ -32,11 +32,14 @@
                 {% endif %}
                 <p>{{ dish.category }}</p>
                 <p>{{ dish.description }}</p>
+                {% if user.is_authenticated and user.chef.user_id == menu.chef.user_id %}
                 <a href="{% url 'edit_dish' menu_id=menu.id dish_id=dish.id %}">Edit Dish</a>
                 <a href="{% url 'delete_dish' menu_id=menu.id dish_id=dish.id %}">Delete Dish</a>
+                {% endif %}
               </div>
             {% endfor %}
         </div>
+        <a href="{% url 'chef_detail' chef_id=menu.chef.user_id %}">Back</a>
     </div>
   </div>
 {% endblock %}

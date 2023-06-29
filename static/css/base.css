@@ -9,6 +9,9 @@
   --accent-color-text: #000000;
 
   --text-black: #000000;
+
+  --card-border-radius: 5px;
+  --card-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 body {
@@ -92,8 +95,8 @@ html {
     top: 0;
     left: 0;
     position: fixed;
-    background-color: white;
     z-index: -1;
+    background-color: #fcfcfc;
   }
 }
 
