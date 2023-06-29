@@ -437,10 +437,4 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     return cookieValue;
   }
-
-  // Function to store the selected date in a variable
-  function storeSelectedDate(selectedDate) {
-    console.log('Storing selected date');
-    console.log('Selected date:', selectedDate);
-  }
 });

@@ -39,3 +39,37 @@
 .menu-selected {
   padding-bottom: 2.41rem;
 }
+
+.review-container {
+  background-color: #fed8b1;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.review-container button {
+  margin-top: 1rem;
+  padding: 0.8rem 0.5rem;
+}
+
+.review-item {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  height: 150px; /* Set a fixed height */
+  overflow: auto; /* Add scrollbar if the content exceeds the height */
+
+  box-shadow: var(--card-box-shadow);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.review-header h6 {
+  margin-bottom: 0;
+}
