@@ -101,17 +101,15 @@
             <!-- Reviews -->
             <div class="row">
               <div class="col-12">
-                <div class="mb-4">
-                  <div class="d-flex align-items-center">
-                    <i class="fas fa-star mr-1"></i>
-                    <span>
-                        {{ chef.average_rating }}
-                        <a href="#reviews">({{ reviews.count }} reviews)</a>
-                    </span>
-                  </div>
-                </div>
-
                   <div class="review-container">
+                    <div class="row mb-2 ml-1 mt-2">
+                      <h3 class="d-flex justify-items-center">
+                        <i class="fas fa-star mr-1 text-primary"></i>
+                        <span>
+                            <p>{{ chef.average_rating }} ({{ reviews.count }} reviews)</p>
+                        </span>
+                      </>
+                    </div>
                     <div class="row">
                       {% for review in reviews|slice:":4" %}
                         <div class="col-lg-6 col-md-12">

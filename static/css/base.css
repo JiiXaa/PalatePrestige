@@ -140,3 +140,13 @@ html {
 .center-text {
   text-align: center;
 }
+
+/* Alerts  */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.fade-out.show {
+  opacity: 1;
+}

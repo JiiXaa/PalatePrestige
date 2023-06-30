@@ -125,13 +125,17 @@
     </header>
 
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
+    <div class="fixed-bottom">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade-out show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
     {% block page_header %}
     {% endblock %}
@@ -141,6 +145,13 @@
 
     {% block postload_js %}
     {% endblock %}
+
+    <script>
+      // Hide alert messages after 6 seconds
+      setTimeout(function () {
+        document.querySelector('.alert').classList.remove('show');
+      }, 6000);
+    </script>
 
   </body>
 </html>
