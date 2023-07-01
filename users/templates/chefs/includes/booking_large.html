@@ -17,7 +17,13 @@
     <p id="totalPrice">Total Price: &#163;0.00</p>
   </div>
   <div id="bookingBtn" class="d-flex justify-content-center">
-    <div class="book-btn-container"><button class="btn btn-outline-primary mr-1" id="submitBookingBtn">Book</button></div>
+    <div class="book-btn-container">
+      {% if user.is_authenticated %}
+        <button class="btn btn-outline-primary mr-1" id="submitBookingBtn">Book</button>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn-primary mr-1">Login to book</a>
+      {% endif %}
+    </div>
     <div id="clearBooking" class="hidden">
       <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
     </div>
