@@ -189,12 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ? document.getElementById('submitBookingBtnMobile')
       : document.getElementById('submitBookingBtn');
 
-  submitBookingBtn.addEventListener('click', () => {
-    console.log('Submit Booking button clicked');
+  if (submitBookingBtn) {
+    submitBookingBtn.addEventListener('click', () => {
+      console.log('Submit Booking button clicked');
 
-    // Open the card payment modal
-    paymentModal.show();
-  });
+      // Open the card payment modal
+      paymentModal.show();
+    });
+  }
 
   // Create the card Element and mount it to the Element DOM element.
   const card = elements.create('card', {
@@ -418,10 +420,14 @@ class SelectedBooking {
 
     if (this.menu) {
       selectedMenu.innerHTML = `
-        <p>Menu: ${this.menuTitle}</p>
-        <span class="icon ml-2">
-          <i class="fa-solid fa-xmark"></i>
-        </span>
+        <p class="badge-info badge p-2 d-flex justify-content-between align-items-center">
+          <span style="font-size: 1.25rem">
+            Menu: ${this.menuTitle}
+          </span>
+          <span class="icon ml-2 d-block d-lg-none" style="font-size: .8rem; background-color: white; border-radius: 50%; padding: 5px;">
+            <i class="fa-solid fa-xmark"></i>
+          </span>
+        </p>
       `;
 
       // Get the icon element
@@ -429,10 +435,33 @@ class SelectedBooking {
 
       // Add an event listener to the icon to remove the selected menu
       icon.addEventListener('click', () => {
-        this.removeSelectedMenuLS();
-        this.clearSelectedMenu();
-        this.clearSelectedChef();
-        this.updateSelectionDisplay();
+        selectedBooking.removeSelectedMenuLS();
+        selectedBooking.removeTotalPriceLS();
+        selectedBooking.clearTotalPrice();
+        selectedBooking.clearSelectedMenu();
+        selectedBooking.clearSelectedChef();
+        selectedBooking.updateSelectionDisplay();
+
+        // Retrieve the total price in the booking modal and shopping bag from local storage
+        const totalPriceLS = localStorage.getItem('totalPrice');
+        const totalPriceIcon = document.getElementById('totalPriceIcon');
+
+        const totalPriceElement =
+          window.innerWidth < 768
+            ? document.getElementById('totalPriceMobile')
+            : document.getElementById('totalPrice');
+
+        if (totalPriceLS) {
+          totalPriceIcon.textContent = `£${parseFloat(totalPriceLS).toFixed(
+            2
+          )}`;
+          totalPriceElement.textContent = `£${parseFloat(totalPriceLS).toFixed(
+            2
+          )}`;
+        } else {
+          totalPriceIcon.textContent = '£0.00';
+          totalPriceElement.textContent = '£0.00';
+        }
       });
     } else {
       selectedMenu.innerHTML = `
@@ -458,7 +487,7 @@ class SelectedBooking {
         name: chefName,
       };
 
-      selectedChef.innerHTML = `<p>Chef: ${this.chef.name}</p>`;
+      selectedChef.innerHTML = `<p class="badge-info badge p-2" style="font-size: 1.25rem">Chef: ${this.chef.name}</p>`;
       selectedChef.classList.add('d-flex');
       selectedChef.classList.add('justify-content-center');
     } else {
@@ -470,18 +499,22 @@ class SelectedBooking {
 
     if (this.date) {
       selectedDate.innerHTML = `
-        <p class="date">${dateObj.toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        })} ${dateObj.toLocaleTimeString('en-GB', {
+        <p class="date badge-info badge p-2 d-flex justify-content-between align-items-center">
+          <span style="font-size: 1.25rem">
+          ${dateObj.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          })} ${dateObj.toLocaleTimeString('en-GB', {
         hour: 'numeric',
         minute: 'numeric',
-      })}</p>
-        <span class="icon ml-2">
-          <i class="fa-solid fa-xmark"></i>
-        </span>
-      `;
+      })}
+          </span>
+          <span class="icon ml-2 d-block d-lg-none" style="font-size: 0.8rem; background-color: white; border-radius: 50%; padding: 5px;">
+            <i class="fa-solid fa-xmark"></i>
+          </span>
+        </p>
+  `;
 
       // Get the icon element
       const icon = selectedDate.querySelector('.icon');

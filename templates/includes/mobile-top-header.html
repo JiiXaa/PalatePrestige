@@ -1,3 +1,5 @@
+{% load static %}
+{% load group_filter %}
 <ul>
   <li class="list-inline-item">
     <a class="text-black nav-link d-block d-lg-none" href="#" id="mobile-search" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -25,15 +27,20 @@
     <a class="text-black nav-link d-block d-lg-none" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="text-center">
             <div><i class="fas fa-user fa-lg"></i></div>
-            <p class="my-0">My Account</p>
+            <p class="my-0">Browse</p>
         </div>
     </a>
     <div class="dropdown-menu border-0" aria-labelledby="user-options">
+        {% if request.user.is_superuser %}
+            <a href="#" class="dropdown-item">Admin</a>
+        {% endif %}
         {% if request.user.is_authenticated %}
-            {% if request.user.is_superuser %}
-                <a href="{% url 'account_logout' %}" class="dropdown-item">Product Management</a>
+            <a href="{% url 'chefs' %}" class="dropdown-item">All Chefs</a>
+            {% if user|has_group:'Chef' %}
+                <a href="{% url 'chef_detail' chef_id=user.id %}" class="dropdown-item">My Profile</a>
+            {% elif user|has_group:'Customer' %}
+                <a href="{% url 'customer_detail' customer_id=user.id %}" class="dropdown-item">My Profile</a>
             {% endif %}
-            <a href="" class="dropdown-item">My Profile</a>
             <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
         {% else %}
             <a href="{% url 'account_signup' %}" class="dropdown-item">Register</a>

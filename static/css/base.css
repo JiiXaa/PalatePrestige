@@ -133,8 +133,19 @@ html {
   display: none;
 }
 
-.mt-custom-10rem {
-  margin-top: 10rem;
+.fa-xmark {
+  cursor: pointer;
+  color: #d32f2f;
+}
+
+.mt-custom-7rem {
+  margin-top: 7rem;
+}
+
+@media screen and (min-width: 768px) {
+  .mt-custom-10rem {
+    margin-top: 10rem;
+  }
 }
 
 .center-text {
