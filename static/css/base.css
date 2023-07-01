@@ -36,7 +36,7 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  clip-path: polygon(0 34%, 100% 33%, 100% 64%, 0 54%);
+  clip-path: polygon(0 40%, 100% 39%, 100% 74%, 0 64%);
   background-color: var(--primary-color);
   z-index: -1;
 }
@@ -66,7 +66,6 @@ html {
     justify-content: center;
     align-items: center;
     height: 100%;
-    border: 2px solid tomato;
     margin-top: 4rem;
   }
 
@@ -83,11 +82,6 @@ html {
     padding-top: 164px;
   }
 
-  /* TESTING ONLY */
-  .move-down {
-    margin-top: 8rem;
-  }
-
   /* Background color trick for the content (just place div on top of the content) */
   .overlay {
     height: 100%;
@@ -101,19 +95,44 @@ html {
 }
 
 @media (max-width: 667px) {
+  body {
+    height: calc(100vh - 116px);
+  }
+
+  .home-container {
+    margin-top: 5rem;
+  }
+
   .header-container {
     padding-top: 116px;
   }
 
-  body {
-    height: calc(100vh - 116px);
+  .hero-container {
+    text-align: center;
+  }
+  .slider-container {
+    display: none;
+  }
+
+  .home-bg-clip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: none;
+    background-color: var(--primary-color);
+    z-index: -1;
   }
 }
 
-/* TESTING ONLY */
+#headernav {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
 #topnav {
   background-color: var(--primary-color) !important;
-  border-bottom: 3px solid black;
+  padding-bottom: 0.6rem !important;
 }
 
 /* Allauth custom styles */
@@ -131,6 +150,10 @@ html {
 /* Utility classes */
 .hidden {
   display: none;
+}
+
+.text-white {
+  color: #fff !important;
 }
 
 .fa-xmark {
