@@ -39,6 +39,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Variable to hold the selected menu card
   let selectedMenuCard = null;
 
+  // Retrieve the total price in the booking modal and shopping bag from local storage
+  const totalPriceLS = localStorage.getItem('totalPrice');
+  const totalPriceIcon = document.getElementById('totalPriceIcon');
+
+  const totalPriceElement =
+    window.innerWidth < 768
+      ? document.getElementById('totalPriceMobile')
+      : document.getElementById('totalPrice');
+
+  if (totalPriceLS) {
+    totalPriceIcon.textContent = `£${parseFloat(totalPriceLS).toFixed(2)}`;
+    totalPriceElement.textContent = `£${parseFloat(totalPriceLS).toFixed(2)}`;
+  } else {
+    totalPriceIcon.textContent = '£0.00';
+    totalPriceElement.textContent = '£0.00';
+  }
   // Add click event listener to each button
   addMenuToBookingBtns.forEach((btn) => {
     btn.addEventListener('click', function () {
@@ -109,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Update total price on the shopping bag icon
       const totalPriceIcon = document.getElementById('totalPriceIcon');
-      totalPriceIcon.textContent = totalPrice ? `£${totalPrice.toFixed(2)}` : '£0';
+      totalPriceIcon.textContent = totalPrice
+        ? `£${totalPrice.toFixed(2)}`
+        : '£0';
 
       // Hide the clicked button and show the rest
       addMenuToBookingBtns.forEach((button) => {
@@ -244,6 +262,7 @@ class SelectedBooking {
     this.menu = null;
     this.menuTitle = null;
     this.chef = null;
+    this.totalPrice = 0;
   }
 
   setSelectedDate(date) {
@@ -328,11 +347,32 @@ class SelectedBooking {
     localStorage.removeItem('selectedChef');
   }
 
+  setTotalPrice(totalPrice) {
+    this.totalPrice = totalPrice;
+  }
+
+  getTotalPrice() {
+    return this.totalPrice;
+  }
+
+  clearTotalPrice() {
+    this.totalPrice = 0;
+  }
+
+  addTotalPriceLS(totalPrice) {
+    localStorage.setItem('totalPrice', totalPrice);
+  }
+
+  removeTotalPriceLS() {
+    localStorage.removeItem('totalPrice');
+  }
+
   clearSelectedBookingLS() {
     localStorage.removeItem('selectedDate');
     localStorage.removeItem('selectedMenu');
     localStorage.removeItem('selectedMenuTitle');
     localStorage.removeItem('selectedChef');
+    localStorage.removeItem('totalPrice');
   }
 
   clearSelectedBooking() {
@@ -340,6 +380,7 @@ class SelectedBooking {
     this.menu = null;
     this.menuTitle = null;
     this.chef = null;
+    this.totalPrice = 0;
   }
 
   updateSelectionDisplay() {
@@ -520,20 +561,27 @@ class SelectedBooking {
       // Calculate the total price
       const totalPrice = numberOfGuests * menuPrice;
 
+      // Update the total price in the selectedBooking instance
+      this.setTotalPrice(totalPrice);
+
       // Display the total price on the booking modal
       const totalPriceElement =
         window.innerWidth < 768
           ? document.getElementById('totalPriceMobile')
           : document.getElementById('totalPrice');
-      totalPriceElement.textContent = `Total Price: £${totalPrice.toFixed(2)}`;
+      totalPriceElement.textContent = `Total Price: £${selectedBooking.totalPrice.toFixed(
+        2
+      )}`;
 
       // Update the total price on the bag icon
       const totalPriceIcon = document.getElementById('totalPriceIcon');
-      console.log('totalPriceIcon', totalPriceIcon);
-      console.log('totalPrice', totalPrice);
+
       totalPriceIcon.textContent = totalPrice
-        ? `£${totalPrice.toFixed(2)}`
+        ? `£${selectedBooking.totalPrice.toFixed(2)}`
         : '£0';
+
+      // Store the total price in the local storage
+      this.addTotalPriceLS(totalPrice);
     });
   }
 }
@@ -578,6 +626,7 @@ function createBooking(
 
   // Get the menu price from the menu card
   const menuCard = document.querySelector('.menu-card');
+
   // Get the menu price from the menu card (price per person)
   const menuPriceAttribute = menuCard.getAttribute('data-menu-price');
 
