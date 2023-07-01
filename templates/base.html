@@ -95,24 +95,6 @@
                 <a href="{% url 'account_signup' %}" class="mr-3">Sign Up</a>
               </li>
             {% endif %}
-            {% if request.user.is_authenticated %}
-            <li class="list-inline-item">
-              <a href="" class="{% if sum_total %}text-info font-weight-bold{% else %} text-black{% endif %} nav-link">
-                <div class="text-center">
-                  <div>
-                    <i class="fas fa-shopping-bag fa-lg"></i>
-                  </div>
-                  <p class="my-0">
-                    {% if sum_total %}
-                      <span class="badge badge-pill badge-info">&#163;{{ sum_total|floatformat:2 }}</span>
-                    {% else %}
-                      <span class="badge badge-pill badge-secondary">&#163;0.00</span>
-                    {% endif %}
-                  </p>
-                </div>
-              </a>
-            </li>
-            {% endif %}
           </ul>
         </div>
       </div>
@@ -147,11 +129,13 @@
     {% endblock %}
 
     <script>
-      // Hide alert messages after 6 seconds
-      setTimeout(function () {
-        document.querySelector('.alert').classList.remove('show');
-      }, 6000);
+      // Hide alert messages after 6 seconds if they exist
+      let alertElement = document.querySelector('.alert');
+      if (alertElement) {
+        setTimeout(function () {
+          alertElement.classList.remove('show');
+        }, 6000);
+      }
     </script>
-
   </body>
 </html>

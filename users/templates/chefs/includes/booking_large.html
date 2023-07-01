@@ -1,0 +1,25 @@
+<!-- Second column fixed on the right side (1/4 of the container width) -->
+<div class="booking-container col-lg-2 align-self-center">
+  <div id="selectedChef" data-chef-id="{{ chef.user_id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
+  <div id="selectedDate" class="d-flex justify-content-center">
+    <p>Please select a date</p>
+  </div>
+  <div id="selectedMenu" class="d-flex justify-content-center">
+    <p>Please select a menu</p>
+  </div>
+  <div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-column align-items-center col-lg-4">
+      <label for="numberOfGuests">Number of guests:</label>
+      <input type="number" id="numberOfGuests" name="numberOfGuests" min="0" value="0">
+    </div>
+  </div>
+  <div class="price-container d-flex justify-content-center">
+    <p id="totalPrice">Total Price: &#163;0.00</p>
+  </div>
+  <div id="bookingBtn" class="d-flex justify-content-center">
+    <div class="book-btn-container"><button class="btn btn-outline-primary mr-1" id="submitBookingBtn">Book</button></div>
+    <div id="clearBooking" class="hidden">
+      <button class="btn btn-primary" id="clearBookingBtn">Clear Booking</button>
+    </div>
+  </div>
+</div>

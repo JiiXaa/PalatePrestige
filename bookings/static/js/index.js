@@ -15,6 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
     {}
   );
 
+  // Event listener for the booking modal close button
+  const bookingModalCloseBtn = document.querySelector(
+    '#mobileBookingModal .close'
+  );
+  bookingModalCloseBtn.addEventListener('click', () => {
+    // Remove the inline style from the body element to clear the padding-right
+    document.body.style.paddingRight = '';
+  });
+
+  // Event listener for the payment modal hidden event
+  paymentModal._element.addEventListener('hidden.bs.modal', () => {
+    // Remove the inline style from the body element to clear the padding-right
+    document.body.style.paddingRight = '';
+  });
+
   // Access the existing selectedBooking instance from the window object
   const selectedBooking = window.selectedBooking;
 
@@ -53,7 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedBooking.updateSelectionDisplay();
 
       // Update the total price
-      const numberOfGuestsInput = document.getElementById('numberOfGuests');
+      const numberOfGuestsInput =
+        window.innerWidth < 768
+          ? document.getElementById('numberOfGuestsMobile')
+          : document.getElementById('numberOfGuests');
       const numberOfGuests = parseInt(numberOfGuestsInput.value);
 
       // Get all the menu cards
@@ -80,8 +98,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalPrice = numberOfGuests * menuPrice;
 
       // Display the total price
-      const totalPriceElement = document.getElementById('totalPrice');
-      totalPriceElement.textContent = `Total Price: £${totalPrice.toFixed(2)}`;
+      // Update total price on the booking modal
+      const totalPriceElement =
+        window.innerWidth < 768
+          ? document.getElementById('totalPriceMobile')
+          : document.getElementById('totalPrice');
+      totalPriceElement.textContent = totalPrice
+        ? `£${totalPrice.toFixed(2)}`
+        : '£0';
+
+      // Update total price on the shopping bag icon
+      const totalPriceIcon = document.getElementById('totalPriceIcon');
+      totalPriceIcon.textContent = totalPrice ? `£${totalPrice.toFixed(2)}` : '£0';
 
       // Hide the clicked button and show the rest
       addMenuToBookingBtns.forEach((button) => {
@@ -98,9 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearBookingBtn = document.getElementById('clearBookingBtn');
 
   clearBookingBtn.addEventListener('click', () => {
-    // Set totalPriceElement.textContent to 0
-    const totalPriceElement = document.getElementById('totalPrice');
+    // Update total price on the booking modal
+    const totalPriceElement =
+      window.innerWidth < 768
+        ? document.getElementById('totalPriceMobile')
+        : document.getElementById('totalPrice');
     totalPriceElement.textContent = 'Total Price: £0';
+
+    // Update total price on the shopping bag icon
+    const totalPriceIcon = document.getElementById('totalPriceIcon');
+    totalPriceIcon.textContent = '£0';
 
     // Show all addMenuToBookingBtns
     addMenuToBookingBtns.forEach((button) => {
@@ -108,7 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Update the total price
-    const numberOfGuestsInput = document.getElementById('numberOfGuests');
+    const numberOfGuestsInput =
+      window.innerWidth < 768
+        ? document.getElementById('numberOfGuestsMobile')
+        : document.getElementById('numberOfGuests');
     numberOfGuestsInput.value = 0;
 
     selectedBooking.clearSelectedBookingLS();
@@ -128,7 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Submit Booking button
-  const submitBookingBtn = document.getElementById('submitBookingBtn');
+  const submitBookingBtn =
+    window.innerWidth < 768
+      ? document.getElementById('submitBookingBtnMobile')
+      : document.getElementById('submitBookingBtn');
 
   submitBookingBtn.addEventListener('click', () => {
     console.log('Submit Booking button clicked');
@@ -302,9 +343,18 @@ class SelectedBooking {
   }
 
   updateSelectionDisplay() {
-    let selectedDate = document.getElementById('selectedDate');
-    let selectedMenu = document.getElementById('selectedMenu');
-    let selectedChef = document.getElementById('selectedChef');
+    let selectedDate =
+      window.innerWidth < 768
+        ? document.getElementById('selectedDateMobile')
+        : document.getElementById('selectedDate');
+    let selectedMenu =
+      window.innerWidth < 768
+        ? document.getElementById('selectedMenuMobile')
+        : document.getElementById('selectedMenu');
+    let selectedChef =
+      window.innerWidth < 768
+        ? document.getElementById('selectedChefMobile')
+        : document.getElementById('selectedChef');
 
     if (localStorage.getItem('selectedDate')) {
       this.date = localStorage.getItem('selectedDate');
@@ -436,12 +486,16 @@ class SelectedBooking {
     }
 
     // Get the number of guests from the input field
-    const numberOfGuestsInput = document.getElementById('numberOfGuests');
+    const numberOfGuestsInput =
+      window.innerWidth < 768
+        ? document.getElementById('numberOfGuestsMobile')
+        : document.getElementById('numberOfGuests');
 
     // Add an event listener to the number of guests input field
     numberOfGuestsInput.addEventListener('input', () => {
       // Get the current number of guests
       const numberOfGuests = parseInt(numberOfGuestsInput.value);
+      console.log('number of guests updated', numberOfGuests);
 
       // Get all the menu cards
       const menuCards = document.querySelectorAll('.menu-card');
@@ -466,9 +520,20 @@ class SelectedBooking {
       // Calculate the total price
       const totalPrice = numberOfGuests * menuPrice;
 
-      // Display the total price
-      const totalPriceElement = document.getElementById('totalPrice');
+      // Display the total price on the booking modal
+      const totalPriceElement =
+        window.innerWidth < 768
+          ? document.getElementById('totalPriceMobile')
+          : document.getElementById('totalPrice');
       totalPriceElement.textContent = `Total Price: £${totalPrice.toFixed(2)}`;
+
+      // Update the total price on the bag icon
+      const totalPriceIcon = document.getElementById('totalPriceIcon');
+      console.log('totalPriceIcon', totalPriceIcon);
+      console.log('totalPrice', totalPrice);
+      totalPriceIcon.textContent = totalPrice
+        ? `£${totalPrice.toFixed(2)}`
+        : '£0';
     });
   }
 }
@@ -505,7 +570,11 @@ function createBooking(
   }
 
   // Get the number of guests
-  const numberOfGuests = document.getElementById('numberOfGuests').value;
+  const numberOfGuestsInput =
+    window.innerWidth < 768
+      ? document.getElementById('numberOfGuestsMobile')
+      : document.getElementById('numberOfGuests');
+  const numberOfGuests = numberOfGuestsInput.value;
 
   // Get the menu price from the menu card
   const menuCard = document.querySelector('.menu-card');

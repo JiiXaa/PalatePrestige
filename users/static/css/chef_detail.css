@@ -17,21 +17,6 @@
   box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }
 
-.booking-container {
-  background-color: white;
-  position: -webkit-fixed;
-  position: fixed;
-  top: 25%;
-  right: 20%;
-  padding: 2rem 0;
-  border-radius: 5px;
-  box-shadow: var(--card-box-shadow);
-}
-
-.booking-container div:nth-child(n) {
-  padding-bottom: 10px;
-}
-
 .test {
   background-color: red;
 }
@@ -72,4 +57,26 @@
 
 .review-header h6 {
   margin-bottom: 0;
+}
+
+.booking-container {
+  display: none;
+}
+
+@media screen and (min-width: 1200px) {
+  .booking-container {
+    display: block;
+    background-color: white;
+    position: -webkit-fixed;
+    position: fixed;
+    top: 25%;
+    right: 20%;
+    padding: 2rem 0;
+    border-radius: 5px;
+    box-shadow: var(--card-box-shadow);
+  }
+
+  .booking-container div:nth-child(n) {
+    padding-bottom: 10px;
+  }
 }

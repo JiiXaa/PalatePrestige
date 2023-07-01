@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('Chef ID:', chefId);
 
   // Check if the selectedBooking instance already exists in the window object
-  const selectedBooking = window.aselectedBooking || new SelectedBooking();
+  const selectedBooking = window.selectedBooking || new SelectedBooking();
 
   // Assign the selectedBooking instance to the window object
   window.selectedBooking = selectedBooking;
