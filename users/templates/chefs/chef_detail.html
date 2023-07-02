@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load group_filter %}
 
 {% block extra_js %}
     <!-- Include the base extra_js block from the base.html template -->
@@ -24,41 +25,55 @@
     <!-- Main row -->
     <div class="row">
         <!-- First column (2/3 of the page) -->
-        <div class="col-lg-8">
+        <div class="col-lg-{% if request.user.is_authenticated and user|has_group:'Customer' %}8{% else %}12{% endif %}">
             <!-- Chef Details -->
             <div class="row mb-5">
+              <div class="col-12 text-center mb-4">
+                {% if request.user.is_authenticated and user|has_group:'Customer'%}
+                  <div id="openMobileBookingModalBtn" class="d-inline-block d-lg-none custom-btn">
+                    <button class="btn btn-link nav-link border rounded pb-0 pt-2" data-bs-toggle="modal" data-bs-target="#mobileBookingModal">
+                      <div class="text-center pt-1">
+                        <p class="my-0">
+                          <span id="totalPriceIcon" class="badge-primary badge badge-pill">£0</span>
+                        </p>
+                        <p class="d-inline-block">Booking Summary</p>
 
+                      </div>
+                    </button>
+                  </div>
+                {% endif %}
+              </div>
 
               <div class="col-12">
                 <div class="row">
-                  <div class="col-md-6 d-flex align-items-center justify-content-center mb-3">
-                    {% if chef.user.profile_image %}
-                      <div class="profile-image-container">
-                        <img src="{{ chef.user.profile_image.url }}" alt="Profile Image" class="img-fluid">
-                      </div>
-                    {% else %}
-                      <div class="profile-image-container">
-                        <img src="{{ MEDIA_URL }}placeholder_img.png" alt="Placeholder Image" class="img-fluid">
-                      </div>
-                    {% endif %}
-                  </div>
-                  <div class="col-md-6">
-                    <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
-                      <h2 class="mr-3">{{ chef.user.first_name|capfirst }} {{ chef.user.last_name|capfirst }}</h2>
-                      <p class="my-auto ">
-                        <i class="fas fa-star text-primary"></i>
-                        <span class="review-span">
-                          {{ chef.average_rating }}
-                          <a href="#reviews">({{ reviews.count }} reviews)</a>
-                        </span>
-                      </p>
+                  <div class="col-md-4 d-flex align-items-center justify-content-center mb-3">
+                      {% if chef.user.profile_image %}
+                        <div class="profile-image-container">
+                          <img src="{{ chef.user.profile_image.url }}" alt="Profile Image" class="img-fluid">
+                        </div>
+                      {% else %}
+                        <div class="profile-image-container">
+                          <img src="{{ MEDIA_URL }}placeholder_img.png" alt="Placeholder Image" class="img-fluid">
+                        </div>
+                      {% endif %}
                     </div>
-                    <p>{{ chef.bio|capfirst }}</p>
-                    {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
-                      <a href="{% url 'edit_chef' chef_id=chef.user.id %}" class="btn btn-outline-primary mr-1">Edit Profile</a>
-                      <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
-                    {% endif %}
-                  </div>
+                    <div class="col-md-8">
+                      <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
+                        <h2 class="mr-3">{{ chef.user.first_name|capfirst }} {{ chef.user.last_name|capfirst }}</h2>
+                        <p class="my-auto ">
+                          <i class="fas fa-star text-primary"></i>
+                          <span class="review-span">
+                            {{ chef.average_rating }}
+                            <a href="#reviews">({{ reviews.count }} reviews)</a>
+                          </span>
+                        </p>
+                      </div>
+                      <p>{{ chef.bio|capfirst }}</p>
+                      {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
+                        <a href="{% url 'edit_chef' chef_id=chef.user.id %}" class="btn btn-outline-primary mr-1">Edit Profile</a>
+                        <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
+                      {% endif %}
+                    </div>
                 </div>
               </div>
             </div>
@@ -153,8 +168,14 @@
     </div>
 </div>
 
-{% include 'chefs/includes/booking_large.html' %}
-{% include 'chefs/includes/booking_mobile.html' %}
+{% if request.user.is_authenticated and user|has_group:'Customer' %}
+  {% include 'chefs/includes/booking_large.html' with hide=False %}
+  {% include 'chefs/includes/booking_mobile.html' with hide=False %}
+{% else %}
+  {% include 'chefs/includes/booking_large.html' with hide=True %}
+  {% include 'chefs/includes/booking_mobile.html' with hide=True %}
+{% endif %}
+
 
 <!-- Stripe Payment Modal -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">

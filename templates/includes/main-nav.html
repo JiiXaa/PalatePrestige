@@ -1,39 +1,39 @@
 <div class="collapse navbar-collapse" id="main-nav">
-  <ul class="navbar-nav w-auto mx-auto">
+    <ul class="navbar-nav mx-auto">
       <li class="nav-item dropdown">
-          <a class="logo-font font-weight-bold nav-link text-black mr-5" href="#" id="all-chefs-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Our Chefs
-          </a>
-          <div class="dropdown-menu border-0" aria-labelledby="all-chefs-link">
-              <a href="" class="dropdown-item">By Price</a>
-              <a href="" class="dropdown-item ">By Rating</a>
-              <a href="" class="dropdown-item ">By Category</a>
-              <a href="{% url 'chefs' %}" class="dropdown-item">All Chefs</a>
-          </div>
+        <a class="logo-font font-weight-bold nav-link text-black me-5" href="#" id="all-chefs-link" data-bs-toggle="dropdown" aria-expanded="false">
+          Our Chefs
+        </a>
+        <ul class="dropdown-menu border-0" aria-labelledby="all-chefs-link">
+          <li><a href="#" class="dropdown-item">By Price</a></li>
+          <li><a href="#" class="dropdown-item">By Rating</a></li>
+          <li><a href="#" class="dropdown-item">By Category</a></li>
+          <li><a href="{% url 'chefs' %}" class="dropdown-item">All Chefs</a></li>
+        </ul>
       </li>
 
       <li class="nav-item dropdown">
-          <a class="logo-font font-weight-bold nav-link text-black mr-5" href="#" id="food-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Food Types
-          </a>
-          <div class="dropdown-menu border-0" aria-labelledby="clothing-link">
-              <a href="{% url 'menus'%}?category=Mediterranean" class="dropdown-item">Mediterranean</a>
-              <a href="{% url 'menus'%}?category=Indian" class="dropdown-item">Indian</a>
-              <a href="{% url 'menus'%}?category=Thai" class="dropdown-item">Thai</a>
-              <a href="{% url 'menus'%}?category=Japanese" class="dropdown-item">Japanese</a>
-              <a href="{% url 'menus'%}" class="dropdown-item">All types</a>
-          </div>
+        <a class="logo-font font-weight-bold nav-link text-black me-5" href="#" id="food-link" data-bs-toggle="dropdown" aria-expanded="false">
+          Menu Types
+        </a>
+        <ul class="dropdown-menu border-0" aria-labelledby="food-link">
+          <li><a href="{% url 'menus' %}?category=Mediterranean" class="dropdown-item">Mediterranean</a></li>
+          <li><a href="{% url 'menus' %}?category=Indian" class="dropdown-item">Indian</a></li>
+          <li><a href="{% url 'menus' %}?category=Thai" class="dropdown-item">Thai</a></li>
+          <li><a href="{% url 'menus' %}?category=Japanese" class="dropdown-item">Japanese</a></li>
+          <li><a href="{% url 'menus' %}" class="dropdown-item">All types</a></li>
+        </ul>
       </li>
 
       <li class="nav-item dropdown">
-          <a class="logo-font font-weight-bold nav-link text-black" href="#" id="specials-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Special Offers
-          </a>
-          <div class="dropdown-menu border-0" aria-labelledby="specials-link">
-              <a href="" class="dropdown-item">New Deals</a>
-              <a href="" class="dropdown-item">Last Minute</a>
-              <a href="" class="dropdown-item">All Specials</a>
-          </div>
+        <a class="logo-font font-weight-bold nav-link text-black" href="#" id="specials-link" data-bs-toggle="dropdown" aria-expanded="false">
+          Special Offers
+        </a>
+        <ul class="dropdown-menu border-0" aria-labelledby="specials-link">
+          <li><a href="#" class="dropdown-item">New Deals</a></li>
+          <li><a href="#" class="dropdown-item">Last Minute</a></li>
+          <li><a href="#" class="dropdown-item">All Specials</a></li>
+        </ul>
       </li>
-  </ul>
-</div>
+    </ul>
+  </div>

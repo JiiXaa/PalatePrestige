@@ -45,16 +45,16 @@
     <header id="headernav" class="container-fluid fixed-top">
       <div id="topnav" class="row bg-white pt-lg-2 d-none d-lg-flex">
         <div class="col-12 col-lg-4 my-auto py-1 py-lg-0 text-center text-lg-left">
-          <a href="{% url 'home' %}" class="nav-link main-logo-link">
+          <a href="{% url 'home' %}" class="navbar-brand">
             <h2 class="logo-font text-white my-0"><strong>Palate</strong>Prestige</h2>
           </a>
         </div>
         <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
           <form method="GET" action="{% url 'menus' %}">
             <div class="input-group w-100">
-              <input type="text" name="q" placeholder="Search for menus" class="form-control border border-black rounded-0" >
+              <input type="text" name="q" placeholder="Search for menus" class="form-control border border-black rounded-0">
               <div class="input-group-append">
-                <button type="submit" class="form-control btn btn-black border border-black rounded-0">
+                <button type="submit" class="form-control btn btn-dark border border-black rounded-0">
                   <span class="icon">
                     <i class="fas fa-search"></i>
                   </span>
@@ -64,59 +64,61 @@
           </form>
         </div>
         <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
-          <ul class="list-inline list-unstyled text-center text-lg-right my-0">
+          <ul class="list-inline text-center text-lg-end my-0 d-flex">
             {% if request.user.is_authenticated %}
-            <li class="list-inline-item dropdown mr-2">
-              <a href="#" class="text-white nav-link" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div class="text-center">
-                  <i class="fas fa-user" style="font-size: 1.25rem;"></i>
-                </div>
-                <span class="d-none d-lg-inline-block" style="font-size: 1.15rem;">My Account</span>
-              </a>
-                <div class="dropdown-menu border-0" aria-labelledby="user-options">
-                    {% if request.user.is_superuser %}
-                        <a href="#" class="dropdown-item">Admin</a>
-                    {% endif %}
-                    {% if user.is_authenticated %}
-                      {% if user|has_group:'Chef' %}
-                        <a href="{% url 'chef_detail' chef_id=user.id %}" class="dropdown-item">My Profile</a>
-                      {% elif user|has_group:'Customer' %}
-                        <a href="{% url 'customer_detail' customer_id=user.id %}" class="dropdown-item">My Profile</a>
-                      {% endif %}
-                    {% endif %}
-                    <a href="#" class="dropdown-item">My Bookings</a>
-                    <a href="#" class="dropdown-item">My Reviews</a>
-                    <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
-                </div>
-            </li>
+                <li class="list-inline-item dropdown mr-2 ml-auto">
+                    <a href="#" class="text-white nav-link" id="user-options" data-bs-toggle="dropdown" aria-haspopup="true">
+                        <div class="text-center">
+                            <i class="fas fa-user" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <span class="d-none d-lg-inline-block" style="font-size: 1.15rem;">My Account</span>
+                    </a>
+                    <ul class="dropdown-menu border-0" aria-labelledby="user-options">
+                        {% if request.user.is_superuser %}
+                            <li><a href="#" class="dropdown-item">Admin</a></li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            {% if user|has_group:'Chef' %}
+                                <li><a href="{% url 'chef_detail' chef_id=user.id %}" class="dropdown-item">My Profile</a></li>
+                            {% elif user|has_group:'Customer' %}
+                                <li><a href="{% url 'customer_detail' customer_id=user.id %}" class="dropdown-item">My Profile</a></li>
+                            {% endif %}
+                        {% endif %}
+                        <li><a href="#" class="dropdown-item">My Bookings</a></li>
+                        <li><a href="#" class="dropdown-item">My Reviews</a></li>
+                        <li><a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a></li>
+                    </ul>
+                </li>
             {% else %}
-              <li class="list-inline-item" style="font-size: 1.15rem;">
-                <a href="{% url 'account_login' %}" class="mr-3 text-white">Login</a>
-                <a href="{% url 'account_signup' %}" class="mr-3 text-white">Sign Up</a>
-              </li>
+                <li class="list-inline-item ml-auto" style="font-size: 1.15rem;">
+                    <a href="{% url 'account_login' %}" class="mr-3 text-white">Login</a>
+                    <a href="{% url 'account_signup' %}" class="mr-3 text-white">Sign Up</a>
+                </li>
             {% endif %}
-          </ul>
+        </ul>
         </div>
       </div>
       <div class="row bg-white">
-        <nav class="navbar navbar-expand-lg navbar-light w-100">
+        <nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-center align-items-center w-100">
           {% include "includes/mobile-top-header.html" %}
           {% include "includes/main-nav.html" %}
         </nav>
       </div>
     </header>
 
+
     {% if messages %}
     <div class="fixed-bottom">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-          <span>{{ message }}</span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade-out show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
       {% endfor %}
     </div>
   {% endif %}
-
 
     {% block page_header %}
     {% endblock %}
@@ -129,12 +131,12 @@
 
     <script>
       // Hide alert messages after 6 seconds if they exist
-      document.querySelectorAll('.alert').forEach(alertElement => {
-        setTimeout(() => {
-          var bsAlert = new bootstrap.Alert(alertElement);
-          bsAlert.close();
+      let alertElement = document.querySelector('.alert');
+      if (alertElement) {
+        setTimeout(function () {
+          alertElement.classList.remove('show');
         }, 6000);
-      });
+      }
     </script>
   </body>
 </html>

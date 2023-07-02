@@ -1,5 +1,5 @@
 <!-- Second column fixed on the right side (1/4 of the container width) -->
-<div class="booking-container col-lg-2 align-self-center">
+<div class="booking-container col-lg-2 align-self-center {% if hide %}opacity-0{% endif %}">
   <div id="selectedChef" data-chef-id="{{ chef.user_id }}" data-chef-name="{{ chef.user.first_name }} {{ chef.user.last_name }}"></div>
   <div id="selectedDate" class="d-flex justify-content-center">
     <p>Please select a date</p>
