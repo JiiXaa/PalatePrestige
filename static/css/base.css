@@ -181,6 +181,11 @@ html {
   margin-top: 7rem;
 }
 
+.custom-btn {
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
 .custom-dropdown {
   min-width: 250px;
 }
@@ -203,4 +208,13 @@ html {
 
 .fade-out.show {
   opacity: 1;
+}
+
+.btn-close::before {
+  content: '\00d7';
+  font-size: 1.5rem;
+}
+.btn-close {
+  background: none;
+  border: none;
 }

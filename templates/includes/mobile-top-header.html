@@ -44,16 +44,4 @@
             {% endif %}
         </div>
     </li>
-    {% if request.user.is_authenticated and user|has_group:'Customer'%}
-        <li class="list-inline-item">
-            <button id="openMobileBookingModalBtn" class="btn btn-link nav-link d-block d-lg-none" data-bs-toggle="modal" data-bs-target="#mobileBookingModal">
-                <div class="text-center">
-                    <div><i class="fas fa-shopping-bag fa-lg"></i></div>
-                    <p class="my-0">
-                        <span id="totalPriceIcon" class="badge-primary badge badge-pill">£0</span>
-                    </p>
-                </div>
-            </button>
-        </li>
-    {% endif %}
 </ul>
