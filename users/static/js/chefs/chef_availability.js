@@ -56,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Events:', events);
 
       if (calendar) {
-        console.log('Updating events...');
-        // TODO: update events when the chef's availability is updated
         // Update the calendar with the chef's availability
         calendar.removeAllEvents();
         calendar.addEventSource(events);

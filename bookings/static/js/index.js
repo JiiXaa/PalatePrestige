@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     totalPriceElement.textContent = `Total Price: £${parseFloat(
       totalPriceLS
     ).toFixed(2)}`;
-  } else {
+  } else if (totalPriceIcon) {
     totalPriceIcon.textContent = '£0.00';
     totalPriceElement.textContent = '£0.00';
   }
