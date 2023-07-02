@@ -68,6 +68,7 @@ def all_chefs(request):
 
     context = {
         "all_chefs": all_chefs,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request, "chefs/chefs.html", context)

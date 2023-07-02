@@ -213,3 +213,7 @@ html {
 .fade-out.show {
   opacity: 1;
 }
+
+.chef-card {
+  box-shadow: var(--card-box-shadow);
+}

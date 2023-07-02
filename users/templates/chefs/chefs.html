@@ -1,24 +1,52 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
+{% load static custom_filters %}
 
 {% block content %}
-  <div class="container">
+  <div class="container mt-custom-10rem mt-custom-7rem">
     <div class="row">
-      {% for chef in all_chefs %}
-        <div class="col">
-          <h2>{{ chef.user.first_name }} {{ chef.user.last_name }}</h2>
-          <p>{{ chef.bio }}</p>
-          <a href="{% url 'chef_detail' chef_id=chef.user_id %}">More Details</a>
+        <div class="col-10 col-lg-6 mx-auto mb-5 pt-3 call-cta">
+            <p class="text-center text-grey-dark">
+              Looking for a chef? Call us:
+              <a href="tel:+x592362685x" class="text-primary"><strong>x592362685x</strong></a>
+            </p>
         </div>
-      {% endfor %}
+        <div class="card-deck">
+          {% for chef in all_chefs %}
+            <div class="col-12 col-md-6 mb-3">
+              <div class="card chef-card h-100" data-chef-id="{{ chef.user_id }}">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    {% if chef.user.profile_image %}
+                        <img src="{{ chef.user.profile_image.url }}" alt="Profile Image" class="rounded-circle img-fluid chef-image" style="height: 110px; width: 110px; object-fit: cover; margin-right: 10px;">
+                    {% else %}
+                        <img src="{{ MEDIA_URL }}placeholder_img.png" alt="Placeholder Image" class="rounded-circle img-fluid chef-image" style="height: 110px; width: 110px; object-fit: cover; margin-right: 10px;">
+                    {% endif %}
+                    <div>
+                      <a href="{% url 'chef_detail' chef_id=chef.user_id %}">
+                        <h4 class="card-title mb-0">{{ chef.user.first_name }} {{ chef.user.last_name }}</h4>
+                      </a>
+                      <div class="d-flex align-items-center">
+                        {% if chef.average_rating == 0 %}
+                          <span class="badge badge-success mt-2">New</span>
+                        {% else %}
+                          <i class="fas fa-star text-primary mr-1"></i>
+                          <span class="review-span" style="font-size: 1.15rem;">{{ chef.average_rating }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  <p>{{ chef.bio }}</p>
+                  <div class="chef-cuisine-types mb-3">
+                    {% for cuisine_type in chef.cuisine_types|split_string:", " %}
+                      <span class="badge badge-pill badge-primary">{{ cuisine_type }}</span>
+                    {% endfor %}
+                  </div>
+                  <a href="{% url 'chef_detail' chef_id=chef.user_id %}" class="btn btn-primary">More Details</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
     </div>
   </div>
 {% endblock %}
