@@ -2,49 +2,62 @@
 {% load static %}
 
 {% block extra_js %}
-    <!-- Chef's availability JS -->
-    <script src="{% static 'js/bookings/index.js' %}"></script>
 {% endblock %}
 
 {% block extra_css %}
 {% endblock %}
 
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
-
 {% block content %}
-  <div class="overlay"></div>
-  <div class="container fluid">
+<div class="overlay"></div>
+<div class="container mt-custom-10rem mt-custom-7rem">
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
-        <h2>Menus:</h2>
-        {% if user.is_authenticated and user.chef %}
-        <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
-        {% endif %}
-        {% for menu in all_menus %}
-          <div class="row">
-            <div class="col-12">
-              <a href="{% url 'menu_detail' menu_id=menu.id %}">
-                <div>
-                  <h2>{{ menu.title }}</h2>
-                  <p>{{ menu.description }}</p>
-                  {% for dish in menu.dishes.all %}
-                    <h3>{{ dish.name }}</h3>
-                    <p>{{ dish.category }}</p>
-                    <p>{{ dish.description }}</p>
-                  {% endfor %}
-                  <p>From &#163;{{ menu.price }} pp </p>
-                </div>
-              </a>
-            </div>
-        </div>
-        {% endfor %}
+      <div class="col-10 col-lg-6 mx-auto mb-5 pt-3 call-cta">
+        <p class="text-center text-grey-dark">
+          Can't find what you're looking for? Call us:
+          <a href="tel:+x592362685x" class="text-primary"><strong>x592362685x</strong></a>
+        </p>
       </div>
+        {% if user.is_authenticated and user.chef %}
+        <div class="col-12 text-center mb-4">
+            <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
+        </div>
+        {% endif %}
+        <div class="card-deck">
+          {% for menu in all_menus %}
+            {% for dish in menu.dishes.all %}
+            <!-- Check if first main dish has an image. Only show cards that have image. -->
+              {% if forloop.counter == 1 and dish.image %}
+                <div class="col-12 col-md-6 mb-3">
+                  <div class="card chef-menu-card h-100" data-menu-id="{{ menu.id }}" data-menu-title="{{ menu.title }}" data-chef-id="{{ menu.chef.user_id }}" data-chef-first-name="{{ menu.chef.user.first_name }}" data-chef-last-name="{{ menu.chef.user.last_name }}" data-menu-price="{{ menu.price }}">
+                    <div class="card-body">
+                      <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                        <h4 class="card-title">{{ menu.title|title }}</h4>
+                      </a>
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex align-items-center mr-2">
+                          <i class="fas fa-star text-primary mr-1"></i>
+                          <span class="review-span " style="font-size: 1.15rem;">{{ menu.chef.average_rating }}</span>
+                        </div>
+                        <p class="mb-0" style="font-size: 1.15rem;">{{ menu.chef.user.first_name }} {{ menu.chef.user.last_name }}</p>
+                      </div>
+                      <p class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">{{ menu.menu_category|capfirst }}</p>
+                      <div class="border rounded p-3 mb-3">
+                        <p class="card-text">{{ menu.description|capfirst }}</p>
+                      </div>
+                      <div class="chef-menu-card-content mb-3">
+                        <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid rounded" style="height: 200px; object-fit: cover;">
+                      </div>
+                      <p>From <span class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">&#163;{{ menu.price }}</span> pp</p>
+                      <a href="{% url 'chef_detail' chef_id=menu.chef.user_id %}" class="btn btn-primary">View Chef Profile</a>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
     </div>
-  </div>
+</div>
+
+
 {% endblock %}

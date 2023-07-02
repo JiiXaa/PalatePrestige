@@ -50,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (totalPriceLS) {
     totalPriceIcon.textContent = `£${parseFloat(totalPriceLS).toFixed(2)}`;
-    totalPriceElement.textContent = `£${parseFloat(totalPriceLS).toFixed(2)}`;
+    totalPriceElement.textContent = `Total Price: £${parseFloat(
+      totalPriceLS
+    ).toFixed(2)}`;
   } else {
     totalPriceIcon.textContent = '£0.00';
     totalPriceElement.textContent = '£0.00';
@@ -120,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ? document.getElementById('totalPriceMobile')
           : document.getElementById('totalPrice');
       totalPriceElement.textContent = totalPrice
-        ? `£${totalPrice.toFixed(2)}`
+        ? `Total Price: £${totalPrice.toFixed(2)}`
         : '£0';
 
       // Update total price on the shopping bag icon
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.innerWidth < 768
         ? document.getElementById('totalPriceMobile')
         : document.getElementById('totalPrice');
-    totalPriceElement.textContent = 'Total Price: £0';
+    totalPriceElement.textContent = '£0';
 
     // Update total price on the shopping bag icon
     const totalPriceIcon = document.getElementById('totalPriceIcon');
@@ -455,9 +457,9 @@ class SelectedBooking {
           totalPriceIcon.textContent = `£${parseFloat(totalPriceLS).toFixed(
             2
           )}`;
-          totalPriceElement.textContent = `£${parseFloat(totalPriceLS).toFixed(
-            2
-          )}`;
+          totalPriceElement.textContent = `Total Price: £${parseFloat(
+            totalPriceLS
+          ).toFixed(2)}`;
         } else {
           totalPriceIcon.textContent = '£0.00';
           totalPriceElement.textContent = '£0.00';
