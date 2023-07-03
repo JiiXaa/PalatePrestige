@@ -28,7 +28,7 @@
       </div>
       <div class="modal-footer">
         {% if user.is_authenticated %}
-          <button type="button" class="btn btn-outline-primary" id="submitBookingBtnMobile" data-dismiss="modal">Book</button>
+          <button type="button" class="btn btn-outline-primary" id="submitBookingBtnMobile" data-bs-dismiss="modal">Book</button>
         {% else %}
           <a href="{% url 'account_login' %}" class="btn btn-primary">Login to book</a>
         {% endif %}
