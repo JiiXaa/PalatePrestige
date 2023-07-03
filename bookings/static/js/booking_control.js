@@ -2,14 +2,15 @@ console.log('booking_control loaded...');
 
 document.addEventListener('DOMContentLoaded', function () {
   const collapseButton = document.querySelector('[data-bs-toggle="collapse"]');
+  const collapseContent = document.getElementById('moreBookings');
 
-  if (collapseButton) {
-    collapseButton.addEventListener('click', function () {
-      if (this.getAttribute('aria-expanded') === 'false') {
-        this.innerHTML = 'Show Less';
-      } else {
-        this.innerHTML = 'Show More';
-      }
+  if (collapseButton && collapseContent) {
+    collapseContent.addEventListener('shown.bs.collapse', function () {
+      collapseButton.innerHTML = 'Show Less';
+    });
+
+    collapseContent.addEventListener('hidden.bs.collapse', function () {
+      collapseButton.innerHTML = 'Show More';
     });
   }
 });

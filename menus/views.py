@@ -13,7 +13,7 @@ from .forms import MenuForm, MenuCategoryForm, DishForm
 
 def all_menus(request):
     """A view to display all menus, including sorting and search queries"""
-    all_menus = Menu.objects.all()
+    all_menus = Menu.objects.filter().order_by("title")
     query = None
     categories = None
 
