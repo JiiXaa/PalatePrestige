@@ -7,16 +7,12 @@
  <script src="{% static 'js/booking_control.js' %}"></script>
 {% endblock %}
 
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/customer_reviews.css' %}">
 {% endblock %}
 
 {% block content %}
-  <div class="container">
+  <div class="container mt-custom-7rem mt-custom-10rem mb-4">
     <!-- Customer Details -->
     <div class="row mt-5">
       <div class="col-12">
@@ -30,7 +26,6 @@
             {% if customer.user.location %}
               <p>Location: {{ customer.location }}</p>
             {% endif %}
-
           </div>
         </div>
       </div>
@@ -39,58 +34,60 @@
     <!-- Bookings Table -->
     <div class="row mt-5">
       <div class="col-12">
-          <div class="card">
-              <div class="card-header">
-                  <h3>Your Bookings</h3>
-              </div>
-              <div class="card-body">
-                  <table class="table table-striped">
-                      <thead>
-                          <tr>
-                              <th scope="col">Chef</th>
-                              <th scope="col">Menu</th>
-                              <th scope="col">Booking Date</th>
-                              <th scope="col">Status</th>
-                              <th scope="col">Total Cost</th>
-                              <th scope="col">Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {% for booking in bookings %}
-                          <tr
-                            {% if bookings|length > 5 and forloop.counter > 5 %}
-                              class="collapse" id="moreBookings"
-                            {% endif %}>
-                                  <td>{{ booking.chef.user.username }}</td>
-                                  <td>{{ booking.menu.title }}</td>
-                                  <td>{{ booking.booking_date }}</td>
-                                  <td>{{ booking.status }}</td>
-                                  <td>{{ booking.total_cost }}</td>
-                                  <td>
-                                    {% if not booking.chefreview %}
-                                        <a href="{% url 'create_review' booking.id %}" class="btn btn-primary">
-                                            <i class="fas fa-plus-circle"></i> Add Review
-                                        </a>
-                                    {% else %}
-                                        <a href="{% url 'update_review' booking.id %}" class="btn btn-secondary">
-                                            <i class="fas fa-edit"></i> Update Review
-                                        </a>
-                                    {% endif %}
-                                  </td>
-                              </tr>
-                          {% endfor %}
-                      </tbody>
-                  </table>
-                  {% if bookings|length > 5 %}
-                      <p>
-                          <a class="btn btn-primary" data-bs-toggle="collapse" href="#moreBookings" role="button" aria-expanded="false" aria-controls="moreBookings">
-                              Show More
-                          </a>
-                      </p>
-                  {% endif %}
-              </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Your Bookings</h3>
           </div>
+          <div class="table-responsive">
+            <table class="table table-striped text-lg-center">
+              <thead>
+                <tr>
+                  <th scope="col">Chef</th>
+                  <th scope="col">Menu</th>
+                  <th scope="col">Booking Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Total Cost</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for booking in bookings %}
+                  <tr
+                    {% if bookings|length > 5 and forloop.counter > 5 %}
+                      class="collapse" id="moreBookings"
+                    {% endif %}>
+                    <td data-label="Chef">{{ booking.chef.user.username }}</td>
+                    <td data-label="Menu">{{ booking.menu.title }}</td>
+                    <td data-label="Booking Date">{{ booking.booking_date }}</td>
+                    <td data-label="Status">{{ booking.status }}</td>
+                    <td data-label="Total Cost">£{{ booking.total_cost }}</td>
+                    <td data-label="Actions">
+                      {% if not booking.chefreview %}
+                        <a href="{% url 'create_review' booking.id %}" class="btn btn-primary">
+                          <i class="fas fa-plus-circle"></i> Add Review
+                        </a>
+                      {% else %}
+                        <a href="{% url 'update_review' booking.id %}" class="btn btn-secondary">
+                          <i class="fas fa-edit"></i> Update Review
+                        </a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% if bookings|length > 5 %}
+              <p class="ml-3">
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#moreBookings" role="button" aria-expanded="false" aria-controls="moreBookings">
+                  Show More
+                </a>
+              </p>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 {% endblock %}
+
+

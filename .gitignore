@@ -7,4 +7,5 @@ myvenv
 .env
 env/
 new_env/
+staticfiles/
 ```
