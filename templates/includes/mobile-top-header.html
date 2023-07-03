@@ -9,15 +9,15 @@
             </div>
         </a>
         <div class="dropdown-menu custom-dropdown border-0 w-100 p-3 rounded-0 my-0" aria-labelledby="mobile-search">
-            <form class="form d-flex" method="GET" action="">
-              <div class="input-group">
-                <input class="form-control form-control-sm border border-black rounded-0" type="text" name="q" placeholder="Search our site">
+            <form class="form d-flex" method="GET" action="{% url 'menus' %}">
+                <div class="input-group">
+                <input class="form-control form-control-sm border border-black rounded-0" type="text" name="q" placeholder="Search for menus">
                 <button class="btn btn-black border border-black rounded-0 d-flex align-items-center" type="submit">
-                  <i class="fas fa-search"></i>
+                    <i class="fas fa-search"></i>
                 </button>
-              </div>
+                </div>
             </form>
-          </div>
+            </div>
     </li>
     <li class="list-inline-item dropdown">
         <a class="text-black nav-link d-block d-lg-none" href="#" id="user-options" data-bs-toggle="dropdown" aria-expanded="false">
