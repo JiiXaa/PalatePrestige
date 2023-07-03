@@ -38,7 +38,7 @@
                   <p>{{ chef.bio }}</p>
                   <div class="chef-cuisine-types mb-3">
                     {% for cuisine_type in chef.cuisine_types|split_string:", " %}
-                      <span class="badge badge-pill badge-primary">{{ cuisine_type }}</span>
+                      <span class="badge badge-pill badge-info">{{ cuisine_type }}</span>
                     {% endfor %}
                   </div>
                   <a href="{% url 'chef_detail' chef_id=chef.user_id %}" class="btn btn-primary">More Details</a>

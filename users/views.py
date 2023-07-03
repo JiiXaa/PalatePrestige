@@ -58,7 +58,7 @@ def login_redirect(request):
     else:
         # Handle the case when the user does not have any role assigned
         messages.error(request, "Access Denied. You are not a Chef or a Customer.")
-        return redirect("home")
+        return redirect("menus")
 
 
 def all_chefs(request):
@@ -334,7 +334,7 @@ def customer_detail(request, customer_id):
             messages.error(
                 request, "Access Denied. You are not authorized to view this profile."
             )
-            return redirect("home")
+            return redirect("menus")
     else:
         messages.error(request, "Access Denied. You are not a Customer.")
-        return redirect("home")
+        return redirect("menus")

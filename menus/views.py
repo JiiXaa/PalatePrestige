@@ -81,7 +81,7 @@ def edit_menu(request, menu_id):
 
     if menu.chef != request.user.chef:
         messages.error(request, "You can only edit your own menus!")
-        return redirect("home")
+        return redirect("menus")
 
     if request.method == "POST":
         form = MenuForm(request.POST, instance=menu)
@@ -104,7 +104,7 @@ def delete_menu(request, menu_id):
 
     if menu.chef != request.user.chef:
         messages.error(request, "You can only delete your own menus!")
-        return redirect("home")
+        return redirect("menus")
 
     if request.method == "POST":
         try:
@@ -129,7 +129,7 @@ def add_menu_category(request):
     # Only staff can add menu categories
     if not request.user.is_superuser and not request.user.is_staff:
         messages.error(request, "Only staff can add menu categories.")
-        return redirect("home")
+        return redirect("menus")
 
     if request.method == "POST":
         form = MenuCategoryForm(request.POST)

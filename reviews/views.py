@@ -14,7 +14,7 @@ def create_review(request, booking_id):
     if request.user != booking.customer.user:
         # Handle the case where the user is not the customer for this booking, e.g., by showing an error message.
         messages.error(request, "You are not the customer for this booking.")
-        return redirect("home")
+        return redirect("menus")
 
     # Check if review already exists for this booking
     existing_review = ChefReview.objects.filter(booking=booking).first()
@@ -55,7 +55,7 @@ def update_review(request, booking_id):
     # Check if the user is the customer for this booking
     if request.user != booking.customer.user:
         messages.error(request, "You are not the customer for this booking.")
-        return redirect("home")
+        return redirect("menus")
 
     # Check if review exists for this booking
     review = ChefReview.objects.filter(booking=booking).first()

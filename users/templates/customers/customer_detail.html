@@ -25,8 +25,11 @@
             <h3>Customer Profile</h3>
           </div>
           <div class="card-body">
+            <h4>{{ customer.user.username }}</h4>
             <h5>{{ customer.user.first_name }} {{ customer.user.last_name }}</h5>
-            <p>Location: {{ customer.location }}</p>
+            {% if customer.user.location %}
+              <p>Location: {{ customer.location }}</p>
+            {% endif %}
 
           </div>
         </div>
@@ -89,12 +92,5 @@
           </div>
       </div>
     </div>
-      {% for review in reviews %}
-      <p>Customer: {{ review.booking.customer.user.first_name }} {{ review.booking.customer.user.last_name }}</p>
-      <p>Chef: {{ review.booking.chef.user.first_name }} {{ review.booking.chef.user.last_name }}</p>
-      <p>Rating: {{ review.rating }}</p>
-      <p>Review: {{ review.review }}</p>
-      {% endfor %}
-
   </div>
 {% endblock %}

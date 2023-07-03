@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "home",
     "users",
     "menus",
     "bookings",
