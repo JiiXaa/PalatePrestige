@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.db.models import Q
 import boto3
 from django.conf import settings
@@ -18,21 +19,28 @@ def all_menus(request):
 
     if request.GET:
         if "category" in request.GET:
-            categories = request.GET["category"].split(",")
+            categories = request.GET.getlist("category")
             all_menus = all_menus.filter(menu_category__name__in=categories)
             categories = MenuCategory.objects.filter(name__in=categories)
 
-    if "q" in request.GET:
-        query = request.GET["q"]
-        if not query:
-            messages.error(request, "You didn't enter any search criteria!")
-            return redirect(reverse("menus"))
-        queries = Q(title__icontains=query) | Q(description__icontains=query)
+        if "q" in request.GET:
+            query = request.GET["q"]
+            if not query:
+                messages.error(request, "You didn't enter any search criteria!")
+                return redirect(reverse("menus"))
+            queries = Q(title__icontains=query) | Q(description__icontains=query)
+            all_menus = all_menus.filter(queries)
+            print("query: ", query)
+            print("all_menus: ", all_menus)
 
-        all_menus = all_menus.filter(queries)
+    # Pagination
+    # Show 4 menus per page
+    paginator = Paginator(all_menus, 4)
+    page_number = request.GET.get("page")
+    menus = paginator.get_page(page_number)
 
     context = {
-        "all_menus": all_menus,
+        "menus": menus,
         "search_term": query,
         "current_categories": categories,
     }
