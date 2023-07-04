@@ -74,7 +74,6 @@
     padding: 2rem 0;
     border-radius: 5px;
     box-shadow: var(--card-box-shadow);
-    pointer-events: none;
   }
 
   .booking-container div:nth-child(n) {
