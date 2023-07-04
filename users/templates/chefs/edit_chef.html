@@ -1,32 +1,58 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
+{% load static custom_filters %}
 
 {% block content %}
 <div class="container">
-  <div class="row mt-3">
-      <div class="col">
-        <h2>Edit Chef {{ user.first_name }} {{ user.last_name }}</h2>
-        <form method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
-          <!-- Display user fields -->
-          {{ user_form.as_p }}
+  <div class="row justify-content-center align-items-center mt-4" style="height: 100vh;">
+    <div class="col-10 col-md-6 p-3 border rounded shadow">
+      <h2>Edit Chef {{ user.first_name }} {{ user.last_name }}</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-          <!-- Display chef fields -->
-          {{ chef_form.as_p }}
+        <!-- Iterate through User Form Fields -->
+        <div style="margin-left: 10px; margin-right: 10px;">
+          {% for field in user_form %}
+            <div>
+              <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px;">{{ field.label }}</label>
+              {% if field.field.widget.input_type == 'select' or field.field.widget.input_type == 'file' %}
+                {{ field }}
+              {% elif field.field.widget.input_type == 'checkbox' %}
+                {{ field }}
+              {% elif field.field.widget|class_name == 'Textarea' %}
+                {{ field }}
+              {% else %}
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%;" value="{{ field.value }}" {% if field.field.required %} required {% endif %}>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
 
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
-      </div>
+        <!-- Iterate through Chef Form Fields -->
+        <div style="margin-left: 10px; margin-right: 10px;">
+          {% for field in chef_form %}
+            <div>
+              <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px; margin-top: 5px">{{ field.label }}</label>
+
+              {% if field.label == "Cuisine types" %}
+                <small style="display: block; margin-bottom: 5px;">Please enter the cuisine types separated by commas.</small>
+              {% endif %}
+
+              {% if field.field.widget.input_type == 'select' or field.field.widget.input_type == 'file' %}
+                {{ field }}
+              {% elif field.field.widget.input_type == 'checkbox' %}
+                {{ field }}
+              {% elif field.field.widget|class_name == 'Textarea' %}
+                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%; height: 120px;" {% if field.field.required %} required {% endif %}>{{ field.value|default:'' }}</textarea>
+              {% else %}
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%;" value="{{ field.value }}" {% if field.field.required %} required {% endif %}>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary ml-2 mt-4">Save Changes</button>
+      </form>
+    </div>
   </div>
 </div>
-
-
 {% endblock %}

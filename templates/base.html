@@ -74,7 +74,7 @@
                     </a>
                     <ul class="dropdown-menu border-0" aria-labelledby="user-options">
                         {% if request.user.is_superuser %}
-                            <li><a href="#" class="dropdown-item">Admin</a></li>
+                            <li><a href="/admin" class="dropdown-item">Admin</a></li>
                         {% endif %}
                         {% if user.is_authenticated %}
                             {% if user|has_group:'Chef' %}
@@ -83,8 +83,6 @@
                                 <li><a href="{% url 'customer_detail' customer_id=user.id %}" class="dropdown-item">My Profile</a></li>
                             {% endif %}
                         {% endif %}
-                        <li><a href="#" class="dropdown-item">My Bookings</a></li>
-                        <li><a href="#" class="dropdown-item">My Reviews</a></li>
                         <li><a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a></li>
                     </ul>
                 </li>
