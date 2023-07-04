@@ -72,6 +72,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -177,6 +178,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "menus", "static"),
     os.path.join(BASE_DIR, "bookings", "static"),
 )
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIAFILES_LOCATION = "media"
 DEFAULT_FILE_STORAGE = "palateprestige.custom_storages.MediaStorage"
