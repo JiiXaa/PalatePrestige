@@ -71,7 +71,8 @@
                       {% if user.is_authenticated and user.chef.user_id == chef.user_id %}
                         <a href="{% url 'edit_chef' chef_id=chef.user.id %}" class="btn btn-outline-primary mr-1">Edit Profile</a>
                         <a href="{% url 'add_menu' %}" class="btn btn-primary">Add Menu</a>
-                      {% else %}
+                      {% endif %}
+                      {% if not user.is_authenticated and user.chef.user_id != chef.user_id %}
                       <a href="{% url 'account_login' %}" class="btn btn-primary mr-1">Login to book</a>
                       {% endif %}
                     </div>
