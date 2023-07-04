@@ -32,7 +32,6 @@ def create_booking(request):
                 datetime.strptime(booking_date_str, "%Y-%m-%dT%H:%M:%S")
             )
         except ValueError:
-            print(f"Failed to convert date: {booking_date_str}")
             return JsonResponse({"error": "Invalid date format"}, status=400)
 
         # Retrieve the chef instance

@@ -4,16 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const chefId = calendarEl.getAttribute('data-chef-id');
   const userRole = calendarEl.getAttribute('data-user-role');
 
-  console.log('calendarEl', calendarEl);
-  console.log('User role:', userRole);
-  console.log('Chef ID:', chefId);
-
   // Check if the selectedBooking instance already exists in the window object
   const selectedBooking = window.selectedBooking || new SelectedBooking();
 
   // Assign the selectedBooking instance to the window object
   window.selectedBooking = selectedBooking;
-  console.log('selectedBooking', selectedBooking);
   selectedBooking.updateSelectionDisplay();
 
   if (userRole === 'chef') {
@@ -24,23 +19,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let calendar;
   async function getChefAvailability(chefId) {
-    console.log('Getting chef availability...');
     try {
       // Remove past availabilities before retrieving current availability
       await removePastAvailabilities();
 
       // Fetch the chef's availability
-      console.log('Chef ID:', chefId);
       const response = await fetch(
         `/users/chefs/get_chef_availability/${chefId}/`
       );
       const availability = await response.json();
 
-      console.log('Chef availability:', availability);
-
       const events = availability.map((slot) => {
-        console.log(slot);
-        console.log('Availability ID:', slot.availability_id);
         return {
           title: slot.title,
           start: slot.start,
@@ -52,8 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
           allDay: false,
         };
       });
-
-      console.log('Events:', events);
 
       if (calendar) {
         // Update the calendar with the chef's availability
@@ -70,8 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Add event listener for when a user clicks on an event (when chef clicks on an availability)
         calendar.on('eventClick', function (info) {
-          console.log('Event click info:', info.event);
-
           const e = info.event;
           const availabilityId = e.extendedProps.availability_id;
 
@@ -93,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calendar.on('eventDrop', function (info) {
           const e = info.event;
           const availabilityId = e.extendedProps.availability_id;
-          console.log('Event drop info:', info.event);
           // Retrieve the logged-in chef ID from the HTML attribute
           const logged_in_chef_id = calendarEl.getAttribute(
             'data-logged-in-user-id'
@@ -114,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calendar.on('eventResize', function (info) {
           const e = info.event;
           const availabilityId = e.extendedProps.availability_id;
-          console.log('Event resize info:', info.event);
 
           // Retrieve the logged-in chef ID from the HTML attribute
           const logged_in_chef_id = calendarEl.getAttribute(
@@ -138,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to handle past availabilities
   async function removePastAvailabilities() {
-    console.log('Removing past availabilities...');
     try {
       const csrfToken = getCookie('csrftoken');
       const response = await fetch('/users/chefs/remove_past_availabilities/', {
@@ -152,15 +134,12 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
       }
-
-      console.log('Past availabilities removed successfully.');
     } catch (error) {
       console.error('Error removing past availabilities:', error);
     }
   }
 
   async function getChefAvailabilityForBooking(chefId) {
-    console.log('Getting chef availability for booking...');
     try {
       // Remove past availabilities before retrieving current availability
       await removePastAvailabilities();
@@ -171,11 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
       );
       const availability = await response.json();
 
-      console.log('Chef availability:', availability);
-
       const events = availability.map((slot) => {
-        console.log(slot);
-        console.log('Availability ID:', slot.availability_id);
         return {
           title: slot.title,
           start: slot.start,
@@ -208,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
           selectedBooking.setSelectedDate(selectedDate);
           selectedBooking.addSelectedDateLS(selectedDate);
           selectedBooking.updateSelectionDisplay();
-          console.log('Selected date:', selectedBooking);
         } else {
           alert(
             'The selected date is not available. Please choose a different date..'
@@ -222,8 +196,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Calendar initialization function - called after the chef's availability is retrieved from the server
   function initCalendar(events, chefId, editable) {
-    console.log('init Events:', events);
-
     const calendarEl = document.getElementById('calendar');
     const calendarInstance = new FullCalendar.Calendar(calendarEl, {
       initialView: 'timeGridWeek',
@@ -273,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Event handler for when a Chef selects a time slot
   function handleChefSelect(selectInfo, chefId, calendar) {
-    console.log('Select info:', selectInfo);
     const existingEvents = calendar.getEvents();
 
     for (let i = 0; i < existingEvents.length; i++) {
@@ -282,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
         selectInfo.end > existingEvents[i].start
       ) {
         // The selected time slot overlaps with an existing event - do not allow the user to select it
-        console.log('Slot is not available');
         return;
       }
     }
@@ -298,8 +268,6 @@ document.addEventListener('DOMContentLoaded', function () {
   async function addChefAvailability(chefId, start, end) {
     try {
       const csrfToken = getCookie('csrftoken');
-      console.log('CSRF Token:', csrfToken);
-      console.log('Chef ID:', typeof chefId, chefId);
 
       const start_time = start.toISOString();
       const end_time = end.toISOString();
@@ -308,8 +276,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const logged_in_chef_id = calendarEl.getAttribute(
         'data-logged-in-user-id'
       );
-      console.log('logged_in_chef_id:', logged_in_chef_id);
-      console.log('chefId:', chefId);
 
       // Ensure only the logged-in chef can add availability for their own page
       if (chefId === logged_in_chef_id) {
@@ -343,15 +309,11 @@ document.addEventListener('DOMContentLoaded', function () {
   async function deleteChefAvailability(availabilityId, chefId) {
     try {
       const csrfToken = getCookie('csrftoken');
-      console.log('CSRF Token:', csrfToken);
-      console.log('Chef ID:', typeof chefId, chefId);
 
       // Retrieve the logged-in chef ID from the HTML attribute
       const logged_in_chef_id = calendarEl.getAttribute(
         'data-logged-in-user-id'
       );
-      console.log('logged_in_chef_id:', logged_in_chef_id);
-      console.log('chefId:', chefId);
 
       // Ensure only the logged-in chef can delete their own availability
       if (chefId === logged_in_chef_id) {
@@ -383,8 +345,6 @@ document.addEventListener('DOMContentLoaded', function () {
   async function updateChefAvailability(availabilityId, chefId, start, end) {
     try {
       const csrfToken = getCookie('csrftoken');
-      console.log('CSRF Token:', csrfToken);
-      console.log('Chef ID:', typeof chefId, chefId);
 
       const start_time = start.toISOString();
       const end_time = end.toISOString();
@@ -409,8 +369,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
       }
-
-      console.log('Availability updated');
 
       // Refresh the calendar to show the new availability
       getChefAvailability(chefId);

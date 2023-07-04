@@ -100,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menuCard.dataset.menuId === menuId) {
           selectedMenuCard = menuCard;
           selectedMenuCard.classList.add('menu-selected');
-          console.log('selectedMenuCard', selectedMenuCard);
         } else {
           menuCard.classList.remove('menu-selected');
         }
@@ -172,12 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedBooking.clearSelectedBookingLS();
     selectedBooking.clearSelectedBooking();
     selectedBooking.updateSelectionDisplay();
-    console.log(
-      'test',
-      selectedBooking.date,
-      selectedBooking.menu,
-      selectedBooking.chef
-    );
 
     // Remove the 'menu-selected' class from the selected menu card
     if (selectedMenuCard) {
@@ -193,8 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (submitBookingBtn) {
     submitBookingBtn.addEventListener('click', () => {
-      console.log('Submit Booking button clicked');
-
       // Open the card payment modal
       paymentModal.show();
     });
@@ -330,7 +321,6 @@ class SelectedBooking {
   }
 
   setSelectedChef(chef) {
-    console.log('Setting chef:', chef);
     this.chef = chef;
   }
 
@@ -343,7 +333,6 @@ class SelectedBooking {
   }
 
   addSelectedChefLS(chef) {
-    console.log('Adding chef to local storage:', chef);
     localStorage.setItem('selectedChef', JSON.stringify(chef));
   }
 
@@ -540,17 +529,6 @@ class SelectedBooking {
     // Clear Booking button
     const clearBooking = document.getElementById('clearBooking');
 
-    console.log(
-      'date from method',
-      this.date,
-      'menu',
-      this.menu,
-      'chef',
-      this.chef
-    );
-
-    console.log('clearBooking', clearBooking);
-
     if (this.date || this.menu || this.chef) {
       clearBooking.classList.remove('hidden');
       // Add event listener to the Clear Booking button here
@@ -571,12 +549,9 @@ class SelectedBooking {
     numberOfGuestsInput.addEventListener('input', () => {
       // Get the current number of guests
       const numberOfGuests = parseInt(numberOfGuestsInput.value);
-      console.log('number of guests updated', numberOfGuests);
 
       // Get all the menu cards
       const menuCards = document.querySelectorAll('.menu-card');
-
-      console.log('menuCards', menuCards);
 
       // Find the selected menu card
       let selectedMenuCard = null;
@@ -625,12 +600,6 @@ const clearBookingFunction = () => {
   selectedBooking.clearSelectedBookingLS();
   selectedBooking.clearSelectedBooking();
   selectedBooking.updateSelectionDisplay();
-  console.log(
-    'test',
-    selectedBooking.date,
-    selectedBooking.menu,
-    selectedBooking.chef
-  );
 };
 
 function createBooking(
@@ -674,10 +643,8 @@ function createBooking(
   // Get the email from the input field in the payment modal
   const email = document.getElementById('email').value;
 
-  console.log('date before formatting', selectedDate);
   // Format date
   const formattedDate = formatDate(selectedDate);
-  console.log('date after formatting', formattedDate);
 
   // Create the booking object
   const booking = {
@@ -690,7 +657,6 @@ function createBooking(
   };
 
   const csrfToken = getCookie('csrftoken');
-  console.log('Before sending request to server');
   // Send the booking object to the server
   fetch('/bookings/create_booking/', {
     method: 'POST',
@@ -705,8 +671,6 @@ function createBooking(
       if (data.error) {
         alert(data.error);
       } else {
-        console.log('Success:', data);
-
         // Clear the selected booking
         clearBookingFunction();
 
@@ -738,9 +702,8 @@ function createBooking(
       }
     })
     .catch((error) => {
-      console.error('Error:', error);
+      alert('Something went wrong. ${error}');
     });
-  console.log('After sending request to server');
 }
 
 // Format the date to Django's required format

@@ -30,8 +30,6 @@ def all_menus(request):
                 return redirect(reverse("menus"))
             queries = Q(title__icontains=query) | Q(description__icontains=query)
             all_menus = all_menus.filter(queries)
-            print("query: ", query)
-            print("all_menus: ", all_menus)
 
     # Pagination
     # Show 4 menus per page

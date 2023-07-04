@@ -62,5 +62,4 @@ class Dish(models.Model):
                 s3 = boto3.client("s3")
                 bucket_name = "palateprestigebucket"
                 object_key = f"media/{self.image.name}"
-                print(f"Bucket: {bucket_name}, Key: {object_key}")
                 s3.put_object_acl(Bucket=bucket_name, Key=object_key, ACL="public-read")

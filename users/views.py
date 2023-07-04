@@ -93,7 +93,6 @@ def chef_detail(request, chef_id):
     else:
         user_role = "customer"
 
-    print("user_role", user_role)
     if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
         # If the logged-in user is the Chef whose profile is being viewed
         context = {
@@ -205,10 +204,6 @@ def add_chef_availability(request):
         start_time = parse_datetime(data["start_time"])
         end_time = parse_datetime(data["end_time"])
 
-        print(chef_id)
-        print(start_time)
-        print(end_time)
-
         # Ensure only the chef can add availability
         if request.user.is_authenticated and request.user.id == chef_id:
             Availability.objects.create(
@@ -217,8 +212,6 @@ def add_chef_availability(request):
                 end_time=end_time,
                 is_available=True,
             )
-
-            print("Availability added successfully.")
 
             return JsonResponse(
                 {"message": "Availability added successfully."}, status=201
@@ -291,12 +284,9 @@ def update_chef_availability(request, availability_id):
 
 
 def remove_past_availabilities(request):
-    print("Removing past availabilities...")
     now = timezone.now()
     past_availabilities = Availability.objects.filter(end_time__lt=now)
-    print("Past availabilities count:", past_availabilities.count())
     past_availabilities.delete()
-    print("Past availabilities deleted.")
 
     return JsonResponse(
         {"message": "Past availabilities removed successfully."}, status=200
@@ -326,7 +316,6 @@ def customer_detail(request, customer_id):
             bookings = Booking.objects.filter(customer=customer)
             # Retrieve all reviews for the logged-in customer
             reviews = ChefReview.objects.filter(booking__customer=customer)
-            print("reviews", reviews)
             # Pass the customer, bookings and reviews to the template context
             context = {"customer": customer, "bookings": bookings, "reviews": reviews}
             return render(request, "customers/customer_detail.html", context)
