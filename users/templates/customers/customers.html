@@ -4,14 +4,6 @@
 {% block extra_js %}
 {% endblock %}
 
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
-
 {% block content %}
   {% for customer in customers %}
     {{ customer.user.first_name }} {{ customer.user.last_name }}

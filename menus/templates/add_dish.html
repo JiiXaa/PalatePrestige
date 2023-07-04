@@ -1,25 +1,34 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
+{% load static custom_filters %}
 
 {% block content %}
   <div class="container">
-    <div class="row mt-3">
-        <div class="col">
-            <h2>Add a dish to {{ menu.title }}</h2>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Add dish</button>
-            </form>
-        </div>
+    <div class="row justify-content-center align-items-center mt-5" style="height: 100vh;">
+      <div class="col-10 col-md-6 p-3 border rounded shadow">
+        <h2>Add a dish to "{{ menu.title }}"</h2>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-2">
+            <label for="{{ field.id_for_label }}" class="m-0 mb-1" style="display: block;">{{ field.label }}</label>
+            {% if field.field.widget|class_name == 'Textarea' %}
+            <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%; height: 120px;" {% if field.field.required %} required {% endif %}>{{ field.value|default:'' }}</textarea>
+            {% elif field.field.widget.input_type == 'select' %}
+            {{ field }}
+            {% elif field.field.widget.input_type == 'file' %}
+            <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%;" {% if field.field.required %} required {% endif %}>
+            {% else %}
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}" style="width: 100%;" {% if field.field.required %} required {% endif %}>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="d-flex align-items-center mt-3">
+            <button type="submit" class="btn btn-outline-primary mr-3">Add dish</button>
+            <a href="{% url 'chef_detail' chef_id=user.chef.user_id %}" class="btn btn-primary">Back to Profile</a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}

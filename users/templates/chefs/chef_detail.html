@@ -82,35 +82,35 @@
 
             <!-- Menus -->
             <div class="row mb-5">
-                {% for menu in menus %}
-                  <div class="col-md-6 mb-3">
-                    <div class="card menu-card" data-menu-id="{{ menu.id }}"  data-menu-title="{{ menu.title }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
-                      <div class="card-body">
-                        <a href="{% url 'menu_detail' menu_id=menu.id %}">
-                          <h4 class="card-title">{{ menu.title|title }}</h4>
-                        </a>
-                        <p class="card-text">{{ menu.description|capfirst }}</p>
-                        <div class="menu-card-content">
-                          {% for dish in menu.dishes.all %}
-                            {% if forloop.counter == 1 %}
-                              <h5>{{ dish.name|capfirst }}</h5>
-                              {% if dish.image %}
-                                <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid">
-                              {% endif %}
-                              <p>{{ dish.category|capfirst }}</p>
-                              <p>{{ dish.description|capfirst }}</p>
+              {% for menu in menus %}
+                <div class="col-md-6 mb-3 d-flex">
+                  <div class="card menu-card flex-grow-1" data-menu-id="{{ menu.id }}" data-menu-title="{{ menu.title }}" data-chef-id="{{ chef.user_id }}" data-chef-first-name="{{ chef.user.first_name }}" data-chef-last-name="{{ chef.user.last_name }}" data-menu-price="{{ menu.price }}">
+                    <div class="card-body d-flex flex-column">
+                      <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                        <h4 class="card-title">{{ menu.title|title }}</h4>
+                      </a>
+                      <p class="card-text flex-grow-1">{{ menu.description|capfirst }}</p>
+                      <div class="menu-card-content">
+                        {% for dish in menu.dishes.all %}
+                          {% if forloop.counter == 1 %}
+                            {% if dish.image %}
+                              <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid mb-2">
                             {% endif %}
-                          {% endfor %}
-                        </div>
-                        <p>From &#163;{{ menu.price }} pp</p>
-                        {% if request.user.is_authenticated and user|has_group:'Customer'%}
-                        <button type="button" class="btn btn-primary add-menu-js">Add to Booking</button>
-                        {% endif %}
+                            <p>{{ dish.category|capfirst }}</p>
+                            <p>{{ dish.description|capfirst }}</p>
+                          {% endif %}
+                        {% endfor %}
                       </div>
+                      <p>From &#163;{{ menu.price }} pp</p>
+                      {% if request.user.is_authenticated and user|has_group:'Customer'%}
+                        <button type="button" class="btn btn-primary mt-auto add-menu-js">Add to Booking</button>
+                      {% endif %}
                     </div>
                   </div>
-                {% endfor %}
+                </div>
+              {% endfor %}
             </div>
+
 
             <!-- Calendar -->
             <div class="row mb-5">

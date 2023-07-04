@@ -1,23 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block page_header %}
-  <div class="container header-container">
-    <div class="row">
-      <div class="col"></div>
-    </div>
-  </div>
-{% endblock %}
-
 {% block content %}
   <div class="container">
-    <div class="row mt-3">
-        <div class="col">
-            <h2>Add a new Menu Category</h2>
-            <form method="post">
+    <div class="row justify-content-center align-items-center mt-4" style="height: 100vh;">
+        <div class="col-10 col-md-6 p-4 border rounded shadow">
+            <h3>Add a new Menu Category</h3>
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Add Category</button>
+
+                <!-- Iterate through Form Fields -->
+                <div>
+                    {% for field in form %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px;">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" placeholder="Enter category name" style="width: 100%;" {% if field.field.required %} required {% endif %}>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Add Category</button>
             </form>
         </div>
     </div>
