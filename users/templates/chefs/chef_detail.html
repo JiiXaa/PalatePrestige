@@ -211,16 +211,19 @@
 <!-- Script to toggle show more/less button text for reviews -->
 <script>
   const moreReviewsBtn = document.getElementById('moreReviewsBtn');
-  const moreReviewsBtnText = moreReviewsBtn.innerHTML;
-  const lessReviewsBtnText = 'Show Less Reviews';
 
-  moreReviewsBtn.addEventListener('click', () => {
-    if (moreReviewsBtn.innerHTML === moreReviewsBtnText) {
-      moreReviewsBtn.innerHTML = lessReviewsBtnText;
-    } else {
-      moreReviewsBtn.innerHTML = moreReviewsBtnText;
-    }
-  });
+  if(moreReviewsBtn) {
+    const moreReviewsBtnText = moreReviewsBtn.innerHTML;
+    const lessReviewsBtnText = 'Show Less Reviews';
+
+    moreReviewsBtn.addEventListener('click', () => {
+      if (moreReviewsBtn.innerHTML === moreReviewsBtnText) {
+        moreReviewsBtn.innerHTML = lessReviewsBtnText;
+      } else {
+        moreReviewsBtn.innerHTML = moreReviewsBtnText;
+      }
+    });
+  }
 </script>
 
 {% endblock %}
