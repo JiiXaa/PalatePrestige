@@ -7,16 +7,14 @@
 
 {% block content %}
 <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
-  <div class="card">
+  <div class="card shadow-sm p-3 pl-4">
     <div class="card-body">
-      <h1 class="card-title text-center">{% trans "Sign In" %}</h1>
+      <h1 class="card-title">{% trans "Sign In" %}</h1>
 
       {% get_providers as socialaccount_providers %}
 
       {% if socialaccount_providers %}
-      <p class="card-text text-center">{% blocktrans with site.name as site_name %}Please sign in with one
-        of your existing third-party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-        for a {{ site_name }} account and sign in below.{% endblocktrans %}</p>
+      <p class="card-text text-center">{% blocktrans with site.name as site_name %}Please sign in with one of your existing third-party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a {{ site_name }} account and sign in below.{% endblocktrans %}</p>
 
       <div class="socialaccount_ballot text-center">
 

@@ -138,16 +138,6 @@ html {
 
 /* Allauth custom styles */
 
-/* Logout */
-.logout-wrapper {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-}
-
 /* Utility classes */
 .hidden {
   display: none;
