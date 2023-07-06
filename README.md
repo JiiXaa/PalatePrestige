@@ -1,4 +1,4 @@
-### User Stories:
+## User Stories:
 
 **Registration and User Accounts**
 
@@ -12,7 +12,7 @@
 
 **Displaying and Navigation**
 
-- [ ] The display of content is determined by the group assigned to each individual user. Depending on their assigned group, clients are able to view pages and templates that showcase chefs' profiles and menus associated with them. On the other hand, chefs have the ability to add or edit menus that they offer to customers.</br>
+- [x] The display of content is determined by the group assigned to each individual user. Depending on their assigned group, clients are able to view pages and templates that showcase chefs' profiles and menus associated with them. On the other hand, chefs have the ability to add or edit menus that they offer to customers.</br>
       More information about the Django groups can be found: </br>
   - https://testdriven.io/blog/django-permissions/ </br>
   - https://stackoverflow.com/questions/34571880/how-to-check-in-template-if-user-belongs-to-a-group </br>
@@ -21,6 +21,7 @@
 | ------- | ----------------------------------------------- | -------------------------------------------------------- |
 | Client  | View a list of chefs                            | Select a chef to book                                    |
 | Client  | View individual chef details                    | Identify the price, menu, availability, rating           |
+| Client  | View individual menu details                    | Identify the dishes, and description of a menu           |
 | Client  | Easily view the total price of the booking      | Keep an eye on the total sum before completing a booking |
 |         |                                                 |                                                          |
 | Chef    | Easily add/edit/remove menu's available to book | Keep an eye on the total sum before completing a booking |
@@ -37,15 +38,24 @@
 | Chef    | Easily add/remove availability dates       | Manage availability                   |
 | Chef    | Create various deals                       | Promote my services                   |
 
-## Development
+## Technologies and Third party packages:
 
-### Third party packages:
+- [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML/) Used for the creation of the markup of Django templates for the website content.
+- [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS/) Cascading Style Sheets language used to style individual pages.
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/) Scripting language used mainly for making website interactive (Logic for mobile menu (show/hide toggle), controlling styles addition/removal based on 'mouse' events).
+- [Django](https://www.djangoproject.com/) Python-based web framework that follows the model–template–views architectural pattern.
 
 - [Bootstrap](https://getbootstrap.com/) the world’s most popular framework for building responsive, mobile-first sites
 - [django-allauth](https://django-allauth.readthedocs.io/en/latest/) provides a set of reusable Django applications addressing authentication, registration, account management, and third-party (social) account authentication.
 - [Full Calendar](https://fullcalendar.io/) is a lightweight yet powerful and developer-friendly JavaScript library to create flexible, draggable event calendars on the modern web app.
+- [AWS S3 Bucket](https://aws.amazon.com/s3/) Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance.
+- [ElephantSQL](https://www.elephantsql.com/) Used to store PostgreSQL database in cloud.
 
 ## Database Model
+
+Implemented Django's ORM (Object-Relational Mapping) to generate the app's database schema.
+
+Database relationships between class objects:
 
 **User and Chef:** The relationship (one-to-one) between the Chef and Customer models with the built-in Django's User model is established primarily for authentication and authorization purposes. If a User is deleted, the associated Chef will be deleted too due to the 'on_delete=models.CASCADE' option.
 

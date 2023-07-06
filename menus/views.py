@@ -34,8 +34,8 @@ def all_menus(request):
             all_menus = all_menus.filter(queries)
 
     # Pagination
-    # Show 4 menus per page
-    paginator = Paginator(all_menus, 4)
+    # Show 8 menus per page
+    paginator = Paginator(all_menus, 8)
     page_number = request.GET.get("page")
     menus = paginator.get_page(page_number)
 

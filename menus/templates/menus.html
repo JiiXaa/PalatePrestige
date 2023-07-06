@@ -18,32 +18,34 @@
         <a href="tel:+x592362685x" class="text-primary"><strong>x592362685x</strong></a>
     </p>
   </div>
-  <div class="card-columns">
+  <div class="row mb-5">
       {% for menu in menus %}
       {% for dish in menu.dishes.all %}
       <!-- Check if first main dish has an image. Only show cards that have image. -->
       {% if forloop.counter == 1 and dish.image %}
-      <div class="card chef-menu-card h-100" data-menu-id="{{ menu.id }}" data-menu-title="{{ menu.title }}" data-chef-id="{{ menu.chef.user_id }}" data-chef-first-name="{{ menu.chef.user.first_name }}" data-chef-last-name="{{ menu.chef.user.last_name }}" data-menu-price="{{ menu.price }}">
-          <div class="card-body">
-              <a href="{% url 'menu_detail' menu_id=menu.id %}">
-                  <h4 class="card-title">{{ menu.title|title }}</h4>
-              </a>
-              <div class="d-flex align-items-center mb-3">
-                  <div class="d-flex align-items-center mr-2">
-                      <i class="fas fa-star text-primary mr-1"></i>
-                      <span class="review-span " style="font-size: 1.15rem;">{{ menu.chef.average_rating }}</span>
+      <div class="col-md-6 mb-3 d-flex">
+          <div class="card chef-menu-card flex-grow-1" data-menu-id="{{ menu.id }}" data-menu-title="{{ menu.title }}" data-chef-id="{{ menu.chef.user_id }}" data-chef-first-name="{{ menu.chef.user.first_name }}" data-chef-last-name="{{ menu.chef.user.last_name }}" data-menu-price="{{ menu.price }}">
+              <div class="card-body">
+                  <a href="{% url 'menu_detail' menu_id=menu.id %}">
+                      <h4 class="card-title">{{ menu.title|title }}</h4>
+                  </a>
+                  <div class="d-flex align-items-center mb-3">
+                      <div class="d-flex align-items-center mr-2">
+                          <i class="fas fa-star text-primary mr-1"></i>
+                          <span class="review-span " style="font-size: 1.15rem;">{{ menu.chef.average_rating }}</span>
+                      </div>
+                      <p class="mb-0" style="font-size: 1.15rem;">{{ menu.chef.user.first_name }} {{ menu.chef.user.last_name }}</p>
                   </div>
-                  <p class="mb-0" style="font-size: 1.15rem;">{{ menu.chef.user.first_name }} {{ menu.chef.user.last_name }}</p>
+                  <p class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">{{ menu.menu_category|capfirst }}</p>
+                  <div class="border rounded p-3 mb-3">
+                      <p class="card-text">{{ menu.description|capfirst }}</p>
+                  </div>
+                  <div class="chef-menu-card-content mb-3">
+                      <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid rounded" style="height: 200px; object-fit: cover;">
+                  </div>
+                  <p>From <span class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">&#163;{{ menu.price }}</span> pp</p>
+                  <a href="{% url 'chef_detail' chef_id=menu.chef.user_id %}" class="btn btn-primary">View Chef Profile</a>
               </div>
-              <p class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">{{ menu.menu_category|capfirst }}</p>
-              <div class="border rounded p-3 mb-3">
-                  <p class="card-text">{{ menu.description|capfirst }}</p>
-              </div>
-              <div class="chef-menu-card-content mb-3">
-                  <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid rounded" style="height: 200px; object-fit: cover;">
-              </div>
-              <p>From <span class="badge badge-pill badge-success p-2" style="font-size: 0.9rem;">&#163;{{ menu.price }}</span> pp</p>
-              <a href="{% url 'chef_detail' chef_id=menu.chef.user_id %}" class="btn btn-primary">View Chef Profile</a>
           </div>
       </div>
       {% endif %}
