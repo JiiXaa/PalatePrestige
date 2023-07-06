@@ -85,3 +85,5 @@ Admin-only add menu categories simplify search and sorting while preventing an e
 Nice to have:
 
 - [ ] Chef can request specific category addition.
+
+** When logged in as a superuser the 'My Account' navbar dropdown have a link to the admin panel. **
