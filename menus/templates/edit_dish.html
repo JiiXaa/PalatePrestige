@@ -1,17 +1,36 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static custom_filters %}
 
 {% block content %}
   <div class="container">
-    <div class="row mt-3">
-        <div class="col">
-            <h2>Edit Dish "{{ dish.name }}" in {{ menu.name }}</h2>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </form>
-        </div>
+    <div class="row justify-content-center align-items-center mt-4" style="height: 100vh;">
+      <div class="col-10 col-md-6 p-3 border rounded shadow">
+        <h2>Edit Dish "{{ dish.name }}" in {{ menu.name }}</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- Iterate through Form Fields -->
+          {% for field in form %}
+            <div>
+              <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px;">{{ field.label }}</label>
+              {% if field.field.widget.input_type == 'select' or field.field.widget.input_type == 'file' %}
+                {{ field }}
+              {% elif field.field.widget.input_type == 'checkbox' %}
+                {{ field }}
+              {% elif field.field.widget|class_name == 'Textarea' %}
+                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%; height: 120px;" {% if field.field.required %} required {% endif %}>{{ field.value|default:'' }}</textarea>
+              {% else %}
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" style="width: 100%;" value="{{ field.value }}" {% if field.field.required %} required {% endif %}>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="btn-wrapper mt-3">
+            <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+            <a href="{% url 'menu_detail' menu_id=menu.id %}" class="btn btn-primary">Go Back</a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}

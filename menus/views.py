@@ -11,6 +11,10 @@ from .models import Menu, Dish, MenuCategory
 from .forms import MenuForm, MenuCategoryForm, DishForm
 
 
+def handler404(request, exception):
+    return render(request, '404.html', status=404)
+
+
 def all_menus(request):
     """A view to display all menus, including sorting and search queries"""
     all_menus = Menu.objects.filter().order_by("title")

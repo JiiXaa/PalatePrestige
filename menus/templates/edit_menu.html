@@ -25,7 +25,10 @@
               </div>
             {% endfor %}
 
-          <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+          <div class="btn-wrapper mt-3">
+            <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+            <a href="{% url 'menu_detail' menu_id=menu.id %}" class="btn btn-primary">Go Back</a>
+          </div>
         </form>
       </div>
     </div>

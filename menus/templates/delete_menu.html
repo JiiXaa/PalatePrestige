@@ -10,7 +10,7 @@
             <form method="POST" action="{% url 'delete_menu' menu_id=menu.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger mr-2">Delete</button>
-                <a href="{% url 'chef_detail' chef_id=user.chef.user_id %}" class="btn btn-primary">Back to Profile</a>
+                <a href="{% url 'menu_detail' menu_id=menu.id %}" class="btn btn-primary">Go Back</a>
             </form>
         </div>
     </div>

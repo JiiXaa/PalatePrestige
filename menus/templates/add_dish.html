@@ -25,7 +25,7 @@
           {% endfor %}
           <div class="d-flex align-items-center mt-3">
             <button type="submit" class="btn btn-outline-primary mr-3">Add dish</button>
-            <a href="{% url 'chef_detail' chef_id=user.chef.user_id %}" class="btn btn-primary">Back to Profile</a>
+            <a href="{% url 'menu_detail' menu_id=menu.id %}" class="btn btn-primary">Go Back</a>
           </div>
         </form>
       </div>
