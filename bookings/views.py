@@ -32,7 +32,8 @@ def create_booking(request):
                 datetime.strptime(booking_date_str, "%Y-%m-%dT%H:%M:%S")
             )
         except ValueError:
-            return JsonResponse({"error": "Invalid date format"}, status=400)
+            return JsonResponse({"error": "Invalid date format"},
+                                status=400)
 
         # Retrieve the chef instance
         try:

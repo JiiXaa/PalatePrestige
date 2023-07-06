@@ -15,6 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
     {}
   );
 
+  // Access the existing selectedBooking instance from the window object
+  const selectedBooking = window.selectedBooking;
+
+  const visitedChefEl = document.getElementById('calendar');
+  const visitedChefCheckId = parseInt(visitedChefEl.dataset.chefId);
+  let menuIdToCheck = JSON.parse(localStorage.getItem('selectedMenu'));
+
+  if (menuIdToCheck) {
+    menuIdToCheck = parseInt(menuIdToCheck.chefId);
+    if (menuIdToCheck != visitedChefCheckId) {
+      clearBooking();
+    }
+  }
+
   // Event listener for the booking modal close button
   const bookingModalCloseBtn = document.querySelector(
     '#mobileBookingModal .close'
@@ -29,9 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove the inline style from the body element to clear the padding-right
     document.body.style.paddingRight = '';
   });
-
-  // Access the existing selectedBooking instance from the window object
-  const selectedBooking = window.selectedBooking;
 
   // Get all the "Add menu to booking" buttons
   const addMenuToBookingBtns = document.querySelectorAll('.add-menu-js');
@@ -72,8 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const chefName = chefFirstName + ' ' + chefLastName;
 
       // Use the menu ID to set the selected menu in the selectedBooking instance and in local storage
-      selectedBooking.setSelectedMenu(menuId);
-      selectedBooking.addSelectedMenuLS(menuId);
+
+      const menu = { id: menuId, chefId: chefId, title: menuTitle };
+      selectedBooking.setSelectedMenu(menu);
+      selectedBooking.addSelectedMenuLS(JSON.stringify(menu));
       selectedBooking.setSelectedMenuTitle(menuTitle);
       selectedBooking.addSelectedMenuTitleLS(menuTitle);
 
@@ -97,11 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Find the selected menu card
       menuCards.forEach((menuCard) => {
-        if (menuCard.dataset.menuId === menuId) {
+        if (menuCard.dataset.menuId === menu.id) {
           selectedMenuCard = menuCard;
           selectedMenuCard.classList.add('menu-selected');
-        } else {
-          menuCard.classList.remove('menu-selected');
         }
       });
 
@@ -242,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createBooking(
               selectedChef,
               selectedDate,
-              selectedMenu,
+              selectedMenu.id,
               paymentMethodId,
               paymentModal
             );
@@ -403,7 +414,7 @@ class SelectedBooking {
       localStorage.getItem('selectedMenu') &&
       localStorage.getItem('selectedMenuTitle')
     ) {
-      this.menu = localStorage.getItem('selectedMenu');
+      this.menu = JSON.parse(localStorage.getItem('selectedMenu'));
       this.menuTitle = localStorage.getItem('selectedMenuTitle');
     } else {
       this.menu = null;
@@ -464,23 +475,29 @@ class SelectedBooking {
     if (this.date && this.menu) {
       // Find the correct parent element which contains the data attributes
       const menuCard = document.querySelector(
-        `.menu-card[data-menu-id="${this.menu}"]`
+        `.menu-card[data-menu-id="${this.menu.id}"]`
       );
 
-      // Get the chef data from the parent element
-      const chefId = menuCard.dataset.chefId;
-      const chefFirstName = menuCard.dataset.chefFirstName;
-      const chefLastName = menuCard.dataset.chefLastName;
-      const chefName = `${chefFirstName} ${chefLastName}`;
+      if (menuCard) {
+        // Get the chef data from the parent element
+        const chefId = menuCard.dataset.chefId;
+        const chefFirstName = menuCard.dataset.chefFirstName;
+        const chefLastName = menuCard.dataset.chefLastName;
+        const chefName = `${chefFirstName} ${chefLastName}`;
 
-      this.chef = {
-        id: chefId,
-        name: chefName,
-      };
+        this.chef = {
+          id: chefId,
+          name: chefName,
+        };
 
-      selectedChef.innerHTML = `<p class="badge-info badge p-2" style="font-size: 1.25rem">Chef: ${this.chef.name}</p>`;
-      selectedChef.classList.add('d-flex');
-      selectedChef.classList.add('justify-content-center');
+        selectedChef.innerHTML = `<p class="badge-info badge p-2" style="font-size: 1.25rem">Chef: ${this.chef.name}</p>`;
+        selectedChef.classList.add('d-flex');
+        selectedChef.classList.add('justify-content-center');
+      } else {
+        selectedBooking.clearSelectedBooking();
+        selectedBooking.clearSelectedBookingLS();
+        this.updateSelectionDisplay();
+      }
     } else {
       // Either date or menu is not selected, clear chef and selectedChef display
       this.chef = null;
@@ -552,11 +569,10 @@ class SelectedBooking {
 
       // Get all the menu cards
       const menuCards = document.querySelectorAll('.menu-card');
-
       // Find the selected menu card
       let selectedMenuCard = null;
       menuCards.forEach((menuCard) => {
-        if (menuCard.dataset.menuId === this.menu) {
+        if (menuCard.dataset.menuId === this.menu.id) {
           selectedMenuCard = menuCard;
           return; // Exit the loop once the selected menu card is found
         }
@@ -600,6 +616,10 @@ const clearBookingFunction = () => {
   selectedBooking.clearSelectedBookingLS();
   selectedBooking.clearSelectedBooking();
   selectedBooking.updateSelectionDisplay();
+};
+
+const clearBooking = () => {
+  selectedBooking.clearSelectedBooking();
 };
 
 function createBooking(

@@ -1,26 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-custom-7rem mt-custom-10rem">
-    <h1>Update Review</h1>
-
-    <form method="POST" action="{% url 'update_review' booking.id %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="rating">Rating:</label>
-            <i class="fa-regular fa-star" data-rating="1"></i>
-            <i class="fa-regular fa-star" data-rating="2"></i>
-            <i class="fa-regular fa-star" data-rating="3"></i>
-            <i class="fa-regular fa-star" data-rating="4"></i>
-            <i class="fa-regular fa-star" data-rating="5"></i>
-            <input type="hidden" name="rating" id="rating" class="form-control" value="{{ review.rating }}" required>
-        </div>
-        <div class="form-group">
-            <label for="review">Review:</label>
-            <textarea name="review" id="review" class="form-control" required>{{ review.review }}</textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Review</button>
-    </form>
+  <div class="container">
+    <div class="row justify-content-center align-items-center mt-4" style="height: 100vh;">
+        <div class="col-10 col-md-6 p-4 border rounded shadow">
+        <h1>Update Review</h1>
+        <form method="POST" action="{% url 'update_review' booking.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <i class="fa-regular fa-star" data-rating="1"></i>
+                <i class="fa-regular fa-star" data-rating="2"></i>
+                <i class="fa-regular fa-star" data-rating="3"></i>
+                <i class="fa-regular fa-star" data-rating="4"></i>
+                <i class="fa-regular fa-star" data-rating="5"></i>
+                <input type="hidden" name="rating" id="rating" class="form-control" value="{{ review.rating }}" required>
+            </div>
+            <div class="form-group">
+                <label for="review">Review:</label>
+                <textarea name="review" id="review" class="form-control" required>{{ review.review }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Review</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
