@@ -26,7 +26,7 @@ from reviews.models import ChefReview
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
 
-    # Override the form_valid method to add user_type to the form data before it is saved. Also, create Chef or Customer object based on user_type.
+    # Override the form_valid method to add user_type to the form data.
     def form_valid(self, form):
         response = super().form_valid(form)
         user_type = form.cleaned_data.get("user_type")
@@ -57,7 +57,8 @@ def login_redirect(request):
         return redirect("chefs")
     else:
         # Handle the case when the user does not have any role assigned
-        messages.error(request, "Access Denied. You are not a Chef or a Customer.")
+        messages.error(request,
+                       "Access Denied. You are not a Chef or a Customer.")
         return redirect("menus")
 
 
@@ -86,14 +87,15 @@ def chef_detail(request, chef_id):
     reviews = ChefReview.objects.filter(booking__chef=chef)
     logged_in_user_id = request.user.id
 
-    # determine the user role of the logged-in user. This is used to determine which instance of the calendar to render
+    # determine the logged-in user role and which calendar to render.
     user_role = None
     if request.user.groups.filter(name="Chef").exists():
         user_role = "chef"
     else:
         user_role = "customer"
 
-    if request.user.groups.filter(name="Chef").exists() and request.user == chef.user:
+    if request.user.groups.filter(name="Chef").exists() and \
+            request.user == chef.user:
         # If the logged-in user is the Chef whose profile is being viewed
         context = {
             "chef": chef,
@@ -129,7 +131,8 @@ def edit_chef(request, chef_id):
     # If the logged in user is not the owner of the chef profile
     # Redirect them to the detail page with an error message
     if request.user != user:
-        messages.error(request, "You do not have permission to edit this profile.")
+        messages.error(
+            request, "You do not have permission to edit this profile.")
         return redirect("chef_detail", chef_id=chef_id)
 
     if request.method == "POST":
@@ -186,7 +189,8 @@ def get_chef_availability(request, chef_id):
             {
                 "start": start_time,
                 "end": end_time,
-                "title": "Available" if entry.is_available else "Not Available",
+                "title":
+                    "Available" if entry.is_available else "Not Available",
                 "editable": entry.is_available,
                 "availability_id": entry.id,
             }
@@ -218,7 +222,8 @@ def add_chef_availability(request):
             )
         else:
             return JsonResponse(
-                {"error": "You do not have permission to add availability."}, status=403
+                {"error": "You do not have permission to add availability."},
+                status=403
             )
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
@@ -241,9 +246,11 @@ def delete_chef_availability(request, availability_id):
                 {"message": "Availability deleted successfully."}, status=200
             )
 
-        # If the availability instance was not found or the user is not the chef associated with the availability instance or the user is not authenticated
+        # If the availability instance was not found send a 403 response
+
         return JsonResponse(
-            {"error": "You do not have permission to delete availability."}, status=403
+            {"error": "You do not have permission to delete availability."},
+            status=403
         )
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
@@ -275,9 +282,10 @@ def update_chef_availability(request, availability_id):
                 {"message": "Availability updated successfully."}, status=200
             )
 
-        # If the availability instance was not found or the user is not the chef associated with the availability instance or the user is not authenticated
+        # If the availability instance was not found send a 403 response
         return JsonResponse(
-            {"error": "You do not have permission to update availability."}, status=403
+            {"error": "You do not have permission to update availability."},
+            status=403
         )
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
@@ -297,7 +305,8 @@ def all_customers(request):
     """A view to display all customers, including sorting and search queries"""
     customers = Customer.objects.all()
 
-    return render(request, "customers/customers.html", {"customers": customers})
+    return render(
+        request, "customers/customers.html", {"customers": customers})
 
 
 @login_required
@@ -317,11 +326,12 @@ def customer_detail(request, customer_id):
             # Retrieve all reviews for the logged-in customer
             reviews = ChefReview.objects.filter(booking__customer=customer)
             # Pass the customer, bookings and reviews to the template context
-            context = {"customer": customer, "bookings": bookings, "reviews": reviews}
+            context = {
+                "customer": customer, "bookings": bookings, "reviews": reviews}
             return render(request, "customers/customer_detail.html", context)
         else:
             messages.error(
-                request, "Access Denied. You are not authorized to view this profile."
+                request, "Access Denied. You are not authorized!"
             )
             return redirect("menus")
     else:

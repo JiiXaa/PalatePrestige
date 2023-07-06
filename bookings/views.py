@@ -47,7 +47,9 @@ def create_booking(request):
             try:
                 customer = request.user.customer
             except Customer.DoesNotExist:
-                return JsonResponse({"error": "Customer does not exist"}, status=400)
+                return JsonResponse(
+                    {"error": "Customer does not exist"}, status=400
+                )
         else:
             return JsonResponse(
                 {"error": "Access Denied. You are not a Customer."}, status=400
@@ -66,7 +68,7 @@ def create_booking(request):
 
         if existing_booking:
             return JsonResponse(
-                {"error": "Booking already exists for this chef at the selected date"},
+                {"error": "Booking already exists for this chef"},
                 status=200,
             )
 
@@ -101,7 +103,7 @@ def create_booking(request):
                     avail.is_available = False
                     avail.save()
             except Availability.DoesNotExist:
-                # Update the booking status to "failed" if availability does not exist
+                # Update the booking status to "failed"
                 booking.status = "failed"
                 booking.save()
                 return JsonResponse(
@@ -113,7 +115,7 @@ def create_booking(request):
             booking.save()
 
             # Return the PaymentIntent client_secret along with booking info
-            # The client_secret is used to finalize the payment on the client-side
+            # The client_secretused to finalize the payment on the client-side
             return JsonResponse(
                 {
                     "status": "booking_created",
@@ -126,7 +128,9 @@ def create_booking(request):
             # Update the booking status to "failed" if an IntegrityError occurs
             booking.status = "failed"
             booking.save()
-            return JsonResponse({"error": "Booking already exists"}, status=400)
+            return JsonResponse(
+                {"error": "Booking already exists"}, status=400
+                    )
 
         except Exception as e:
             # Update the booking status to "failed" for other exceptions

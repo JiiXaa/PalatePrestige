@@ -12,15 +12,15 @@ def create_review(request, booking_id):
 
     # Check if the user is the customer for this booking
     if request.user != booking.customer.user:
-        # Handle the case where the user is not the customer for this booking, e.g., by showing an error message.
         messages.error(request, "You are not the customer for this booking.")
         return redirect("menus")
 
     # Check if review already exists for this booking
     existing_review = ChefReview.objects.filter(booking=booking).first()
     if existing_review:
-        # Handle the case where a review already exists, e.g., by showing an error message.
-        messages.error(request, "You have already submitted a review for this booking.")
+        # If review already exists, e.g., by showing an error message.
+        messages.error(request,
+                       "You have already submitted a review for this booking.")
         customer_detail_url = reverse(
             "customer_detail", kwargs={"customer_id": booking.customer.user.id}
         )
@@ -80,9 +80,11 @@ def update_review(request, booking_id):
 
         return redirect("review_success", customer_id=booking.customer.user.id)
 
-    return render(request, "update_review.html", {"booking": booking, "review": review})
+    return render(
+        request, "update_review.html", {"booking": booking, "review": review})
 
 
 def show_customer_reviews(request, customer_id):
-    reviews = ChefReview.objects.filter(booking__customer__user__id=customer_id)
+    reviews = ChefReview.objects.filter(
+        booking__customer__user__id=customer_id)
     return render(request, "customer_reviews.html", {"reviews": reviews})

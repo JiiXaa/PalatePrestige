@@ -26,9 +26,11 @@ def all_menus(request):
         if "q" in request.GET:
             query = request.GET["q"]
             if not query:
-                messages.error(request, "You didn't enter any search criteria!")
+                messages.error(
+                    request, "You didn't enter any search criteria!")
                 return redirect(reverse("menus"))
-            queries = Q(title__icontains=query) | Q(description__icontains=query)
+            queries = Q(
+                title__icontains=query) | Q(description__icontains=query)
             all_menus = all_menus.filter(queries)
 
     # Pagination
@@ -95,7 +97,8 @@ def edit_menu(request, menu_id):
             try:
                 form.save()
                 messages.success(request, "Menu successfully updated!")
-                return redirect("chef_detail", chef_id=request.user.chef.user_id)
+                return redirect(
+                    "chef_detail", chef_id=request.user.chef.user_id)
             except ValidationError as e:
                 messages.error(request, f"Error updating menu: {e}")
     else:
@@ -141,15 +144,16 @@ def add_menu_category(request):
         form = MenuCategoryForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data["name"]
-            # Check if a menu category with the same name already exists (case insensitive) Found solution here: https://stackoverflow.com/questions/9983391/how-do-i-use-iexact-to-check-if-an-item-matches-case-insensitively-in-django
             if MenuCategory.objects.filter(name__iexact=name).exists():
                 messages.error(
-                    request, "A menu category with the same name already exists."
+                    request,
+                    "A menu category with the same name already exists."
                 )
             else:
                 try:
                     form.save()
-                    messages.success(request, "Menu category successfully added!")
+                    messages.success(
+                        request, "Menu category successfully added!")
                     return redirect("add_menu_category")
                 except Exception as e:
                     messages.error(request, f"Error adding menu category: {e}")
@@ -202,7 +206,8 @@ def edit_dish(request, menu_id, dish_id):
 
             if dish.image and old_image_name != dish.image.name:
                 s3 = boto3.resource("s3")
-                s3.Object(settings.AWS_STORAGE_BUCKET_NAME, old_image_name).delete()
+                s3.Object(
+                    settings.AWS_STORAGE_BUCKET_NAME, old_image_name).delete()
 
             return redirect("menu_detail", menu_id=menu.id)
     else:
@@ -233,7 +238,8 @@ def delete_dish(request, menu_id, dish_id):
             if dish.image:
                 s3 = boto3.resource("s3")
                 s3.Object(
-                    settings.AWS_STORAGE_BUCKET_NAME, "media/" + dish.image.name
+                    settings.AWS_STORAGE_BUCKET_NAME,
+                    "media/" + dish.image.name
                 ).delete()
 
             messages.success(request, "Dish successfully deleted!")

@@ -15,4 +15,4 @@ class Booking(models.Model):
     total_cost = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __str__(self):
-        return f"{self.customer.user.username} - {self.menu.title} - {self.booking_date.date()} - {self.booking_date.time()}"
+        return f"{self.menu.title} - {self.booking_date.date()}"
