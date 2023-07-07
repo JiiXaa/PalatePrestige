@@ -96,7 +96,9 @@
                             {% if dish.image %}
                               <img src="{{ dish.image.url }}" alt="{{ dish.name }}" class="img-fluid mb-2">
                             {% endif %}
-                            <p class="badge badge-success p-2 mt-2 ml-1 d-block w-25" style="font-size: 0.9rem;">{{ dish.category|capfirst }}</p>
+                            <div class="d-flex">
+                              <p class="badge badge-success p-2 mt-2 ml-1" style="font-size: 0.9rem;">{{ dish.category|capfirst }}</p>
+                            </div>
                             <p class="border rounded p-4">{{ dish.description|capfirst }}</p>
                           {% endif %}
                         {% endfor %}
