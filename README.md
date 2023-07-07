@@ -1,6 +1,29 @@
-# PalatePrestige - A Luxury Private Chef Rental
+# PalatePrestige - A Luxury Private Chef Rental Service
 
 <img width="960" alt="page screenshot" src="https://raw.githubusercontent.com/JiiXaa/PalatePrestige/main/.github/screenshots/palate-prestige.jpg">
+
+## About
+
+The **PalatePrestige** is a sophisticated app that offers a luxury chef rental service, facilitating seamless connections between talented chefs and discerning customers. With PalatePrestige, customers can effortlessly browse through a curated selection of experienced chefs and explore their menus. Whether it's a memorable celebration or an intimate gathering, customers have the freedom to book their chosen chef for a truly special culinary experience.
+
+Customers also benefit from an intuitive booking history feature, allowing them to effortlessly track and manage their past reservations. This provides a convenient overview of their culinary adventures and ensures a seamless and personalized experience throughout.
+
+For chefs, PalatePrestige offers a comprehensive set of tools to manage their culinary offerings. Chefs have complete control over their menus, enabling them to add, edit, and delete dishes specific to each menu. Additionally, chefs can effortlessly manage their availability by adding or removing dates from their calendar. This flexibility ensures that chefs can cater to special occasions and provide unique dining experiences tailored to each customer's needs.
+
+Whether it's a romantic dinner, a festive celebration, or any occasion that calls for an exceptional culinary experience, The PalatePrestige has you covered. Elevate your dining experience with our talented chefs and indulge in unforgettable flavors, all conveniently arranged through our user-friendly app.
+
+**Link to** [live site](https://palate-prestige.onrender.com)
+
+## Contents
+
+- [**User Stories**](#user-stories)
+- [**Technologies Used**](#technologies)
+- [**Database Model**](#database-model)
+- [**Admin Specific Actions**](#admin-specific-actions)
+- [**Testing**](#testing)
+- [**Deployment**](#deployment)
+- [**Recreate Project Locally**](#recreate-project-locally)
+- [**Acknowledgements**](#acknowledgements)
 
 ## User Stories:
 
@@ -42,12 +65,13 @@
 | Chef    | Easily add/remove availability dates       | Manage availability                   |
 | Chef    | Create various deals                       | Promote my services                   |
 
-## Technologies and Third party packages:
+## Technologies:
 
 - [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML/) Used for the creation of the markup of Django templates for the website content.
 - [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS/) Cascading Style Sheets language used to style individual pages.
 - [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/) Scripting language used mainly for making website interactive (Logic for mobile menu (show/hide toggle), controlling styles addition/removal based on 'mouse' events).
 - [Django](https://www.djangoproject.com/) Python-based web framework that follows the model–template–views architectural pattern.
+- [PostgreSQL](https://www.postgresql.org/) open-source relational database management system emphasizing extensibility and SQL compliance.
 
 - [Bootstrap](https://getbootstrap.com/) the world’s most popular framework for building responsive, mobile-first sites
 - [django-allauth](https://django-allauth.readthedocs.io/en/latest/) provides a set of reusable Django applications addressing authentication, registration, account management, and third-party (social) account authentication.
@@ -91,3 +115,124 @@ Nice to have:
 - [ ] Chef can request specific category addition.
 
 ** When logged in as a superuser the 'My Account' navbar dropdown have a link to the admin panel. **
+
+The **Django Admin Interface** provides an intuitive way to manage essential data in the project. With the admin.site registration, administrators have the ability to manipulate various key entities such as Menus, Dishes, Chef Reviews, Bookings, as well as the authentication system provided by allauth. Additionally, the admin interface allows for the management of custom roles, specifically the Chef and Customer roles, including the ability to add, edit, and delete them as needed. This streamlined interface empowers administrators to efficiently handle important data within the project.
+
+## Testing
+
+Full testing process and results can be found [here](https://github.com/JiiXaa/PalatePrestige/blob/main/docs/TESTING.md).
+
+## Deployment
+
+PalatePrestige app is hosted on **Render** [live site](https://palate-prestige.onrender.com) hosting.
+
+- Development process:
+  - Create a new Web Service
+  - Connect a GitHub repository
+  - Use the following values during creation:
+    - Environment Python
+    - Build Command: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    - Start Command: gunicorn palateprestige.wsgi --bind 0.0.0.0:$PORT
+  - Add environment variables:
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - DATABASE_URL
+    - EMAIL_HOST_PASS
+    - EMAIL_HOST_USER
+    - PORT
+    - SECRET_KEY
+    - STRIPE_PUBLIC_KEY
+    - STRIPE_SECRET_KEY
+  - Going forward, every push to the repo will automatically build app and deploy it in production. If the build fails, Render will automatically stop the deploy process and the existing version of the app will keep running until the next successful deploy.
+
+## Recreate Project Locally:
+
+To set up a local development version of the app, follow these steps:
+
+1. Ensure that Python 3 is installed on your system.
+2. Clone the project repository from the desired source (e.g., GitHub) to your local machine.
+3. Create a virtual environment for the project to keep the dependencies isolated. You can use tools like virtualenv or venv for this purpose.
+4. Activate the virtual environment.
+5. Install the required Python packages using the provided requirements.txt file. Run the following command: <br>
+   `pip install -r requirements.txt`
+6. Create a file named .env in the root directory of the project. Add the following content to the file: <br>
+
+```DEVELOPMENT=True
+
+SECRET_KEY=xxxxx
+
+STRIPE_PUBLIC_KEY=pk_test_xxxxxx
+
+STRIPE_SECRET_KEY=sk_test_xxxxxx
+
+DATABASE_URL=postgres://username:password@host/username
+
+AWS_ACCESS_KEY_ID=xxxxx
+
+AWS_SECRET_ACCESS_KEY=xxxxx
+
+```
+
+Make sure to replace the values for SECRET_KEY, STRIPE_PUBLIC_KEY, STRIPE_SECRET_KEY, DATABASE_URL, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY with your own values. The provided values are placeholders and should be replaced with real ones.
+
+7. Set up a PostgreSQL database and update the DATABASE_URL value in the .env file accordingly. (I have used the ElephantSQL hosting)
+
+8. Run the database migrations to set up the database schema. Execute the following command:
+
+```
+python manage.py migrate
+```
+
+9. Start the development server by running the following command:
+
+```
+python manage.py runserver
+
+```
+
+10. To make sure that images are stored in your AWS S3 Bucket:
+
+- S3 Bucket Configuration:
+
+  - Create an Amazon S3 bucket on the AWS Management Console.
+  - Configure the bucket to store static files and media files for the app.
+  - Obtain the AWS Access Key ID and Secret Access Key for the bucket.
+  - In the project's settings.py replace your S3 bucket settings:
+
+  ```
+  AWS_STORAGE_BUCKET_NAME = "<YOUR BUCKET NAME>"
+  AWS_S3_REGION_NAME = "<YOUR BUCKET REGION>"
+  ```
+
+11. Stripe Integration:
+
+- Create a Stripe account at https://stripe.com.
+- Obtain the Stripe publishable key and secret key from your Stripe account.
+- Open the .env file in the project's root directory.
+- Update the STRIPE_PUBLIC_KEY and STRIPE_SECRET_KEY values with your Stripe keys:
+
+```
+STRIPE_PUBLIC_KEY=<your_stripe_public_key>
+STRIPE_SECRET_KEY=<your_stripe_secret_key>
+```
+
+12. Final Steps:
+
+- Run the following command to collect static files:
+
+```
+python manage.py collectstatic
+```
+
+```
+python manage.py runserver
+```
+
+## Acknowledgements
+
+- My mentor Dick Vlaanderen for his advice and guidance during this project.
+- The Code Institute Slack community, comprised of a vibrant and talented group of developers, has been an invaluable resource throughout my coding journey.
+- Google search engine for limitless resources about web development.
+- [Stackoverflow](https://stackoverflow.com/) community for general advices and solution to problems I have encountered.
+
+[Back to contents](#contents)
