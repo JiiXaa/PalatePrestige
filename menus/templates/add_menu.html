@@ -3,16 +3,14 @@
 {% load custom_filters %}
 
 {% block content %}
-    <div class="container mt-5">
-        <div class="row mb-3">
-            <div class="col text-end">
-                {% if user.is_superuser or user.is_staff %}
-                    <a href="{% url 'add_menu_category' %}" class="btn btn-primary">Add Menu Category</a>
-                {% endif %}
-            </div>
-        </div>
+    <div class="container">
         <div class="row justify-content-center align-items-center mt-4" style="height: 100vh;">
             <div class="col-md-6 mx-auto">
+                <div class="col text-end mb-2">
+                    {% if user.is_superuser or user.is_staff %}
+                        <a href="{% url 'add_menu_category' %}" class="btn btn-primary">Add Menu Category</a>
+                    {% endif %}
+                </div>
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title">Add a new Menu</h2>
