@@ -1,3 +1,7 @@
+# PalatePrestige - A Luxury Private Chef Rental
+
+<img width="960" alt="page screenshot" src="https://raw.githubusercontent.com/JiiXaa/PalatePrestige/main/.github/screenshots/amiresponsive.jpg">
+
 ## User Stories:
 
 **Registration and User Accounts**
