@@ -6,7 +6,7 @@ class Booking(models.Model):
 
     customer = models.ForeignKey("users.Customer", on_delete=models.CASCADE)
     chef = models.ForeignKey("users.Chef", on_delete=models.CASCADE)
-    menu = models.ForeignKey("menus.Menu", on_delete=models.CASCADE)
+    menu = models.ForeignKey("menus.Menu", on_delete=models.DO_NOTHING)
     booking_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default="pending")

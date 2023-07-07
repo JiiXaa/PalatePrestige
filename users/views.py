@@ -78,7 +78,7 @@ def all_chefs(request):
 def chef_detail(request, chef_id):
     """A view to display a single chef profile"""
     chef = get_object_or_404(Chef, user_id=chef_id)
-    menus = Menu.objects.filter(chef=chef)
+    menus = Menu.objects.filter(chef=chef, is_deleted=False)
     check_availability = Availability.objects.filter(
         chef_id=chef_id,
         is_available=True,

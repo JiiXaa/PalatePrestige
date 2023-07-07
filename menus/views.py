@@ -17,7 +17,7 @@ def handler404(request, exception):
 
 def all_menus(request):
     """A view to display all menus, including sorting and search queries"""
-    all_menus = Menu.objects.filter().order_by("title")
+    all_menus = Menu.objects.filter(is_deleted=False).order_by("title")
     query = None
     categories = None
 
@@ -121,7 +121,9 @@ def delete_menu(request, menu_id):
 
     if request.method == "POST":
         try:
-            menu.delete()
+            # Soft delete menu. Set is_deleted to True instead of deleting.
+            menu.is_deleted = True
+            menu.save()
             messages.success(request, "Menu successfully deleted!")
             return redirect("chef_detail", chef_id=request.user.chef.user_id)
         except Exception as e:
