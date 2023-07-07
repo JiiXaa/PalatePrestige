@@ -11,7 +11,8 @@ import os
 
 
 class User(AbstractUser):
-    profile_image = models.ImageField(upload_to="profile_images", blank=True, null=True)
+    profile_image = models.ImageField(upload_to="profile_images",
+                                      blank=True, null=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -32,11 +33,13 @@ class User(AbstractUser):
                 s3 = boto3.client("s3")
                 bucket_name = "palateprestigebucket"
                 object_key = f"media/{self.profile_image.name}"
-                s3.put_object_acl(Bucket=bucket_name, Key=object_key, ACL="public-read")
+                s3.put_object_acl(Bucket=bucket_name,
+                                  Key=object_key, ACL="public-read")
 
 
 class Chef(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                primary_key=True)
     bio = models.TextField(max_length=500, blank=True)
     cuisine_types = models.CharField(max_length=200, blank=True)
     is_super_chef = models.BooleanField(default=False)
@@ -62,7 +65,8 @@ class Availability(models.Model):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                primary_key=True)
     location = models.CharField(max_length=200, blank=True)
 
     def __str__(self):

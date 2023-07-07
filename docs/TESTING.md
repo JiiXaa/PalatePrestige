@@ -207,3 +207,11 @@ Uncaught TypeError: can't access property "innerHTML", selectedMenu is null upda
 ### Issue: There was an error in the code related to the JavaScript functionality of the booking feature. The error occurred because the booking JavaScript relied on elements from the booking_large.html template, but those elements were conditionally excluded from the DOM when the authentication and group conditions were not met. <br>
 
 **Solution:** Instead of excluding the elements completely, it was necessary to keep them in the DOM but hide them conditionally. The solution involved modifying the code to include the booking_large.html template with a hide parameter set to True or False based on the authentication and group condition. Similarly, the booking_mobile.html template was included with the same hide parameter. In the included templates, a CSS class called hidden was added to the outermost container elements that needed to be hidden. The hidden class was defined in CSS with opacity: 0 to hide the elements while keeping them in the DOM.
+
+## PEP 8 Validation:
+
+PEP 8 is a widely accepted style guide for Python code that promotes clean and readable code. I have performed a thorough PEP 8 validation on all files in the project, ensuring compliance with the guidelines.
+
+During the validation process, I reviewed each file and made necessary adjustments to eliminate any PEP 8 violations. This ensures consistent code formatting and reduces potential errors.
+
+As a result, all files in the project have been checked for PEP 8 errors and modified to meet the PEP 8 requirements. This adherence to industry-standard conventions enhances code readability and maintainability.
