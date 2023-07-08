@@ -1,3 +1,15 @@
+## W3C HTML Validator
+
+**All HTML markup elements passed the W3C HTML validator without errors.**
+
+<img width="476" src="https://raw.githubusercontent.com/JiiXaa/PalatePrestige/main/.github/screenshots/html-validated.jpg">
+
+## W3C CSS Validator
+
+**All styles passed the CSS validator without errors.**
+
+<img width="600" src="https://raw.githubusercontent.com/JiiXaa/PalatePrestige/main/.github/screenshots/css-validated.jpg">
+
 ## Browser Compatibility
 
 | Screen size\Browser |       Safari       |   Opera    |   Microsoft Edge   |       Chrome       |      Firefox       | Internet Explorer |
