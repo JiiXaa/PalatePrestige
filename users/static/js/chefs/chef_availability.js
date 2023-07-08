@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('chef_availability.js loaded');
   const calendarEl = document.getElementById('calendar');
   const chefId = calendarEl.getAttribute('data-chef-id');
   const userRole = calendarEl.getAttribute('data-user-role');

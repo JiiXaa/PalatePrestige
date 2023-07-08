@@ -7,8 +7,6 @@ const elements = stripe.elements();
 let paymentModal;
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('booking/index.js loaded');
-
   // Initialize the payment modal
   const paymentModal = new bootstrap.Modal(
     document.getElementById('paymentModal'),
