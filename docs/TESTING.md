@@ -1,3 +1,11 @@
+## Browser Compatibility
+
+| Screen size\Browser |       Safari       |   Opera    |   Microsoft Edge   |       Chrome       |      Firefox       | Internet Explorer |
+| ------------------- | :----------------: | :--------: | :----------------: | :----------------: | :----------------: | :---------------: |
+| Mobile              | :heavy_check_mark: | Not Tested | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    Not Tested     |
+| Desktop             | :heavy_check_mark: | Not Tested | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    Not Tested     |
+| Tablet              | :heavy_check_mark: | Not Tested | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    Not Tested     |
+
 ## Manual Testing
 
 ### Authentication

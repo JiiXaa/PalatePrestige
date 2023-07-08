@@ -89,7 +89,7 @@
                       <a href="{% url 'menu_detail' menu_id=menu.id %}">
                         <h4 class="card-title">{{ menu.title|title }}</h4>
                       </a>
-                      <p class="card-text flex-grow-1">{{ menu.description|capfirst }}</p>
+                      <p class="card-text flex-grow-1 border rounded p-2">{{ menu.description|capfirst }}</p>
                       <div class="menu-card-content">
                         {% for dish in menu.dishes.all %}
                           {% if forloop.counter == 1 %}
@@ -99,7 +99,6 @@
                             <div class="d-flex">
                               <p class="badge badge-success p-2 mt-2 ml-1" style="font-size: 0.9rem;">{{ dish.category|capfirst }}</p>
                             </div>
-                            <p class="border rounded p-4">{{ dish.description|capfirst }}</p>
                           {% endif %}
                         {% endfor %}
                       </div>

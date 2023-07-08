@@ -65,6 +65,24 @@ Whether it's a romantic dinner, a festive celebration, or any occasion that call
 | Chef    | Easily add/remove availability dates       | Manage availability                   |
 | Chef    | Create various deals                       | Promote my services                   |
 
+## Design / Mockups:
+
+- **Wireframes:**
+
+  Wireframes can be found [here](https://github.com/JiiXaa/PalatePrestige/blob/main/docs/WIREFRAMES.md).
+
+- **Fully Responsive**
+
+  The application is fully responsive, thanks to the powerful grid system of Bootstrap. It utilizes flexbox technology to ensure flexible and adaptive layout across various devices and screen sizes.
+
+- **Color Scheme**
+
+  Utilized default bootstrap color scheme for a clean aesthetic.
+
+- **Typography**
+
+  Used google font: 'Lato'
+
 ## Technologies:
 
 - [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML/) Used for the creation of the markup of Django templates for the website content.
@@ -87,23 +105,39 @@ Database relationships between class objects:
 
 **User and Chef:** The relationship (one-to-one) between the Chef and Customer models with the built-in Django's User model is established primarily for authentication and authorization purposes. If a User is deleted, the associated Chef will be deleted too due to the 'on_delete=models.CASCADE' option.
 
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/user-chef.png">
+
 **User and Customer:** models have a one-to-one relationship. The implication is the same as the relationship between User and Chef.
+
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/user-customer.png">
 
 **Chef and Menu:** this is a one-to-many relationship where one Chef can have multiple Menu instances but each Menu is associated with one Chef. If a Chef is deleted, all associated Menu instances will be deleted too.
 
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/chef-menus.png">
+
 **Menu and MenuCategory:** A ForeignKey relationship exists between the Menu and MenuCategory models. This means each Menu can have one MenuCategory, but a MenuCategory can be associated with many Menu objects. If a MenuCategory is deleted, the Menu objects associated with it will not be deleted; instead, their menu_category fields (which is the ForeignKey to MenuCategory) will be set to NULL due to the on_delete=models.SET_NULL setting.
+
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/menu-menucategory.png">
 
 **Menu and Dish:** This is a one-to-many relationship. One Menu can have many Dish instances but each Dish is associated with one Menu. If a Menu is deleted, all related Dish instances are also deleted.
 
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/menu-dishes.png">
+
 **Customer and Booking:** This is a one-to-many relationship. One Customer can have multiple Booking instances but each Booking is associated with one Customer. If a Customer is deleted, all of their Booking instances are also deleted.
 
-**Menu and Booking:** This is another one-to-many relationship. One Menu can have multiple Booking instances but each Booking is associated with one Menu. If a Menu is deleted, all related Booking instances are also deleted.
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/customer-bookings.png">
 
-**Chef and Deal:** This is a one-to-many relationship. One Chef can create multiple Deal instances, but each Deal is associated with one Chef. If a Chef is deleted, all related Deal instances are also deleted.
+**Menu and Booking:** The relationship between Menu and Booking is defined as one-to-many. A Menu can have multiple Booking instances, while each Booking is associated with one Menu. When a Menu is deleted, a soft deletion technique is employed, which means the Menu is not permanently removed from the system. Instead, it is flagged as "is_deleted=True" to indicate its inactive state. However, the associated Booking instances remain unaffected and are not deleted. Only Menus with the flag "is_deleted=False" are displayed in the system.
+
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/menu-bookings.png">
 
 **Customer and Review:** This is a one-to-many relationship. One Customer can write multiple Review instances, but each Review is associated with one and only one Customer. If a Customer is deleted, all of their Review instances are also deleted due to the on_delete=models.CASCADE argument.
 
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/customer-reviews.png">
+
 **Chef and Review:** This is another one-to-many relationship. One Chef can have multiple Review instances, but each Review is associated with one and only one Chef. If a Chef is deleted, all related Review instances are also deleted due to the on_delete=models.CASCADE argument.
+
+<img width="200" src="https://raw.githubusercontent.com/JiiXaa/bomb-sweeper/main/.github/screenshots/chef-reviews.png">
 
 ## Admin specific actions
 

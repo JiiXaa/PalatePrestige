@@ -4,6 +4,12 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+  .mobile-text {
+    font-size: 0.8rem;
+  }
+}
+
 .pagination-container {
   width: 100%;
 
