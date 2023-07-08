@@ -14,4 +14,4 @@ Main Page Desktop (showcasing all available menus): <br>
 Main Page Mobile <br>
 <img width="300" src="https://raw.githubusercontent.com/JiiXaa/PalatePrestige/main/.github/screenshots/mobile-menus.png">
 
-[Back to Main README](https://github.com/JiiXaa/PalatePrestige#testing)
+[Back to Main README](https://github.com/JiiXaa/PalatePrestige#wireframes)

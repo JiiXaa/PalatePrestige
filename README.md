@@ -17,6 +17,7 @@ Whether it's a romantic dinner, a festive celebration, or any occasion that call
 ## Contents
 
 - [**User Stories**](#user-stories)
+- [**Design / Mockups**](#design--mockups)
 - [**Technologies Used**](#technologies)
 - [**Database Model**](#database-model)
 - [**Admin Specific Actions**](#admin-specific-actions)
